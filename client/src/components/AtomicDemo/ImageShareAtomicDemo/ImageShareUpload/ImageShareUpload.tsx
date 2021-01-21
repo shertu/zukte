@@ -1,9 +1,9 @@
 import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
 import {Alert, message, Space, Typography, Upload} from 'antd';
 import {UploadChangeParam} from 'antd/lib/upload';
-import {RcCustomRequestOptions} from 'antd/lib/upload/interface';
 import * as React from 'react';
-import {BlobStorageApi} from '../../../../../generated-sources/openapi';
+import { BlobStorageApi } from '../../../../openapi-generator';
+import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
 
 const {Dragger} = Upload;
 const {Paragraph} = Typography;

@@ -1,7 +1,7 @@
 import {Divider, Space, Typography} from 'antd';
 import * as React from 'react';
 import Mailto from 'react-mailto.js';
-import {calculateAgeFromBirthdate} from '../../../AgeCalculator';
+import { calculateAgeFromBirthdate } from '../../../utilities/AgeCalculator';
 import {AutoColumnRow, AutoColumnRowGutterDefault} from '../../AutoColumnRow/AutoColumnRow';
 import './style.less';
 

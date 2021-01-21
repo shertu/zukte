@@ -1,7 +1,7 @@
 import {Alert, List, Skeleton} from 'antd';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {BlobStorageApi, StringListResponse} from '../../../../../generated-sources/openapi';
+import { BlobStorageApi, StringListResponse } from '../../../../openapi-generator';
 
 const DEFAULT_PAGE_SIZE: number = 30;
 const ImageShareListGutterValue: number = 8;

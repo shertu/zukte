@@ -1,6 +1,6 @@
 import {message, Typography} from 'antd';
 import * as React from 'react';
-import {ApplicationUser, MineApplicationUserApi} from '../../../../generated-sources/openapi';
+import { ApplicationUser, MineApplicationUserApi } from '../../../openapi-generator';
 import {AppPage} from '../../AppPage/AppPage';
 import {AutoColumnRow, AutoColumnRowGutterDefault} from '../../AutoColumnRow/AutoColumnRow';
 import {ApplicationUserList} from './ApplicationUserList/ApplicationUserList';

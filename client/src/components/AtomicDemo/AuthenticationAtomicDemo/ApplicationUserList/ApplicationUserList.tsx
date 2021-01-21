@@ -1,7 +1,7 @@
 import {UserDeleteOutlined} from '@ant-design/icons';
 import {Alert, Avatar, Button, List, Typography} from 'antd';
 import * as React from 'react';
-import {ApplicationUser, ApplicationUsersApi} from '../../../../../generated-sources/openapi';
+import { ApplicationUser, ApplicationUsersApi } from '../../../../openapi-generator';
 
 const {Text} = Typography;
 

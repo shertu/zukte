@@ -1,6 +1,6 @@
 import * as React from 'react';
 import GoogleButton from 'react-google-button';
-import {ApiAuthGoogleOAuthSignInGetRequest, BASE_PATH} from '../../../../../generated-sources/openapi';
+import { ApiAuthGoogleOAuthSignInGetRequest, BASE_PATH } from '../../../../openapi-generator';
 
 /**
  * A button component used to sign in to the application via the Google Auth API.

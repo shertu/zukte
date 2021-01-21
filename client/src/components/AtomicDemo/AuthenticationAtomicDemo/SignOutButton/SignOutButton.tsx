@@ -1,6 +1,6 @@
 import {Button, message} from 'antd';
 import * as React from 'react';
-import {AuthApi} from '../../../../../generated-sources/openapi';
+import { AuthApi } from '../../../../openapi-generator';
 
 const AUTH_API: AuthApi = new AuthApi();
 
