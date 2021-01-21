@@ -1,0 +1,3 @@
+{
+  "ignores": ["typescript", "webpack-cli", "webpack-dev-server"]
+}

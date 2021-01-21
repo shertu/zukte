@@ -1,0 +1,9 @@
+# npm
+/node_modules
+
+# openapi-generator
+/src/openapi-generator
+/openapi.json
+
+# webpack-dev-server
+/dist
