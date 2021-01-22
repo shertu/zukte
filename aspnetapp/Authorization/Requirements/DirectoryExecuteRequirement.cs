@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 
 namespace zukte.Authorization.Requirements {
-	public class FileReadRequirement : IAuthorizationRequirement {
+	public class DirectoryExecuteRequirement : IAuthorizationRequirement {
 	}
 }

@@ -5,26 +5,26 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using zukte.com.Utilities;
 
-namespace zukte.com.Authorization.Handlers {
-  public class SuperuserAuthorizationHandler : IAuthorizationHandler {
-    private static readonly string[] superusers = {
-      "112088567581740211952"
-    };
+namespace zukte.Authorization.Handlers {
+	public class SuperuserAuthorizationHandler : IAuthorizationHandler {
+		private static readonly string[] superusers = {
+	  "112088567581740211952"
+	};
 
-    public Task HandleAsync(AuthorizationHandlerContext context) {
-      Claim? id = context.User.FindGoogleNameIdentifier();
+		public Task HandleAsync(AuthorizationHandlerContext context) {
+			Claim? id = context.User.FindGoogleNameIdentifier();
 
-      if (id == null) {
-        return Task.CompletedTask;
-      }
+			if (id == null) {
+				return Task.CompletedTask;
+			}
 
-      if (superusers.Contains(id.Value)) {
-        foreach (IAuthorizationRequirement req in context.Requirements) {
-          context.Succeed(req);
-        }
-      }
+			if (superusers.Contains(id.Value)) {
+				foreach (IAuthorizationRequirement req in context.Requirements) {
+					context.Succeed(req);
+				}
+			}
 
-      return Task.CompletedTask;
-    }
-  }
+			return Task.CompletedTask;
+		}
+	}
 }
