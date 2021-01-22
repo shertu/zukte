@@ -1,9 +1,12 @@
-import {UserDeleteOutlined} from '@ant-design/icons';
-import {Alert, Avatar, Button, List, Typography} from 'antd';
-import * as React from 'react';
-import { ApplicationUser, ApplicationUsersApi } from '../../../../openapi-generator';
+import { UserDeleteOutlined } from "@ant-design/icons";
+import { Alert, Avatar, Button, List, Typography } from "antd";
+import * as React from "react";
+import {
+  ApplicationUser,
+  ApplicationUsersApi,
+} from "../../../../openapi-generator";
 
-const {Text} = Typography;
+const { Text } = Typography;
 
 const APPLICATION_USERS_API: ApplicationUsersApi = new ApplicationUsersApi();
 
@@ -17,7 +20,7 @@ export function ApplicationUserList(props: {
   mineApplicationUser?: ApplicationUser;
   onRemoveMineApplicationUserHook?: () => void;
 }): JSX.Element {
-  const {mineApplicationUser, onRemoveMineApplicationUserHook} = props;
+  const { mineApplicationUser, onRemoveMineApplicationUserHook } = props;
 
   const [data, setData] = React.useState<ApplicationUser[]>([]);
 
@@ -35,8 +38,12 @@ export function ApplicationUserList(props: {
     if (data) {
       let newDataSortedValue: ApplicationUser[] = data;
 
-      if (mineApplicationUser) { // Move the user's application user or account to the start of the list.
-        const filteredDataValue: ApplicationUser[] = filterApplicationUser(data, mineApplicationUser);
+      if (mineApplicationUser) {
+        // Move the user's application user or account to the start of the list.
+        const filteredDataValue: ApplicationUser[] = filterApplicationUser(
+          data,
+          mineApplicationUser
+        );
         newDataSortedValue = [mineApplicationUser, ...filteredDataValue];
       }
 
@@ -47,14 +54,17 @@ export function ApplicationUserList(props: {
   /** Loads or reloads the content of this list. */
   function onLoadApplicationUsers(): void {
     APPLICATION_USERS_API.apiApplicationUsersGet()
-        .then((res) => setData(res))
-        .catch((err: Response) => setError(true));
+      .then((res) => setData(res))
+      .catch((err: Response) => setError(true));
   }
 
   /** The event called when the user's application user or account is removed from the list. */
   function onRemoveMineApplicationUser(): void {
     if (data && mineApplicationUser) {
-      const filteredDataValue: ApplicationUser[] = filterApplicationUser(data, mineApplicationUser);
+      const filteredDataValue: ApplicationUser[] = filterApplicationUser(
+        data,
+        mineApplicationUser
+      );
       setData(filteredDataValue);
     }
 
@@ -70,42 +80,62 @@ export function ApplicationUserList(props: {
    * @param {ApplicationUser} applicationUser
    * @return {ApplicationUser[]}
    */
-  function filterApplicationUser(collection: ApplicationUser[], applicationUser: ApplicationUser): ApplicationUser[] {
-    return collection.filter((e: ApplicationUser) => e.id !== applicationUser.id);
+  function filterApplicationUser(
+    collection: ApplicationUser[],
+    applicationUser: ApplicationUser
+  ): ApplicationUser[] {
+    return collection.filter(
+      (e: ApplicationUser) => e.id !== applicationUser.id
+    );
   }
 
   return (
     <div>
-      {error &&
-        <Alert message="Error" description="An unexpected error occured while trying to load the accounts." type="error" showIcon />
-      }
+      {error && (
+        <Alert
+          message="Error"
+          description="An unexpected error occured while trying to load the accounts."
+          type="error"
+          showIcon
+        />
+      )}
 
-      {dataSorted &&
+      {dataSorted && (
         <List
           dataSource={dataSorted}
           renderItem={(item: ApplicationUser) => {
-            const {id, avatarUrl, name} = item;
+            const { id, avatarUrl, name } = item;
 
-            const isMineApplicationUser: boolean = mineApplicationUser ? id === mineApplicationUser.id : false;
+            const isMineApplicationUser: boolean = mineApplicationUser
+              ? id === mineApplicationUser.id
+              : false;
 
             return (
               <List.Item
                 key={id}
                 actions={[
-                  isMineApplicationUser ?
-                    <Button icon={<UserDeleteOutlined />} onClick={onRemoveMineApplicationUser} >remove account</Button> : null,
+                  isMineApplicationUser ? (
+                    <Button
+                      icon={<UserDeleteOutlined />}
+                      onClick={onRemoveMineApplicationUser}
+                    >
+                      remove account
+                    </Button>
+                  ) : null,
                 ]}
               >
                 <List.Item.Meta
                   avatar={<Avatar src={avatarUrl} />}
                   title={name}
-                  description={<Text style={{fontFamily: 'monospace'}}>{id}</Text>}
+                  description={
+                    <Text style={{ fontFamily: "monospace" }}>{id}</Text>
+                  }
                 />
               </List.Item>
             );
           }}
         />
-      }
+      )}
     </div>
   );
 }

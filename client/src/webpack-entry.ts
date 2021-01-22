@@ -1,4 +1,5 @@
 import 'antd/dist/antd.less';
+import './style/index.less';
 import {render} from 'react-dom';
 import {App} from './components/App/App';
 

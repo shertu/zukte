@@ -1,7 +1,10 @@
-import {Alert, List, Skeleton} from 'antd';
-import * as React from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { BlobStorageApi, StringListResponse } from '../../../../openapi-generator';
+import { Alert, List, Skeleton } from "antd";
+import * as React from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
+import {
+  BlobStorageApi,
+  StringListResponse,
+} from "../../../../openapi-generator";
 
 const DEFAULT_PAGE_SIZE: number = 30;
 const ImageShareListGutterValue: number = 8;
@@ -15,37 +18,37 @@ const BLOB_STORAGE_API: BlobStorageApi = new BlobStorageApi();
  * @return {JSX.Element}
  */
 export function ImageShareList(props: {
-  itemCollection: string[],
-  setItemCollection: (value: string[]) => void
+  itemCollection: string[];
+  setItemCollection: (value: string[]) => void;
 }): JSX.Element {
-  const {itemCollection, setItemCollection} = props;
+  const { itemCollection, setItemCollection } = props;
 
   /** The response from the latest item fetch. */
-  const [currentResponse, setCurrentResponse] =
-    React.useState<StringListResponse>(null);
+  const [
+    currentResponse,
+    setCurrentResponse,
+  ] = React.useState<StringListResponse>(null);
 
   /** The current page index of the pagination. */
-  const [paginationCurrent, setPaginationCurrent] =
-    React.useState<number>(0);
+  const [paginationCurrent, setPaginationCurrent] = React.useState<number>(0);
 
   /** The current page size of the pagination. */
-  const [paginationSize, setPaginationSize] =
-    React.useState<number>(0);
+  const [paginationSize, setPaginationSize] = React.useState<number>(0);
 
   /** Has an error occured during a fetch op? */
-  const [error, setError] =
-    React.useState<boolean>(false);
+  const [error, setError] = React.useState<boolean>(false);
 
   const paginationExpectedTotal: number = paginationCurrent * paginationSize;
   const dataLength: number = itemCollection ? itemCollection.length : 0;
-  const shouldAndCanLoadMore: boolean = dataLength < paginationExpectedTotal && canLoadMore(currentResponse);
+  const shouldAndCanLoadMore: boolean =
+    dataLength < paginationExpectedTotal && canLoadMore(currentResponse);
   const hasMore: boolean = canLoadMore(currentResponse) && !error;
 
   /** After fetching additional items, append the new items to the data collection. */
   React.useEffect(() => {
     if (currentResponse) {
       const data: string[] = itemCollection || []; // important to default data value
-      const {items} = currentResponse;
+      const { items } = currentResponse;
 
       if (items) {
         setItemCollection(data.concat(items));
@@ -62,8 +65,8 @@ export function ImageShareList(props: {
   React.useEffect(() => {
     if (shouldAndCanLoadMore) {
       fetchNextResponse(currentResponse)
-          .then((res: StringListResponse) => setCurrentResponse(res))
-          .catch(() => setError(true));
+        .then((res: StringListResponse) => setCurrentResponse(res))
+        .catch(() => setError(true));
     }
   }, [shouldAndCanLoadMore, itemCollection]);
 
@@ -86,11 +89,16 @@ export function ImageShareList(props: {
    * @param {number} maxResults
    * @return {StringListResponse}
    */
-  async function fetchNextResponse(response: StringListResponse, maxResults?: number): Promise<StringListResponse> {
-    const res: StringListResponse = await BLOB_STORAGE_API.apiBlobStorageListGet({
-      maxResults: maxResults,
-      pageToken: response?.nextPageToken,
-    });
+  async function fetchNextResponse(
+    response: StringListResponse,
+    maxResults?: number
+  ): Promise<StringListResponse> {
+    const res: StringListResponse = await BLOB_STORAGE_API.apiBlobStorageListGet(
+      {
+        maxResults: maxResults,
+        pageToken: response?.nextPageToken,
+      }
+    );
 
     return res;
   }
@@ -106,10 +114,20 @@ export function ImageShareList(props: {
   }
 
   return (
-    <div style={{paddingLeft: ImageShareListGutterValue, paddingRight: ImageShareListGutterValue}}>
-      {error &&
-        <Alert message="Error" description="An unexpected error occured while trying to load the images." type="error" showIcon />
-      }
+    <div
+      style={{
+        paddingLeft: ImageShareListGutterValue,
+        paddingRight: ImageShareListGutterValue,
+      }}
+    >
+      {error && (
+        <Alert
+          message="Error"
+          description="An unexpected error occured while trying to load the images."
+          type="error"
+          showIcon
+        />
+      )}
 
       <InfiniteScroll
         dataLength={dataLength}
@@ -117,7 +135,7 @@ export function ImageShareList(props: {
         hasMore={hasMore}
         loader={<Skeleton loading active />}
       >
-        {dataLength > 0 &&
+        {dataLength > 0 && (
           <List
             grid={{
               gutter: ImageShareListGutterValue,
@@ -133,7 +151,7 @@ export function ImageShareList(props: {
               </List.Item>
             )}
           />
-        }
+        )}
       </InfiniteScroll>
     </div>
   );

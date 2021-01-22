@@ -1,8 +1,8 @@
-import {Divider, Space} from 'antd';
-import * as React from 'react';
-import {AppPage} from '../AppPage/AppPage';
-import {AboutMeContent} from './AboutMeContent/AboutMeContent';
-import {PortfolioNav} from './PortfolioNav/PortfolioNav';
+import { Divider, Space } from "antd";
+import * as React from "react";
+import { AppPage } from "../AppPage/AppPage";
+import { AboutMeContent } from "./AboutMeContent/AboutMeContent";
+import { PortfolioNav } from "./PortfolioNav/PortfolioNav";
 
 /**
  * The page the user scrolls down to after seeing the landing screen.
@@ -11,16 +11,15 @@ import {PortfolioNav} from './PortfolioNav/PortfolioNav';
  */
 export function LandingPage(): JSX.Element {
   return (
-    <AppPage style={{minHeight: '100vh'}}>
+    <AppPage style={{ minHeight: "100vh" }}>
       <Space direction="vertical" align="center" size={40}>
         <AboutMeContent />
 
         <AppPage>
-          <Divider>Work Examples</Divider>
+          <Divider>examples</Divider>
           <PortfolioNav />
         </AppPage>
       </Space>
     </AppPage>
   );
 }
-

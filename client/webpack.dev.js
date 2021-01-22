@@ -8,9 +8,15 @@ module.exports = merge(common, {
   // https://webpack.js.org/configuration/devtool/
   devtool: "inline-source-map",
 
+  // https://webpack.js.org/concepts/output/
+  output: {
+    publicPath: "/",
+  },
+
   // https://webpack.js.org/configuration/dev-server/
   devServer: {
     hot: true,
     open: true,
+    historyApiFallback: true,
   },
 });

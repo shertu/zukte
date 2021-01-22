@@ -1,14 +1,14 @@
-import {Button, Layout, Space} from 'antd';
-import * as React from 'react';
-import {Link, useRouteMatch} from 'react-router-dom';
-import ApplicationRouteCollection from '../../../utilities/ApplicationRouteCollection';
-import {AppPage} from '../../AppPage/AppPage';
-import {LandingScreen} from '../../LandingScreen/LandingScreen';
-import {LocationBreadcrumb} from '../../LocationBreadcrumb/LocationBreadcrumb';
-import {AppContentSwitch} from '../AppContentSwitch/AppContentSwitch';
-import './style.less';
+import { Button, Layout, Space } from "antd";
+import * as React from "react";
+import { Link, Route, Switch } from "react-router-dom";
+import ApplicationRouteCollection from "../../../constants/ApplicationRouteCollection";
+import { AppPage } from "../../AppPage/AppPage";
+import { LandingScreen } from "../../LandingScreen/LandingScreen";
+import { LocationBreadcrumb } from "../../LocationBreadcrumb/LocationBreadcrumb";
+import { AppContentSwitch } from "../AppContentSwitch/AppContentSwitch";
+import "./style.less";
 
-const {Header, Content, Footer} = Layout;
+const { Header, Content, Footer } = Layout;
 
 /**
  * A layout component used to describe general structure of the application, e.g. main, header, footer, etc.
@@ -16,23 +16,28 @@ const {Header, Content, Footer} = Layout;
  * @return {JSX.Element}
  */
 export function AppLayout(): JSX.Element {
-  const isHomePage: boolean = useRouteMatch(ApplicationRouteCollection.Home)?.isExact || false;
   return (
     <Layout id="app-layout">
-      {isHomePage ?
-        <LandingScreen /> :
-        <Header>
-          <Space className="max-height" align="center">
-            <LocationBreadcrumb />
-          </Space>
-        </Header>
-      }
+      <Switch>
+        <Route exact path={ApplicationRouteCollection.Home}>
+          <LandingScreen />
+        </Route>
+
+        <Route>
+          <Header style={{ backgroundColor: "transparent" }}>
+            <Space className="max-height" align="center">
+              <LocationBreadcrumb />
+            </Space>
+          </Header>
+        </Route>
+      </Switch>
 
       <Content>
-        <AppPage id="content-viewport">
+        <div id="content-viewport" className="max-cell-lg">
           <AppContentSwitch />
-        </AppPage>
+        </div>
       </Content>
+
       <Footer>
         <Space className="max-height" align="center">
           <Link to={ApplicationRouteCollection.PrivacyPolicy}>

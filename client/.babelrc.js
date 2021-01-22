@@ -4,10 +4,7 @@ const BabelPluginClassProperties = require("@babel/plugin-proposal-class-propert
 const BabelPluginTransformTypescript = require("@babel/plugin-transform-typescript");
 
 module.exports = {
-  presets: [
-    BabelPresetEnv,
-    BabelPresetReact,
-  ],
+  presets: [BabelPresetEnv, BabelPresetReact],
   plugins: [
     [
       BabelPluginTransformTypescript,

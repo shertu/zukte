@@ -1,6 +1,6 @@
-import * as React from 'react';
-import * as ThreeJs from 'three';
-import NET from 'vanta/dist/vanta.net.min.js';
+import * as React from "react";
+import * as ThreeJs from "three";
+import NET from "vanta/dist/vanta.net.min.js";
 
 /**
  * A component which renders a Vanta NET 3D visual effect.
@@ -9,7 +9,10 @@ import NET from 'vanta/dist/vanta.net.min.js';
  * @return {JSX.Element}
  */
 export function VantaNetContainer(
-    props: React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement>,
+  props: React.DetailedHTMLProps<
+    React.HTMLAttributes<HTMLDivElement>,
+    HTMLDivElement
+  >
 ): JSX.Element {
   const [vantaEffect, setVantaEffect] = React.useState<any>(0);
 
@@ -18,14 +21,14 @@ export function VantaNetContainer(
   React.useEffect(() => {
     if (!vantaEffect) {
       setVantaEffect(
-          NET({
-            el: vantaRef.current,
-            THREE: ThreeJs, // use a custom THREE when initializing
-            color: 0xd8412f,
-            backgroundColor: 0xfcfdfe,
-          }),
+        NET({
+          el: vantaRef.current,
+          THREE: ThreeJs, // use a custom THREE when initializing
+          color: 0xd8412f,
+          backgroundColor: 0xfcfdfe,
+        })
       );
-    };
+    }
 
     // clean-up on component unload
     return () => {
@@ -34,7 +37,5 @@ export function VantaNetContainer(
   }, [vantaEffect]);
 
   // render
-  return (
-    <div {...props} ref={vantaRef} />
-  );
-};
+  return <div {...props} ref={vantaRef} />;
+}
