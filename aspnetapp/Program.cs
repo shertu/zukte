@@ -7,7 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace zukte {
+namespace apple {
 	public class Program {
 		public static void Main(string[] args) {
 			CreateHostBuilder(args).Build().Run();
