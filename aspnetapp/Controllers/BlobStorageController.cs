@@ -7,11 +7,11 @@ using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using zukte.com.Models;
-using zukte.com.Responses;
-using zukte.com.Utilities;
+using zukte.Models;
+using zukte.Responses;
+using zukte.Utilities;
 
-namespace zukte.com.Controllers {
+namespace zukte.Controllers {
 	[Route("api/[controller]")]
 	[ApiController]
 	public class BlobStorageController : ControllerBase {

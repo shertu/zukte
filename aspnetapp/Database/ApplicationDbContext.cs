@@ -1,16 +1,16 @@
 using Microsoft.EntityFrameworkCore;
-using zukte.com.Models;
+using zukte.Models;
 
-namespace zukte.com.Database {
-  public class ApplicationDbContext : DbContext {
-    protected ApplicationDbContext() : base() { }
-    public ApplicationDbContext(DbContextOptions options) : base(options) { }
+namespace zukte.Database {
+	public class ApplicationDbContext : DbContext {
+		protected ApplicationDbContext() : base() { }
+		public ApplicationDbContext(DbContextOptions options) : base(options) { }
 
-    public DbSet<ApplicationUser>? ApplicationUsers { get; set; }
+		public DbSet<ApplicationUser>? ApplicationUsers { get; set; }
 
-    /// <summary>
-    /// Further configure the database model.
-    /// </summary>
-    protected override void OnModelCreating(ModelBuilder modelBuilder) { }
-  }
+		/// <summary>
+		/// Further configure the database model.
+		/// </summary>
+		protected override void OnModelCreating(ModelBuilder modelBuilder) { }
+	}
 }

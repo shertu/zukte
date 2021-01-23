@@ -3,7 +3,7 @@ using System;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using zukte.com.Utilities;
+using zukte.Utilities;
 
 namespace zukte.Authorization.Handlers {
 	public class SuperuserAuthorizationHandler : IAuthorizationHandler {

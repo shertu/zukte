@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using zukte.com.Models;
-using zukte.com.Utilities;
+using zukte.Models;
+using zukte.Utilities;
 
 namespace zukte.Authorization.Handlers {
 	public class ApplicationUserOwnerAuthorizationHandler : AuthorizationHandler<IAuthorizationRequirement, ApplicationUser> {
