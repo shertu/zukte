@@ -1,66 +1,57 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Google.Apis.Auth.OAuth2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using zukte.Models;
-using zukte.Utilities;
 
 namespace zukte.Controllers {
-	[Route("api/[controller]")]
 	[ApiController]
+	[Route("api/[controller]")]
 	[Authorize]
 	[Produces("application/json")]
 	public class MineApplicationUserController : ControllerBase {
-		private readonly ApplicationUsersController _applicationUsersController;
-		private readonly GoogleCredentialManager _googleCredentialManager;
+		public const string GoogleClaimIssuer = "https://accounts.google.com";
+		public const string GoogleNameClaimType = "name";
+		public const string GooglePictureClaimType = "picture";
 
-		public MineApplicationUserController(ApplicationUsersController applicationUsersController, GoogleCredentialManager googleCredentialManager) {
+		private readonly ApplicationUsersController _applicationUsersController;
+
+		public MineApplicationUserController(ApplicationUsersController applicationUsersController) {
 			_applicationUsersController = applicationUsersController;
-			_googleCredentialManager = googleCredentialManager;
 		}
 
 		[HttpGet]
 		public async Task<ActionResult<ApplicationUser>> GetMineApplicationUser() {
-			string id = User.GetGoogleNameIdentifier();
+			string id = FindFirstValueNameIdentifier();
 			_applicationUsersController.ControllerContext = ControllerContext;
 			return await _applicationUsersController.GetApplicationUser(id);
 		}
 
 		[HttpPost]
 		public async Task<ActionResult<ApplicationUser>> PostMineApplicationUser() {
-			string id = User.GetLocalAuthorityNameIdentifier();
-			UserCredential userCredential = await _googleCredentialManager.LoadUserCredentialsAsync(id);
-			GoogleProfile googleProfile = await GoogleProfile.FetchGoogleProfileAsync(userCredential.Token);
+			string id = FindFirstValueNameIdentifier();
 
-			ApplicationUser applicationUser = CreateApplicationUserFromGoogleProfile(googleProfile);
-			ClaimsIdentity identity = CreateClaimsIdentityFromApplicationUser(applicationUser, ClaimsExtensions.GoogleClaimIssuer);
-			User.AddIdentity(identity); // required to be authorized to post a new application user
+			ApplicationUser applicationUser = new ApplicationUser {
+				Id = id,
+				Name = User.FindFirstValue(GoogleNameClaimType),
+				AvatarUrl = User.FindFirstValue(GooglePictureClaimType),
+			};
 
 			_applicationUsersController.ControllerContext = ControllerContext;
 			return await _applicationUsersController.PostApplicationUser(applicationUser);
 		}
 
-		private ApplicationUser CreateApplicationUserFromGoogleProfile(GoogleProfile profile) {
-			return new ApplicationUser {
-				Id = profile.Sub ?? throw new ArgumentNullException("Failed to extract an identifier from the user's Google profile."),
-				Name = profile.Name,
-				AvatarUrl = profile.Picture,
-			};
-		}
-
-		private ClaimsIdentity CreateClaimsIdentityFromApplicationUser(ApplicationUser applicationUser, string issuer) {
-			ClaimsIdentity identity = new ClaimsIdentity(AuthenticationTypes.Know);
-			identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, applicationUser.Id, ClaimValueTypes.String, issuer));
-			return identity;
-		}
-
 		[HttpDelete]
 		public async Task<ActionResult<ApplicationUser>> DeleteMineApplicationUser() {
-			string id = User.GetGoogleNameIdentifier();
+			string id = FindFirstValueNameIdentifier();
 			_applicationUsersController.ControllerContext = ControllerContext;
 			return await _applicationUsersController.DeleteApplicationUser(id);
+		}
+
+		private string FindFirstValueNameIdentifier() {
+			return User.FindFirstValue(ClaimTypes.NameIdentifier) ??
+			throw new ArgumentNullException("User is authenticated but failed to find the user's name identifier.");
 		}
 	}
 }

@@ -1,7 +1,5 @@
 using System.Linq;
 using Azure.Storage.Blobs;
-using Google.Apis.Auth.OAuth2;
-using Google.Apis.Auth.OAuth2.Flows;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -13,11 +11,9 @@ using Microsoft.Extensions.DependencyInjection;
 using zukte.Authorization.Handlers;
 using zukte.Controllers;
 using zukte.Database;
-using zukte.Security.Authentication;
-using zukte.Utilities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.Formatters;
-using System.Text.Json;
+using Google.Apis.Auth.AspNetCore3;
+using zukte.Security.Authentication;
 
 namespace zukte {
 	public class Startup {
@@ -37,40 +33,39 @@ namespace zukte {
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services) {
-			#region Google OAuth 2.0
-			GoogleAuthorizationCodeFlow.Initializer authInitializer = new GoogleAuthorizationCodeFlow.Initializer {
-				ClientSecrets = new ClientSecrets {
-					ClientId = _configuration["Authentication:Google:ClientId"],
-					ClientSecret = _configuration["Authentication:Google:ClientSecret"]
-				},
-				DataStore = GoogleDataStores.GOOGLE_AUTH_TOKEN_STORE,
-				IncludeGrantedScopes = true,
-				Scopes = new string[] {
-		  @"https://www.googleapis.com/auth/userinfo.profile",
-		},
-			};
-
-			_ = services.AddScoped(elem => authInitializer);
-			_ = services.AddScoped<GoogleCredentialManager>();
-			#endregion
-
 			#region routing
 			_ = services.AddControllers();
 			#endregion
 
+			// The following LoC was added to prevent breaking changes with Chrome 80
+			services.ConfigureNonBreakingSameSiteCookies();
+
 			#region authentication
-			_ = services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-			  .AddCookie(options => {
-				  options.Events = new CustomCookieAuthenticationEvents();
-			  });
+			// This configures Google.Apis.Auth.AspNetCore3 for use in this app.
+			services
+				.AddAuthentication(o => {
+					// This forces challenge results to be handled by Google OpenID Handler, so there's no
+					// need to add an AccountController that emits challenges for Login.
+					o.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+					// This forces forbid results to be handled by Google OpenID Handler, which checks if
+					// extra scopes are required and does automatic incremental auth.
+					o.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+					// Default scheme that will handle everything else.
+					// Once a user is authenticated, the OAuth2 token info is stored in cookies.
+					o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+				}).AddCookie(o => {
+					o.Events = new CustomCookieAuthenticationEvents();
+				}).AddGoogleOpenIdConnect(o => {
+					o.ClientId = _configuration["Authentication:Google:ClientId"];
+					o.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
+				});
 			#endregion
 
 			#region authorization
-			_ = services.AddAuthorization(options => {
-			});
+			_ = services.AddAuthorization();
 
 			_ = services.AddSingleton<IAuthorizationHandler, SuperuserAuthorizationHandler>();
-			_ = services.AddSingleton<IAuthorizationHandler, ApplicationUserOwnerAuthorizationHandler>();
+			_ = services.AddSingleton<IAuthorizationHandler, MineApplicationUserAuthorizationHandler>();
 			#endregion
 
 			#region openapi
@@ -82,7 +77,7 @@ namespace zukte {
 
 			if (databaseConnectionString != null) {
 				_ = services.AddDbContext<ApplicationDbContext>(options =>
-				  options.UseSqlServer(databaseConnectionString));
+				  options.UseMySQL(databaseConnectionString));
 			}
 			#endregion
 
@@ -96,10 +91,13 @@ namespace zukte {
 			}
 			#endregion
 
-			if (databaseConnectionString != null) {
+			#region Custom Dependency Injections
+			try {
 				_ = services.AddScoped<MineApplicationUserController>();
 				_ = services.AddScoped<ApplicationUsersController>();
+			} catch (System.Exception) {
 			}
+			#endregion
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -138,9 +136,7 @@ namespace zukte {
 			#endregion
 
 			#region cookie policy
-			_ = app.UseCookiePolicy(new CookiePolicyOptions {
-				MinimumSameSitePolicy = SameSiteMode.Lax,
-			});
+			app.UseCookiePolicy();
 			#endregion
 
 			#region authentication and authorization

@@ -1,18 +1,17 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using zukte.Authorization.Requirements;
 using zukte.Database;
 using zukte.Models;
-using zukte.Utilities;
 
 namespace zukte.Controllers {
-	[Route("api/[controller]")]
 	[ApiController]
+	[Route("api/[controller]")]
 	[Produces("application/json")]
 	public class ApplicationUsersController : ControllerBase {
 		private readonly ApplicationDbContext _context;
@@ -32,6 +31,10 @@ namespace zukte.Controllers {
 		// GET: api/ApplicationUsers/5
 		[HttpGet("{id}")]
 		public async Task<ActionResult<ApplicationUser>> GetApplicationUser(string id) {
+			// if (_context.ApplicationUsers == null) {
+			// 	throw new ArgumentNullException();
+			// }
+
 			var applicationUser = await _context.ApplicationUsers.FindAsync(id);
 
 			if (applicationUser == null) {
@@ -44,26 +47,31 @@ namespace zukte.Controllers {
 		// PUT: api/ApplicationUsers/5
 		// To protect from overposting attacks, enable the specific properties you want to bind to, for
 		// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-		//[HttpPut("{id}")]
-		//public async Task<IActionResult> PutApplicationUser(string id, ApplicationUser applicationUser) {
-		//  if (id != applicationUser.Id) {
-		//    return BadRequest();
-		//  }
+		[HttpPut("{id}")]
+		public async Task<IActionResult> PutApplicationUser(string id, ApplicationUser applicationUser) {
+			AuthorizationResult authorizationResult = await _authorizationService.AuthorizeAsync(User, applicationUser, new FileWriteRequirement());
+			if (!authorizationResult.Succeeded) {
+				return Forbid();
+			}
 
-		//  _context.Entry(applicationUser).State = EntityState.Modified;
+			if (id != applicationUser.Id) {
+				return BadRequest();
+			}
 
-		//  try {
-		//    await _context.SaveChangesAsync();
-		//  } catch (DbUpdateConcurrencyException) {
-		//    if (!ApplicationUserExists(id)) {
-		//      return NotFound();
-		//    } else {
-		//      throw;
-		//    }
-		//  }
+			_context.Entry(applicationUser).State = EntityState.Modified;
 
-		//  return NoContent();
-		//}
+			try {
+				await _context.SaveChangesAsync();
+			} catch (DbUpdateConcurrencyException) {
+				if (!ApplicationUserExists(id)) {
+					return NotFound();
+				} else {
+					throw;
+				}
+			}
+
+			return NoContent();
+		}
 
 		// POST: api/ApplicationUsers
 		// To protect from overposting attacks, enable the specific properties you want to bind to, for
@@ -106,12 +114,12 @@ namespace zukte.Controllers {
 			_context.ApplicationUsers.Remove(applicationUser);
 			await _context.SaveChangesAsync();
 
-			#region Auth SignOut Hook
-			string nameIdentifier = User.GetGoogleNameIdentifier();
-			if (nameIdentifier == applicationUser.Id) {
-				await HttpContext.SignOutAsync();
-			}
-			#endregion
+			// #region Auth SignOut Hook
+			// string nameIdentifier = User.FindGoogleNameIdentifierValue();
+			// if (nameIdentifier == applicationUser.Id) {
+			// 	await HttpContext.SignOutAsync();
+			// }
+			// #endregion
 
 			return applicationUser;
 		}

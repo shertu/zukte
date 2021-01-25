@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Authorization;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using zukte.Utilities;
 
 namespace zukte.Authorization.Handlers {
 	public class SuperuserAuthorizationHandler : IAuthorizationHandler {
@@ -12,15 +12,13 @@ namespace zukte.Authorization.Handlers {
 	};
 
 		public Task HandleAsync(AuthorizationHandlerContext context) {
-			Claim? id = context.User.FindGoogleNameIdentifier();
+			IEnumerable<Claim> idCollection = context.User.FindAll(e => e.Type == ClaimTypes.NameIdentifier);
 
-			if (id == null) {
-				return Task.CompletedTask;
-			}
-
-			if (superusers.Contains(id.Value)) {
-				foreach (IAuthorizationRequirement req in context.Requirements) {
-					context.Succeed(req);
+			foreach (Claim id in idCollection) {
+				if (superusers.Contains(id.Value)) {
+					foreach (IAuthorizationRequirement req in context.Requirements) {
+						context.Succeed(req);
+					}
 				}
 			}
 
