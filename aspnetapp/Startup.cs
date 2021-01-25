@@ -14,6 +14,7 @@ using zukte.Database;
 using Microsoft.EntityFrameworkCore;
 using Google.Apis.Auth.AspNetCore3;
 using zukte.Security.Authentication;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 namespace zukte {
 	public class Startup {
@@ -38,18 +39,20 @@ namespace zukte {
 			#endregion
 
 			// The following LoC was added to prevent breaking changes with Chrome 80
-			services.ConfigureNonBreakingSameSiteCookies();
+			// services.ConfigureNonBreakingSameSiteCookies();
 
 			#region authentication
 			// This configures Google.Apis.Auth.AspNetCore3 for use in this app.
 			services
 				.AddAuthentication(o => {
-					// This forces challenge results to be handled by Google OpenID Handler, so there's no
-					// need to add an AccountController that emits challenges for Login.
-					o.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
-					// This forces forbid results to be handled by Google OpenID Handler, which checks if
-					// extra scopes are required and does automatic incremental auth.
-					o.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+					// // This forces challenge results to be handled by Google OpenID Handler, so there's no
+					// // need to add an AccountController that emits challenges for Login.
+					// o.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+
+					// // This forces forbid results to be handled by Google OpenID Handler, which checks if
+					// // extra scopes are required and does automatic incremental auth.
+					// o.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+
 					// Default scheme that will handle everything else.
 					// Once a user is authenticated, the OAuth2 token info is stored in cookies.
 					o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -136,7 +139,9 @@ namespace zukte {
 			#endregion
 
 			#region cookie policy
-			app.UseCookiePolicy();
+			app.UseCookiePolicy(new CookiePolicyOptions {
+				MinimumSameSitePolicy = SameSiteMode.None,
+			});
 			#endregion
 
 			#region authentication and authorization
