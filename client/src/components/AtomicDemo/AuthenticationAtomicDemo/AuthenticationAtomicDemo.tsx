@@ -1,21 +1,16 @@
-import { message, Typography } from "antd";
-import * as React from "react";
+import { message, Typography } from 'antd';
+import * as React from 'react';
 import {
-  ApplicationUser,
-  MineApplicationUserApi,
-} from "../../../openapi-generator";
-import { AppPage } from "../../AppPage/AppPage";
-import {
-  AutoColumnRow,
-  AutoColumnRowGutterDefault,
-} from "../../AutoColumnRow/AutoColumnRow";
-import { ApplicationUserList } from "./ApplicationUserList/ApplicationUserList";
-import { GoogleSignInButton } from "./GoogleSignInButton/GoogleSignInButton";
-import { SignOutButton } from "./SignOutButton/SignOutButton";
+  ApplicationUser, ApplicationUsersApi,
+} from '../../../openapi-generator';
+import { AppPage } from '../../AppPage/AppPage';
+import { ApplicationUserList, filterApplicationUserListWithList } from './ApplicationUserList/ApplicationUserList';
+import { GoogleSignInButton } from './GoogleSignInButton/GoogleSignInButton';
+import { SignOutButton } from './SignOutButton/SignOutButton';
 
 const { Paragraph } = Typography;
 
-const MINE_APPLICATION_USER_API: MineApplicationUserApi = new MineApplicationUserApi();
+const APPLICATION_USERS_API: ApplicationUsersApi = new ApplicationUsersApi();
 
 /**
  * A demonstration where the user can sign in to the application.
@@ -24,9 +19,9 @@ const MINE_APPLICATION_USER_API: MineApplicationUserApi = new MineApplicationUse
  */
 export function AuthenticationAtomicDemo(): JSX.Element {
   const [
-    mineApplicationUser,
-    setMineApplicationUser,
-  ] = React.useState<ApplicationUser>(null);
+    mineApplicationUsers,
+    setMineApplicationUsers,
+  ] = React.useState<ApplicationUser[]>([]);
 
   /** The initial data fetch. */
   React.useEffect(() => {
@@ -35,12 +30,14 @@ export function AuthenticationAtomicDemo(): JSX.Element {
 
   /** Fetches the user's application user account from the server. */
   function onLoadMineApplicationUser(): void {
-    MINE_APPLICATION_USER_API.apiMineApplicationUserGet()
-      .then((res: ApplicationUser) => setMineApplicationUser(res))
+    APPLICATION_USERS_API.applicationUsersGetApplicationUsers({
+      mine: true,
+    })
+      .then((res) => setMineApplicationUsers(res.items))
       .catch((err: Response) => {
         if (err.status != 401) {
           message.error(
-            "An unexpected error occured while trying to load your account."
+            'An unexpected error occured while trying to load your account.',
           );
         }
       });
@@ -48,21 +45,27 @@ export function AuthenticationAtomicDemo(): JSX.Element {
 
   /** Deletes the user's application user account from the server. */
   function onDeleteMineApplicationUser(): void {
-    MINE_APPLICATION_USER_API.apiMineApplicationUserDelete()
-      .then((res: ApplicationUser) => setMineApplicationUser(null))
+    APPLICATION_USERS_API.applicationUsersDeleteApplicationUser({
+      mine: true,
+    })
+      .then((res) => {
+        const newMineApplicationUsers: ApplicationUser[] = filterApplicationUserListWithList(
+          mineApplicationUsers,
+          res.items,
+        );
+
+        setMineApplicationUsers(newMineApplicationUsers);
+      })
       .catch((err: Response) =>
         message.error(
-          "An unexpected error occured while trying to delete your account."
-        )
+          'An unexpected error occured while trying to delete your account.',
+        ),
       );
   }
 
   return (
     <AppPage pageTitle="Authentication Demo">
-      <AutoColumnRow
-        align="middle"
-        gutter={[AutoColumnRowGutterDefault, AutoColumnRowGutterDefault]}
-      >
+      <div>
         <Typography className="max-cell-xs">
           <Paragraph>
             To use this demo service please sign in to Google and authorize this
@@ -73,14 +76,14 @@ export function AuthenticationAtomicDemo(): JSX.Element {
           </Paragraph>
         </Typography>
 
-        {mineApplicationUser && <SignOutButton />}
+        {mineApplicationUsers && <SignOutButton />}
 
-        {!mineApplicationUser && <GoogleSignInButton />}
-      </AutoColumnRow>
+        {!mineApplicationUsers && <GoogleSignInButton />}
+      </div>
 
       <AppPage pageTitle="Accounts">
         <ApplicationUserList
-          mineApplicationUser={mineApplicationUser}
+          mineApplicationUsers={mineApplicationUsers}
           onRemoveMineApplicationUserHook={onDeleteMineApplicationUser}
         />
       </AppPage>

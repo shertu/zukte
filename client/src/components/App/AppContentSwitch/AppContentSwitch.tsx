@@ -1,15 +1,14 @@
-import { Result, Typography } from "antd";
-import * as React from "react";
-import Mailto from "react-mailto.js";
-import { Route, Switch } from "react-router-dom";
-import ApplicationRouteCollection from "../../../constants/ApplicationRouteCollection";
-import { AuthenticationAtomicDemo } from "../../AtomicDemo/AuthenticationAtomicDemo/AuthenticationAtomicDemo";
-import { ImageShareAtomicDemo } from "../../AtomicDemo/ImageShareAtomicDemo/ImageShareAtomicDemo";
-import { MapAtomicDemo } from "../../AtomicDemo/MapAtomicDemo/MapAtomicDemo";
-import { LandingPage } from "../../LandingPage/LandingPage";
-import { PrivacyPolicyPage } from "../../PrivacyPolicyPage/PrivacyPolicyPage";
+import {Result, Typography} from 'antd';
+import * as React from 'react';
+import Mailto from 'react-mailto.js';
+import {Route, Switch} from 'react-router-dom';
+import ApplicationRouteCollection from '../../../constants/ApplicationRouteCollection';
+import {AuthenticationAtomicDemo} from '../../AtomicDemo/AuthenticationAtomicDemo/AuthenticationAtomicDemo';
+import {MapAtomicDemo} from '../../AtomicDemo/MapAtomicDemo/MapAtomicDemo';
+import {LandingPage} from '../../LandingPage/LandingPage';
+import {PrivacyPolicyPage} from '../../PrivacyPolicyPage/PrivacyPolicyPage';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
 /**
  * A switch component used to route URLs to core pages in the application.
@@ -25,6 +24,10 @@ export function AppContentSwitch(): JSX.Element {
 
       <Route exact path={ApplicationRouteCollection.PrivacyPolicy}>
         <PrivacyPolicyPage />
+      </Route>
+
+      <Route exact path={ApplicationRouteCollection.AuthenticationDemo}>
+        <AuthenticationAtomicDemo />
       </Route>
 
       <Route exact path={ApplicationRouteCollection.MapDemo}>
@@ -52,10 +55,8 @@ export function AppContentSwitch(): JSX.Element {
   );
 }
 
-{/* <Route exact path={ApplicationRouteCollection.AuthenticationDemo}>
-<AuthenticationAtomicDemo />
-</Route>
-
+/*
 <Route exact path={ApplicationRouteCollection.ImageShareDemo}>
 <ImageShareAtomicDemo />
-</Route> */}
+</Route>
+*/

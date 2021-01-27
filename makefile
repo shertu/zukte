@@ -14,11 +14,11 @@ newstart:
 
 # Generate API client library
 openapi:
-	cd laravel && php artisan openapi:generate > openapi.json
-	mv laravel/openapi.json client
+	docker-compose up -d
 	-rm -r client/src/openapi-generator
 	cd client && npm run openapi
 	rm client/openapi.json
+	docker-compose down
 
 # Start the web app for local development
 start:

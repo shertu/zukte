@@ -1,14 +1,18 @@
-import { UserDeleteOutlined } from "@ant-design/icons";
-import { Alert, Avatar, Button, List, Typography } from "antd";
-import * as React from "react";
+import {UserDeleteOutlined} from '@ant-design/icons';
+import {Alert, Avatar, Button, List, Typography} from 'antd';
+import * as React from 'react';
 import {
   ApplicationUser,
   ApplicationUsersApi,
-} from "../../../../openapi-generator";
+} from '../../../../openapi-generator';
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 const APPLICATION_USERS_API: ApplicationUsersApi = new ApplicationUsersApi();
+
+export function filterApplicationUserListWithList(a: ApplicationUser[], b: ApplicationUser[]): ApplicationUser[] {
+  return a.filter((aE) => b.find((bE) => bE.id === aE.id));
+}
 
 /**
  * A list of the application users or accounts stored in the application.
@@ -17,10 +21,10 @@ const APPLICATION_USERS_API: ApplicationUsersApi = new ApplicationUsersApi();
  * @return {JSX.Element}
  */
 export function ApplicationUserList(props: {
-  mineApplicationUser?: ApplicationUser;
+  mineApplicationUsers?: ApplicationUser[];
   onRemoveMineApplicationUserHook?: () => void;
 }): JSX.Element {
-  const { mineApplicationUser, onRemoveMineApplicationUserHook } = props;
+  const {mineApplicationUsers, onRemoveMineApplicationUserHook} = props;
 
   const [data, setData] = React.useState<ApplicationUser[]>([]);
 
@@ -38,32 +42,34 @@ export function ApplicationUserList(props: {
     if (data) {
       let newDataSortedValue: ApplicationUser[] = data;
 
-      if (mineApplicationUser) {
+      if (mineApplicationUsers) {
         // Move the user's application user or account to the start of the list.
-        const filteredDataValue: ApplicationUser[] = filterApplicationUser(
-          data,
-          mineApplicationUser
+        const filteredDataValue: ApplicationUser[] = filterApplicationUserListWithList(
+            data,
+            mineApplicationUsers,
         );
-        newDataSortedValue = [mineApplicationUser, ...filteredDataValue];
+        newDataSortedValue = mineApplicationUsers.concat(filteredDataValue);
       }
 
       setDataSorted(newDataSortedValue);
     }
-  }, [data, mineApplicationUser]);
+  }, [data, mineApplicationUsers]);
 
   /** Loads or reloads the content of this list. */
   function onLoadApplicationUsers(): void {
-    APPLICATION_USERS_API.apiApplicationUsersGet()
-      .then((res) => setData(res))
-      .catch((err: Response) => setError(true));
+    APPLICATION_USERS_API.applicationUsersGetApplicationUsers({
+
+    })
+        .then((res) => setData(res.items))
+        .catch((err: Response) => setError(true));
   }
 
   /** The event called when the user's application user or account is removed from the list. */
   function onRemoveMineApplicationUser(): void {
-    if (data && mineApplicationUser) {
-      const filteredDataValue: ApplicationUser[] = filterApplicationUser(
-        data,
-        mineApplicationUser
+    if (data && mineApplicationUsers) {
+      const filteredDataValue: ApplicationUser[] = filterApplicationUserListWithList(
+          data,
+          mineApplicationUsers,
       );
       setData(filteredDataValue);
     }
@@ -71,22 +77,6 @@ export function ApplicationUserList(props: {
     if (onRemoveMineApplicationUserHook) {
       onRemoveMineApplicationUserHook();
     }
-  }
-
-  /**
-   * Filters a specific application user from an array of application users.
-   *
-   * @param {ApplicationUser[]} collection
-   * @param {ApplicationUser} applicationUser
-   * @return {ApplicationUser[]}
-   */
-  function filterApplicationUser(
-    collection: ApplicationUser[],
-    applicationUser: ApplicationUser
-  ): ApplicationUser[] {
-    return collection.filter(
-      (e: ApplicationUser) => e.id !== applicationUser.id
-    );
   }
 
   return (
@@ -104,11 +94,9 @@ export function ApplicationUserList(props: {
         <List
           dataSource={dataSorted}
           renderItem={(item: ApplicationUser) => {
-            const { id, avatarUrl, name } = item;
+            const {id, avatar, name} = item;
 
-            const isMineApplicationUser: boolean = mineApplicationUser
-              ? id === mineApplicationUser.id
-              : false;
+            const isMineApplicationUser: boolean = Boolean(mineApplicationUsers?.find((elem) => elem.id === id));
 
             return (
               <List.Item
@@ -125,10 +113,10 @@ export function ApplicationUserList(props: {
                 ]}
               >
                 <List.Item.Meta
-                  avatar={<Avatar src={avatarUrl} />}
+                  avatar={<Avatar src={avatar} />}
                   title={name}
                   description={
-                    <Text style={{ fontFamily: "monospace" }}>{id}</Text>
+                    <Text style={{fontFamily: 'monospace'}}>{id}</Text>
                   }
                 />
               </List.Item>

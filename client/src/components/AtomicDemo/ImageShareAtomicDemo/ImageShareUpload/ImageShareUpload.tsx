@@ -1,12 +1,12 @@
-import { LoadingOutlined, PlusOutlined } from "@ant-design/icons";
-import { Alert, message, Space, Typography, Upload } from "antd";
-import { UploadChangeParam } from "antd/lib/upload";
-import * as React from "react";
-import { BlobStorageApi } from "../../../../openapi-generator";
-import { UploadRequestOption as RcCustomRequestOptions } from "rc-upload/lib/interface";
+import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
+import {Alert, message, Space, Typography, Upload} from 'antd';
+import {UploadChangeParam} from 'antd/lib/upload';
+import * as React from 'react';
+import {BlobStorageApi} from '../../../../openapi-generator';
+import {UploadRequestOption as RcCustomRequestOptions} from 'rc-upload/lib/interface';
 
-const { Dragger } = Upload;
-const { Paragraph } = Typography;
+const {Dragger} = Upload;
+const {Paragraph} = Typography;
 
 const BLOB_STORAGE_API: BlobStorageApi = new BlobStorageApi();
 
@@ -20,7 +20,7 @@ export function ImageShareUpload(props: {
   className?: string;
   onFinishUpload?: (url: string) => void;
 }): JSX.Element {
-  const { onFinishUpload, className } = props;
+  const {onFinishUpload, className} = props;
 
   const [imageUrl, setImageUrl] = React.useState<string>(null);
 
@@ -34,7 +34,7 @@ export function ImageShareUpload(props: {
    * @param {UploadChangeParam} info
    */
   function onChange(info: UploadChangeParam): void {
-    if (info.file.status === "uploading") {
+    if (info.file.status === 'uploading') {
       setIsLoading(true);
       return;
     }
@@ -49,14 +49,14 @@ export function ImageShareUpload(props: {
     await BLOB_STORAGE_API.apiBlobStoragePost({
       file: options.file,
     })
-      .then((res: string) => {
-        setImageUrl(res);
+        .then((res: string) => {
+          setImageUrl(res);
 
-        if (onFinishUpload) {
-          onFinishUpload(imageUrl);
-        }
-      })
-      .catch(() => setError(true));
+          if (onFinishUpload) {
+            onFinishUpload(imageUrl);
+          }
+        })
+        .catch(() => setError(true));
 
     setIsLoading(false);
   }
@@ -71,7 +71,7 @@ export function ImageShareUpload(props: {
   function beforeUpload(file: File, FileList: File[]): boolean {
     const isSmallFile = file.size < 8388608;
     if (!isSmallFile) {
-      message.error("Image must smaller than 8 MiB!");
+      message.error('Image must smaller than 8 MiB!');
     }
 
     return isSmallFile;
@@ -91,7 +91,7 @@ export function ImageShareUpload(props: {
         {imageUrl ? (
           <img className="max-cell" src={imageUrl} alt="uploaded-image" />
         ) : (
-          <div style={{ padding: 28 }}>
+          <div style={{padding: 28}}>
             <Paragraph className="ant-upload-drag-icon">
               {isLoading ? <LoadingOutlined /> : <PlusOutlined />}
             </Paragraph>

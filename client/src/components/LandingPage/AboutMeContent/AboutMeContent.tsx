@@ -1,12 +1,12 @@
-import { Col, Divider, Row, Space, Typography } from "antd";
-import * as React from "react";
-import Mailto from "react-mailto.js";
-import { calculateAgeFromBirthdate } from "../../../utilities/AgeCalculator";
-import "./style.less";
+import {Col, Divider, Row, Space, Typography} from 'antd';
+import * as React from 'react';
+import Mailto from 'react-mailto.js';
+import {calculateAgeFromBirthdate} from '../../../utilities/AgeCalculator';
+import './style.less';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
-const shertuDateOfBirth = new Date("1996-06-10");
+const shertuDateOfBirth = new Date('1996-06-10');
 const aboutMeStyleSpace: number = 0;
 const aboutMeStylePersonalInfoSize: number = 60;
 const aboutMeStyleMaxWidth: number = 420;
@@ -22,23 +22,23 @@ export function AboutMeContent(): JSX.Element {
       <Space
         split={<Divider type="vertical" />}
         size={aboutMeStylePersonalInfoSize / 1.618}
-        style={{ marginBottom: aboutMeStylePersonalInfoSize }}
+        style={{marginBottom: aboutMeStylePersonalInfoSize}}
       >
         <Typography
           id="personal-infomation-age"
-          style={{ fontSize: aboutMeStylePersonalInfoSize }}
+          style={{fontSize: aboutMeStylePersonalInfoSize}}
         >
           {calculateAgeFromBirthdate(shertuDateOfBirth)}
         </Typography>
         <Typography
           id="personal-infomation-sex"
-          style={{ fontSize: aboutMeStylePersonalInfoSize }}
+          style={{fontSize: aboutMeStylePersonalInfoSize}}
         >
           ♂
         </Typography>
         <img
           id="personal-infomation-location"
-          style={{ height: aboutMeStylePersonalInfoSize }}
+          style={{height: aboutMeStylePersonalInfoSize}}
           src="https://i.imgur.com/4Ae8JgG.png"
         />
       </Space>
@@ -47,11 +47,11 @@ export function AboutMeContent(): JSX.Element {
         gutter={[32, 60]}
         align="middle"
         justify="center"
-        style={{ marginLeft: 0, marginRight: 0 }}
+        style={{marginLeft: 0, marginRight: 0}}
       >
         <Col>
           <Typography
-            style={{ fontSize: "large", maxWidth: aboutMeStyleMaxWidth }}
+            style={{fontSize: 'large', maxWidth: aboutMeStyleMaxWidth}}
           >
             <Paragraph>
               Hello and welcome to my personal website. My name is Jared Michael
@@ -72,7 +72,7 @@ export function AboutMeContent(): JSX.Element {
           <img
             className="image-cover"
             src="https://i.imgur.com/gcWo3ZE.jpg"
-            style={{ borderRadius: 16, maxWidth: aboutMeStyleMaxWidth }}
+            style={{borderRadius: 16, maxWidth: aboutMeStyleMaxWidth}}
           />
         </Col>
       </Row>

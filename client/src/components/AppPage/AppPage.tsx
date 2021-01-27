@@ -1,7 +1,7 @@
-import { PageHeader } from "antd";
-import classNames from "classnames";
-import * as React from "react";
-import "./style.less";
+import {PageHeader} from 'antd';
+import classNames from 'classnames';
+import * as React from 'react';
+import './style.less';
 
 export interface PageProps
   extends React.DetailedHTMLProps<
@@ -18,12 +18,12 @@ export interface PageProps
  * @return {JSX.Element}
  */
 export function AppPage(props: PageProps): JSX.Element {
-  const { className, pageTitle, children, ...other } = props;
+  const {className, pageTitle, children, ...other} = props;
 
   return (
     <section
       {...other}
-      className={classNames(className, "max-cell-lg", "app-page")}
+      className={classNames(className, 'max-cell-lg', 'app-page')}
     >
       {pageTitle && <PageHeader title={pageTitle} />}
       {children}

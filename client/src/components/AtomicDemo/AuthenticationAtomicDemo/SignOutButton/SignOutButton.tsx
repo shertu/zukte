@@ -1,8 +1,8 @@
-import { Button, message } from "antd";
-import * as React from "react";
-import { AuthApi } from "../../../../openapi-generator";
+import {Button, message} from 'antd';
+import * as React from 'react';
+import {AccountApi, AccountHttpContextSignOutRequest, BASE_PATH} from '../../../../openapi-generator';
 
-const AUTH_API: AuthApi = new AuthApi();
+const ACCOUNT_API: AccountApi = new AccountApi();
 
 /**
  * A button component used to sign out of the application.
@@ -11,19 +11,25 @@ const AUTH_API: AuthApi = new AuthApi();
  * @return {JSX.Element}
  */
 export function SignOutButton(props: { redirect?: string }): JSX.Element {
-  const { redirect } = props;
+  const {redirect} = props;
 
   /** The click event for this button. */
   function onClick(): void {
     const redirectUri: string = redirect || window.location.pathname;
 
-    AUTH_API.apiAuthSignOutGet()
-      .then(() => window.location.assign(redirectUri))
-      .catch((err: Response) =>
-        message.error(
-          "An unexpected error occurred while trying to sign out of the application."
-        )
-      );
+    // ACCOUNT_API.accountHttpContextSignOut();
+
+    const requestParameters: AccountHttpContextSignOutRequest = {
+      returnUrl: redirectUri,
+    };
+
+    const searchParams: URLSearchParams = new URLSearchParams(
+      requestParameters as URLSearchParams,
+    );
+
+    const authorizationCodeRequestUrl: string =
+      BASE_PATH + '/api/Account/Logout' + '?' + searchParams.toString();
+    window.location.assign(authorizationCodeRequestUrl);
   }
 
   return (

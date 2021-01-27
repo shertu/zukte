@@ -1,15 +1,15 @@
-import { Typography } from "antd";
-import * as React from "react";
-import Mailto from "react-mailto.js";
-import { AppPage } from "../../AppPage/AppPage";
+import {Typography} from 'antd';
+import * as React from 'react';
+import Mailto from 'react-mailto.js';
+import {AppPage} from '../../AppPage/AppPage';
 import {
   AutoColumnRow,
   AutoColumnRowGutterDefault,
-} from "../../AutoColumnRow/AutoColumnRow";
-import { ImageShareList } from "./ImageShareList/ImageShareList";
-import { ImageShareUpload } from "./ImageShareUpload/ImageShareUpload";
+} from '../../AutoColumnRow/AutoColumnRow';
+import {ImageShareList} from './ImageShareList/ImageShareList';
+import {ImageShareUpload} from './ImageShareUpload/ImageShareUpload';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
 /**
  * A demonstration where the user can upload and share images with others.
@@ -38,7 +38,7 @@ export function ImageShareAtomicDemo(): JSX.Element {
           <Paragraph>
             To use this demo service please upload an image file, e.g. .png,
             .jpg, which is smaller than 8 MiB. You cannot delete an image once
-            it is uploaded, however, you can{" "}
+            it is uploaded, however, you can{' '}
             <Mailto to="djared.xeknau@outlook.com">send me an email</Mailto> to
             request the deletion of an image.
           </Paragraph>

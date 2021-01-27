@@ -1,7 +1,7 @@
-import { Card, Col, Row } from "antd";
-import * as React from "react";
-import { Link } from "react-router-dom";
-import ApplicationRouteCollection from "../../../constants/ApplicationRouteCollection";
+import {Card, Col, Row} from 'antd';
+import * as React from 'react';
+import {Link} from 'react-router-dom';
+import ApplicationRouteCollection from '../../../constants/ApplicationRouteCollection';
 
 interface PortfolioNavItemProps {
   to: string;
@@ -13,22 +13,22 @@ interface PortfolioNavItemProps {
 const portfolioNavItemArr: PortfolioNavItemProps[] = [
   {
     to: ApplicationRouteCollection.AuthenticationDemo,
-    src: "https://i.imgur.com/MawioTF.jpg",
-    title: "authentication demo",
-    description: "where the user can sign in to a web application",
+    src: 'https://i.imgur.com/MawioTF.jpg',
+    title: 'authentication demo',
+    description: 'where the user can sign in to a web application',
   },
   {
     to: ApplicationRouteCollection.ImageShareDemo,
-    src: "https://i.imgur.com/iHoOXPu.jpg",
-    title: "image share demo",
+    src: 'https://i.imgur.com/iHoOXPu.jpg',
+    title: 'image share demo',
     description:
-      "where the user can upload images to blob storage",
+      'where the user can upload images to blob storage',
   },
   {
     to: ApplicationRouteCollection.MapDemo,
-    src: "https://i.stack.imgur.com/QKlat.png",
-    title: "map demo",
-    description: "where the user can mark locations on a map",
+    src: 'https://i.stack.imgur.com/QKlat.png',
+    title: 'map demo',
+    description: 'where the user can mark locations on a map',
   },
 ];
 

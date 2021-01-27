@@ -1,8 +1,8 @@
-import { Typography } from "antd";
-import * as React from "react";
-import { AppPage } from "../AppPage/AppPage";
+import {Typography} from 'antd';
+import * as React from 'react';
+import {AppPage} from '../AppPage/AppPage';
 
-const { Paragraph, Text, Title } = Typography;
+const {Paragraph, Text, Title} = Typography;
 
 /**
  * This page outlines the rights of the user in regards to their online privacy while using this web application.
@@ -18,13 +18,13 @@ export function PrivacyPolicyPage(): JSX.Element {
         </Title>
 
         <Paragraph>
-          This Privacy Policy document outlines how information about{" "}
+          This Privacy Policy document outlines how information about{' '}
           <Text strong>you</Text> is collected and used whilst you visit this
           website.
         </Paragraph>
 
         <Paragraph>
-          Further use of this website is to be considered{" "}
+          Further use of this website is to be considered{' '}
           <Text strong>consent</Text> to our Privacy Policy and agreemnent to
           its terms.
         </Paragraph>
