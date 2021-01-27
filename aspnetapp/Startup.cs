@@ -12,9 +12,7 @@ using zukte.Authorization.Handlers;
 using zukte.Controllers;
 using zukte.Database;
 using Microsoft.EntityFrameworkCore;
-using Google.Apis.Auth.AspNetCore3;
-using zukte.Security.Authentication;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using zukte.Authentication;
 
 namespace zukte {
 	public class Startup {
@@ -34,6 +32,19 @@ namespace zukte {
 
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services) {
+			#region database
+			string databaseConnectionString = _configuration.GetConnectionString("DatabaseConnection");
+
+			if (databaseConnectionString != null) {
+				_ = services.AddDbContext<ApplicationDbContext>(options =>
+				  options.UseMySQL(databaseConnectionString));
+			}
+			#endregion
+
+			#region intermediate database service
+			ApplicationDbContext? databaseService = services.BuildServiceProvider().GetService<ApplicationDbContext>();
+			#endregion
+
 			#region routing
 			_ = services.AddControllers();
 			#endregion
@@ -55,9 +66,12 @@ namespace zukte {
 
 					// Default scheme that will handle everything else.
 					// Once a user is authenticated, the OAuth2 token info is stored in cookies.
+					// After a user is signed in, auto create an account
 					o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				}).AddCookie(o => {
-					o.Events = new CustomCookieAuthenticationEvents();
+					o.Events = new CustomCookieAuthenticationEvents {
+						databaseService = databaseService
+					};
 				}).AddGoogleOpenIdConnect(o => {
 					o.ClientId = _configuration["Authentication:Google:ClientId"];
 					o.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
@@ -73,15 +87,6 @@ namespace zukte {
 
 			#region openapi
 			_ = services.AddSwaggerDocument();
-			#endregion
-
-			#region database
-			string databaseConnectionString = _configuration.GetConnectionString("DatabaseConnection");
-
-			if (databaseConnectionString != null) {
-				_ = services.AddDbContext<ApplicationDbContext>(options =>
-				  options.UseMySQL(databaseConnectionString));
-			}
 			#endregion
 
 			#region Azure Blob Storage
