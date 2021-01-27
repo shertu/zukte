@@ -1,9 +1,11 @@
 using System.Text.Json.Serialization;
 
-namespace zukte.Models {
+namespace zukte.Messages {
+	/// <summary>
+	/// This is a base class for query requests.
+	/// For filters, groups, orders, and selects, please extend this class.
+	/// </summary>
 	public abstract class ModelListRequest {
-		// To perform filters, groups, orders, and selects, please create derivatives as needed.
-
 		/// <summary>
 		/// The maximum number of items that should be selected by the query.
 		/// </summary>

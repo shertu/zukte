@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace zukte.Models {
+namespace zukte.Messages {
 	public class ModelListResponse<T> {
 		[JsonPropertyName("items")]
 		public virtual IList<T> Items { get; set; } = new T[0];

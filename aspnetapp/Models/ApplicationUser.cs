@@ -18,7 +18,7 @@ namespace zukte.Models {
 		/// A random value that must change whenever a user is persisted to the store.
 		/// </summary>
 		[ConcurrencyCheck]
-		[JsonPropertyName("concurrencyStamp")]
+		[JsonPropertyName("concurrency")]
 		public virtual Guid ConcurrencyStamp { get; set; } = Guid.NewGuid();
 
 		/// <summary>
@@ -31,7 +31,7 @@ namespace zukte.Models {
 		/// Gets or sets the url of the avatar for this user.
 		/// </summary>
 		[DataType(DataType.ImageUrl)]
-		[JsonPropertyName("avatarUrl")]
+		[JsonPropertyName("avatar")]
 		public virtual string? AvatarUrl { get; set; }
 	}
 }

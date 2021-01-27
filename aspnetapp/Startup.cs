@@ -12,7 +12,6 @@ using zukte.Authorization.Handlers;
 using zukte.Database;
 using Microsoft.EntityFrameworkCore;
 using zukte.Authentication;
-using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.CookiePolicy;
 
 namespace zukte {
@@ -34,16 +33,12 @@ namespace zukte {
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services) {
 			#region database
-			string databaseConnectionString = _configuration.GetConnectionString("DatabaseConnection");
+			string? databaseConnectionString = _configuration.GetConnectionString("DatabaseConnection");
 
-			if (databaseConnectionString != null) {
+			if (!string.IsNullOrEmpty(databaseConnectionString)) {
 				_ = services.AddDbContext<ApplicationDbContext>(options =>
 				  options.UseMySQL(databaseConnectionString));
 			}
-			#endregion
-
-			#region intermediate database service
-			ApplicationDbContext? databaseService = services.BuildServiceProvider().GetService<ApplicationDbContext>();
 			#endregion
 
 			#region routing
@@ -55,8 +50,8 @@ namespace zukte {
 
 			#region authentication
 			// This configures Google.Apis.Auth.AspNetCore3 for use in this app.
-			services
-				.AddAuthentication(o => {
+			_ = services
+				.AddAuthentication(options => {
 					// // This forces challenge results to be handled by Google OpenID Handler, so there's no
 					// // need to add an AccountController that emits challenges for Login.
 					// o.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
@@ -68,23 +63,22 @@ namespace zukte {
 					// Default scheme that will handle everything else.
 					// Once a user is authenticated, the OAuth2 token info is stored in cookies.
 					// After a user is signed in, auto create an account
-					o.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-				}).AddCookie(o => {
-					o.Events = new CustomCookieAuthenticationEvents {
-						databaseService = databaseService
+					options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+				}).AddCookie(options => {
+					options.Events = new CustomCookieAuthenticationEvents {
+						databaseService = services.BuildServiceProvider().GetService<ApplicationDbContext>(),
 					};
 
-					o.LoginPath = "/api/Account/Login";
-					o.LogoutPath = "/api/Account/Logout";
-				}).AddGoogleOpenIdConnect(o => {
-					o.ClientId = _configuration["Authentication:Google:ClientId"];
-					o.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
+					options.LoginPath = "/api/Account/Login";
+					options.LogoutPath = "/api/Account/Logout";
+				}).AddGoogleOpenIdConnect(options => {
+					options.ClientId = _configuration["Authentication:Google:ClientId"];
+					options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
 				});
 			#endregion
 
 			#region authorization
 			_ = services.AddAuthorization();
-
 			_ = services.AddSingleton<IAuthorizationHandler, SuperuserAuthorizationHandler>();
 			_ = services.AddSingleton<IAuthorizationHandler, MineApplicationUserAuthorizationHandler>();
 			#endregion
@@ -95,9 +89,9 @@ namespace zukte {
 
 			#region Azure Blob Storage
 			// Account -> Container -> Blob
-			string azureStorageConnectionString = _configuration.GetConnectionString("AzureStorageConnection");
+			string? azureStorageConnectionString = _configuration.GetConnectionString("AzureStorageConnection");
 
-			if (azureStorageConnectionString != null) {
+			if (!string.IsNullOrEmpty(azureStorageConnectionString)) {
 				BlobServiceClient blobServiceClient = new BlobServiceClient(azureStorageConnectionString);
 				_ = services.AddSingleton(blobServiceClient);
 			}
@@ -159,8 +153,8 @@ namespace zukte {
 			#endregion
 
 			#region openapi
-			app.UseOpenApi();
-			app.UseSwaggerUi3();
+			_ = app.UseOpenApi();
+			_ = app.UseSwaggerUi3();
 			#endregion
 		}
 	}

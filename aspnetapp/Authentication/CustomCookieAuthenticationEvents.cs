@@ -1,11 +1,9 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using zukte.Controllers;
 using zukte.Database;
-using zukte.Models;
 using zukte.Utilities;
 
 namespace zukte.Authentication {
@@ -36,22 +34,25 @@ namespace zukte.Authentication {
 		}
 
 		public override Task SignedIn(CookieSignedInContext context) {
-			ClaimsPrincipal principal = context.Principal ??
-				throw new ArgumentNullException(nameof(principal));
+			var principal = context.Principal ??
+				throw new ArgumentNullException();
 
-			if (databaseService != null) {
-				// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
-				try {
-					ApplicationUser applicationUser = ApplicationUserExtensions.CreateApplicationUserFromIdentity(principal);
+			if (!(databaseService == null)) {
+				if (principal.IsAuthenticated()) {
+
+					var applicationUser = principal.CreateApplicationUserFrom();
 					var postApplicationUserTask = ApplicationUsersController.PostApplicationUser(applicationUser, databaseService);
-					postApplicationUserTask.Wait();
-				} catch (AggregateException ae) {
-					foreach (var e in ae.InnerExceptions) {
-						// Handle the custom exception.
-						if (e is ApplicationUsersController.PostApplicationUserConflictException) {
-							//Console.WriteLine(e.Message);
-						} else {
-							throw e;
+
+					// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
+					try {
+						postApplicationUserTask.Wait();
+					} catch (AggregateException ae) {
+						foreach (var e in ae.InnerExceptions) {
+							if (e is ApplicationUsersController.PostApplicationUserConflictException) {
+								Console.WriteLine(e.Message);
+							} else {
+								throw e;
+							}
 						}
 					}
 				}

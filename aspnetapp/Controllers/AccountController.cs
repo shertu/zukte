@@ -7,7 +7,7 @@ namespace zukte.Controllers {
 	[Route("api/[controller]")]
 	[ApiController]
 	public class AccountController : ControllerBase {
-		private const string RETURN_URL_DEFAULT = "/";
+		public const string RETURN_URL_DEFAULT = "/";
 
 		/// <summary>
 		/// Starts the Google OAuth 2.0 flow for application sign in.

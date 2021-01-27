@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using zukte.Authorization.Requirements;
 using zukte.Database;
+using zukte.Messages.ApplicationUsersController;
 using zukte.Models;
+using zukte.Utilities;
 
 namespace zukte.Controllers {
 	[ApiController]
@@ -24,59 +26,53 @@ namespace zukte.Controllers {
 			this.authorizationService = authorizationService;
 		}
 
-		// GET: api/ApplicationUsers
-		[HttpGet]
-		public async Task<ActionResult<ModelListResponse<ApplicationUser>>> GetApplicationUsers([FromQuery] ApplicationUserListRequest listRequest) {
+		private IQueryable<ApplicationUser> ApplyApplicationUserListRequestFilters(IApplicationUserRequestFilter filters) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
-			IQueryable<ApplicationUser> qWhere = databaseService.ApplicationUsers;
+			IQueryable<ApplicationUser> query = databaseService.ApplicationUsers;
 
-			#region ApplicationUserListRequest.Mine
-			if (listRequest.Mine) {
-				// check user is authenticated
-				bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-
-				if (!isAuthenticated) {
-					AuthenticationProperties authenticationProperties = new AuthenticationProperties {
-						RedirectUri = Request.Path + Request.QueryString,
-					};
-
-					return Challenge(authenticationProperties);
-				}
-
-				// perform filter
-				string[] idCollection = User
-				.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier)
-				.Select(claim => claim.Value).ToArray();
-
-				qWhere = qWhere.Where(elem => idCollection.Contains(elem.Id));
+			#region Mine
+			if (filters.Mine) {
+				IEnumerable<Claim> nameIdentifierClaimCollection = User.FindAll(e => e.Type == ClaimTypes.NameIdentifier);
+				ICollection<string> nameIdentifierClaimValueSet = nameIdentifierClaimCollection.Select(claim => claim.Value).ToHashSet();
+				query = query.Where(elem => nameIdentifierClaimValueSet.Contains(elem.Id));
 			}
 			#endregion
 
-			#region ApplicationUserListRequest.Id
-			if (listRequest.Id != null) {
-				qWhere = qWhere.Where(elem => listRequest.Id.Contains(elem.Id));
+			#region Id
+			if (!string.IsNullOrEmpty(filters.Id)) {
+				string[] idCollection = filters.Id.Split(',');
+				query = query.Where(elem => idCollection.Contains(elem.Id));
 			}
 			#endregion
 
-			#region OFFSET and LIMIT
-			int skip = listRequest.Skip;
-			int take = listRequest.Top ?? 30;
-			#endregion
+			return query;
+		}
 
-			// Execute
-			List<ApplicationUser> items = await qWhere
-			.OrderBy(elem => elem.Id)
-			.Skip(skip).Take(take)
-			.ToListAsync();
+		// GET: api/ApplicationUsers
+		[HttpGet]
+		public async Task<ActionResult<ApplicationUserListRequest.ApplicationUserListResponse>> GetApplicationUsers([FromQuery] ApplicationUserListRequest request) {
+			if (request.Mine && !User.IsAuthenticated()) {
+				this.ChallengeToCurrentRequest();
+			}
 
-			int? qWhereCount = listRequest.Count ? await qWhere.CountAsync() : null;
+			IQueryable<ApplicationUser> filteredQuery = ApplyApplicationUserListRequestFilters(request);
 
-			return new ModelListResponse<ApplicationUser> {
+			List<ApplicationUser> items = await filteredQuery
+				.OrderBy(keys => keys.Id)
+				.Skip(request.Skip).Take(request.Top ?? 30)
+				.ToListAsync();
+
+			int? totalResults = null;
+			if (request.Count) {
+				totalResults = await filteredQuery.CountAsync();
+			}
+
+			return new ApplicationUserListRequest.ApplicationUserListResponse {
 				Items = items,
 				ResultsPerPage = items.Count,
-				TotalResults = qWhereCount,
+				TotalResults = totalResults,
 			};
 		}
 
@@ -109,7 +105,7 @@ namespace zukte.Controllers {
 		// 	return NoContent();
 		// }
 
-		// Account creation should not be available to a publically expose endpoint
+		// do not expose this endpoint publically
 		public static async Task<ApplicationUser> PostApplicationUser(ApplicationUser applicationUser, ApplicationDbContext databaseService) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
@@ -129,38 +125,46 @@ namespace zukte.Controllers {
 			return applicationUser;
 		}
 
-		// // DELETE: api/ApplicationUsers/5
-		// [HttpDelete("{id}")]
-		// public async Task<ActionResult<ApplicationUser>> DeleteApplicationUser(string id) {
-		// 	var applicationUser = await databaseService.ApplicationUsers.FindAsync(id);
+		// DELETE: api/ApplicationUsers
+		[HttpDelete]
+		[Authorize]
+		public async Task<ActionResult<ApplicationUserDeleteRequest.ApplicationUserDeleteResponse>> DeleteApplicationUser([FromQuery] ApplicationUserDeleteRequest request) {
+			if (databaseService.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
-		// 	AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(User, applicationUser, new DirectoryWriteRequirement());
-		// 	if (!authorizationResult.Succeeded) {
-		// 		return Forbid();
-		// 	}
+			if (request.Mine && !User.IsAuthenticated()) {
+				this.ChallengeToCurrentRequest();
+			}
 
-		// 	if (applicationUser == null) {
-		// 		return NotFound();
-		// 	}
+			List<ApplicationUser> items = await ApplyApplicationUserListRequestFilters(request).ToListAsync();
 
-		// 	databaseService.ApplicationUsers.Remove(applicationUser);
-		// 	await databaseService.SaveChangesAsync();
+			// check user is permitted to delete specified application users
+			foreach (var applicationUser in items) {
+				AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(User, applicationUser, new DirectoryWriteRequirement());
+				if (!authorizationResult.Succeeded) {
+					return this.ForbidToCurrentRequest();
+				}
+			}
 
-		// 	// #region Auth SignOut Hook
-		// 	// string nameIdentifier = User.FindGoogleNameIdentifierValue();
-		// 	// if (nameIdentifier == applicationUser.Id) {
-		// 	// 	await HttpContext.SignOutAsync();
-		// 	// }
-		// 	// #endregion
+			databaseService.ApplicationUsers.RemoveRange(items);
+			await databaseService.SaveChangesAsync();
 
-		// 	return applicationUser;
-		// }
+			// sign out if user deleted their own account
+			string? id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			if (!ApplicationUserExists(id, databaseService)) {
+				await HttpContext.SignOutAsync();
+			}
 
-		private static bool ApplicationUserExists(string id, ApplicationDbContext applicationDbContext) {
-			if (applicationDbContext.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(applicationDbContext.ApplicationUsers));
+			return new ApplicationUserDeleteRequest.ApplicationUserDeleteResponse {
+				Items = items
+			};
+		}
 
-			return applicationDbContext.ApplicationUsers.Any(e => e.Id == id);
+		private static bool ApplicationUserExists(string id, ApplicationDbContext dbc) {
+			if (dbc.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(dbc.ApplicationUsers));
+
+			return dbc.ApplicationUsers.Any(e => e.Id == id);
 		}
 	}
 }
