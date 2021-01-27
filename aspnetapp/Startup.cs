@@ -13,6 +13,7 @@ using zukte.Database;
 using Microsoft.EntityFrameworkCore;
 using zukte.Authentication;
 using Microsoft.AspNetCore.CookiePolicy;
+using zukte.Controllers;
 
 namespace zukte {
 	public class Startup {
@@ -45,6 +46,14 @@ namespace zukte {
 			_ = services.AddControllers();
 			#endregion
 
+			#region ApplicationUserController
+			ApplicationDbContext intermediateDatabaseService = services.BuildServiceProvider().GetService<ApplicationDbContext>() ??
+				throw new System.ArgumentNullException(nameof(intermediateDatabaseService));
+
+			CreateApplicationUsersController createApplicationUsersController =
+				new CreateApplicationUsersController(intermediateDatabaseService);
+			#endregion
+
 			// The following LoC was added to prevent breaking changes with Chrome 80
 			// services.ConfigureNonBreakingSameSiteCookies();
 
@@ -66,7 +75,7 @@ namespace zukte {
 					options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				}).AddCookie(options => {
 					options.Events = new CustomCookieAuthenticationEvents {
-						databaseService = services.BuildServiceProvider().GetService<ApplicationDbContext>(),
+						controller = createApplicationUsersController,
 					};
 
 					options.LoginPath = "/api/Account/Login";

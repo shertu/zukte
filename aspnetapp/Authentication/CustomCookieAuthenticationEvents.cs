@@ -3,13 +3,12 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Threading.Tasks;
 using zukte.Controllers;
-using zukte.Database;
 using zukte.Utilities;
 
 namespace zukte.Authentication {
 	// https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.Cookies/Events/CookieAuthenticationEvents.cs
 	public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents {
-		public ApplicationDbContext? databaseService;
+		public CreateApplicationUsersController? controller;
 
 		public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context) {
 			context.Response.Headers["Location"] = context.RedirectUri;
@@ -37,28 +36,29 @@ namespace zukte.Authentication {
 			var principal = context.Principal ??
 				throw new ArgumentNullException();
 
-			if (!(databaseService == null)) {
-				if (principal.IsAuthenticated()) {
+			Task def = base.SignedIn(context);
 
-					var applicationUser = principal.CreateApplicationUserFrom();
-					var postApplicationUserTask = ApplicationUsersController.PostApplicationUser(applicationUser, databaseService);
+			if (controller == null || !principal.IsAuthenticated()) {
+				return def;
+			}
 
-					// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
-					try {
-						postApplicationUserTask.Wait();
-					} catch (AggregateException ae) {
-						foreach (var e in ae.InnerExceptions) {
-							if (e is ApplicationUsersController.PostApplicationUserConflictException) {
-								Console.WriteLine(e.Message);
-							} else {
-								throw e;
-							}
-						}
+			var account = principal.CreateApplicationUserFrom();
+			var createAccountTask = controller.PostApplicationUser(account);
+
+			// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
+			try {
+				createAccountTask.Wait();
+			} catch (AggregateException ae) {
+				foreach (var e in ae.InnerExceptions) {
+					if (e is CreateApplicationUsersController.PostApplicationUserConflictException) {
+						Console.WriteLine(e.Message);
+					} else {
+						throw e;
 					}
 				}
 			}
 
-			return base.SignedIn(context);
+			return def;
 		}
 
 		public override Task SigningIn(CookieSigningInContext context) {

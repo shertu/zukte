@@ -17,7 +17,7 @@ namespace zukte.Controllers {
 	[ApiController]
 	[Route("api/[controller]")]
 	[Produces("application/json")]
-	public partial class ApplicationUsersController : ControllerBase {
+	public class ApplicationUsersController : ControllerBase {
 		private readonly ApplicationDbContext databaseService;
 		private readonly IAuthorizationService authorizationService;
 
@@ -76,53 +76,34 @@ namespace zukte.Controllers {
 			};
 		}
 
-		// // PUT: api/ApplicationUsers/5
-		// // To protect from overposting attacks, enable the specific properties you want to bind to, for
-		// // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-		// [HttpPut("{id}")]
-		// public async Task<IActionResult> PutApplicationUser(string id, ApplicationUser applicationUser) {
-		// 	AuthorizationResult authorizationResult = await _authorizationService.AuthorizeAsync(User, applicationUser, new FileWriteRequirement());
-		// 	if (!authorizationResult.Succeeded) {
-		// 		return Forbid();
-		// 	}
+		// PUT: api/ApplicationUsers/5
+		// To protect from overposting attacks, enable the specific properties you want to bind to, for
+		// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+		[HttpPut("{id}")]
+		[Authorize]
+		public async Task<IActionResult> PutApplicationUser(string id, ApplicationUser applicationUser) {
+			AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(User, applicationUser, new FileWriteRequirement());
+			if (!authorizationResult.Succeeded) {
+				return Forbid();
+			}
 
-		// 	if (id != applicationUser.Id) {
-		// 		return BadRequest();
-		// 	}
+			if (id != applicationUser.Id) {
+				return BadRequest();
+			}
 
-		// 	_context.Entry(applicationUser).State = EntityState.Modified;
+			databaseService.Entry(applicationUser).State = EntityState.Modified;
 
-		// 	try {
-		// 		await _context.SaveChangesAsync();
-		// 	} catch (DbUpdateConcurrencyException) {
-		// 		if (!ApplicationUserExists(id, _context)) {
-		// 			return NotFound();
-		// 		} else {
-		// 			throw;
-		// 		}
-		// 	}
-
-		// 	return NoContent();
-		// }
-
-		// do not expose this endpoint publically
-		public static async Task<ApplicationUser> PostApplicationUser(ApplicationUser applicationUser, ApplicationDbContext databaseService) {
-			if (databaseService.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
-
-			databaseService.ApplicationUsers.Add(applicationUser);
 			try {
 				await databaseService.SaveChangesAsync();
-			} catch (DbUpdateException) {
-				if (ApplicationUserExists(applicationUser.Id, databaseService)) {
-					throw new PostApplicationUserConflictException(
-						$" an application user with id, {applicationUser.Id}, already exists");
+			} catch (DbUpdateConcurrencyException) {
+				if (!ApplicationUserExists(id)) {
+					return NotFound();
 				} else {
 					throw;
 				}
 			}
 
-			return applicationUser;
+			return NoContent();
 		}
 
 		// DELETE: api/ApplicationUsers
@@ -147,7 +128,7 @@ namespace zukte.Controllers {
 
 			// sign out if user deleted their own account
 			string? id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			if (!ApplicationUserExists(id, databaseService)) {
+			if (!ApplicationUserExists(id)) {
 				await HttpContext.SignOutAsync();
 			}
 
@@ -156,11 +137,11 @@ namespace zukte.Controllers {
 			};
 		}
 
-		private static bool ApplicationUserExists(string id, ApplicationDbContext dbc) {
-			if (dbc.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(dbc.ApplicationUsers));
+		private bool ApplicationUserExists(string id) {
+			if (databaseService.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
-			return dbc.ApplicationUsers.Any(e => e.Id == id);
+			return databaseService.ApplicationUsers.Any(e => e.Id == id);
 		}
 	}
 }
