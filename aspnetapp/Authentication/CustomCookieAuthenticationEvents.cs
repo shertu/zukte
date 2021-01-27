@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using zukte.Controllers;
 using zukte.Database;
@@ -34,16 +36,24 @@ namespace zukte.Authentication {
 		}
 
 		public override Task SignedIn(CookieSignedInContext context) {
+			ClaimsPrincipal principal = context.Principal ??
+				throw new ArgumentNullException(nameof(principal));
+
 			if (databaseService != null) {
+				// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
 				try {
-					if (context.Principal == null)
-						throw new System.ArgumentNullException(nameof(context.Principal));
-
-					ApplicationUser account = ApplicationUserFromClaims.CreateApplicationUserFromGoogleIdentity(context.Principal);
-					var postApplicationUserTask = ApplicationUsersController.PostApplicationUser(account, databaseService);
+					ApplicationUser applicationUser = ApplicationUserExtensions.CreateApplicationUserFromIdentity(principal);
+					var postApplicationUserTask = ApplicationUsersController.PostApplicationUser(applicationUser, databaseService);
 					postApplicationUserTask.Wait();
-				} catch (ApplicationUsersController.PostApplicationUserConflictException) {
-
+				} catch (AggregateException ae) {
+					foreach (var e in ae.InnerExceptions) {
+						// Handle the custom exception.
+						if (e is ApplicationUsersController.PostApplicationUserConflictException) {
+							//Console.WriteLine(e.Message);
+						} else {
+							throw e;
+						}
+					}
 				}
 			}
 

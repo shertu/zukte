@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,86 +15,110 @@ namespace zukte.Controllers {
 	[ApiController]
 	[Route("api/[controller]")]
 	[Produces("application/json")]
-	public class ApplicationUsersController : ControllerBase {
-		[System.Serializable]
-		public class PostApplicationUserConflictException : System.Exception {
-			public PostApplicationUserConflictException() { }
-			public PostApplicationUserConflictException(string message) : base(message) { }
-			public PostApplicationUserConflictException(string message, System.Exception inner) : base(message, inner) { }
-			protected PostApplicationUserConflictException(
-				System.Runtime.Serialization.SerializationInfo info,
-				System.Runtime.Serialization.StreamingContext context) : base(info, context) { }
-		}
+	public partial class ApplicationUsersController : ControllerBase {
+		private readonly ApplicationDbContext databaseService;
+		private readonly IAuthorizationService authorizationService;
 
-		private readonly ApplicationDbContext _context;
-		private readonly IAuthorizationService _authorizationService;
-
-		public ApplicationUsersController(ApplicationDbContext context, IAuthorizationService authorizationService) {
-			_context = context;
-			_authorizationService = authorizationService;
+		public ApplicationUsersController(ApplicationDbContext databaseService, IAuthorizationService authorizationService) {
+			this.databaseService = databaseService;
+			this.authorizationService = authorizationService;
 		}
 
 		// GET: api/ApplicationUsers
 		[HttpGet]
-		public async Task<ActionResult<IEnumerable<ApplicationUser>>> GetApplicationUsers() {
-			return await _context.ApplicationUsers.ToListAsync();
-		}
+		public async Task<ActionResult<ModelListResponse<ApplicationUser>>> GetApplicationUsers([FromQuery] ApplicationUserListRequest listRequest) {
+			if (databaseService.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
-		// GET: api/ApplicationUsers/5
-		[HttpGet("{id}")]
-		public async Task<ActionResult<ApplicationUser>> GetApplicationUser(string id) {
-			// if (_context.ApplicationUsers == null) {
-			// 	throw new ArgumentNullException();
-			// }
+			IQueryable<ApplicationUser> qWhere = databaseService.ApplicationUsers;
 
-			var applicationUser = await _context.ApplicationUsers.FindAsync(id);
+			#region ApplicationUserListRequest.Mine
+			if (listRequest.Mine) {
+				// check user is authenticated
+				bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
 
-			if (applicationUser == null) {
-				return NotFound();
-			}
+				if (!isAuthenticated) {
+					AuthenticationProperties authenticationProperties = new AuthenticationProperties {
+						RedirectUri = Request.Path + Request.QueryString,
+					};
 
-			return applicationUser;
-		}
-
-		// PUT: api/ApplicationUsers/5
-		// To protect from overposting attacks, enable the specific properties you want to bind to, for
-		// more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
-		[HttpPut("{id}")]
-		public async Task<IActionResult> PutApplicationUser(string id, ApplicationUser applicationUser) {
-			AuthorizationResult authorizationResult = await _authorizationService.AuthorizeAsync(User, applicationUser, new FileWriteRequirement());
-			if (!authorizationResult.Succeeded) {
-				return Forbid();
-			}
-
-			if (id != applicationUser.Id) {
-				return BadRequest();
-			}
-
-			_context.Entry(applicationUser).State = EntityState.Modified;
-
-			try {
-				await _context.SaveChangesAsync();
-			} catch (DbUpdateConcurrencyException) {
-				if (!ApplicationUserExists(id, _context)) {
-					return NotFound();
-				} else {
-					throw;
+					return Challenge(authenticationProperties);
 				}
-			}
 
-			return NoContent();
+				// perform filter
+				string[] idCollection = User
+				.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier)
+				.Select(claim => claim.Value).ToArray();
+
+				qWhere = qWhere.Where(elem => idCollection.Contains(elem.Id));
+			}
+			#endregion
+
+			#region ApplicationUserListRequest.Id
+			if (listRequest.Id != null) {
+				qWhere = qWhere.Where(elem => listRequest.Id.Contains(elem.Id));
+			}
+			#endregion
+
+			#region OFFSET and LIMIT
+			int skip = listRequest.Skip;
+			int take = listRequest.Top ?? 30;
+			#endregion
+
+			// Execute
+			List<ApplicationUser> items = await qWhere
+			.OrderBy(elem => elem.Id)
+			.Skip(skip).Take(take)
+			.ToListAsync();
+
+			int? qWhereCount = listRequest.Count ? await qWhere.CountAsync() : null;
+
+			return new ModelListResponse<ApplicationUser> {
+				Items = items,
+				ResultsPerPage = items.Count,
+				TotalResults = qWhereCount,
+			};
 		}
+
+		// // PUT: api/ApplicationUsers/5
+		// // To protect from overposting attacks, enable the specific properties you want to bind to, for
+		// // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
+		// [HttpPut("{id}")]
+		// public async Task<IActionResult> PutApplicationUser(string id, ApplicationUser applicationUser) {
+		// 	AuthorizationResult authorizationResult = await _authorizationService.AuthorizeAsync(User, applicationUser, new FileWriteRequirement());
+		// 	if (!authorizationResult.Succeeded) {
+		// 		return Forbid();
+		// 	}
+
+		// 	if (id != applicationUser.Id) {
+		// 		return BadRequest();
+		// 	}
+
+		// 	_context.Entry(applicationUser).State = EntityState.Modified;
+
+		// 	try {
+		// 		await _context.SaveChangesAsync();
+		// 	} catch (DbUpdateConcurrencyException) {
+		// 		if (!ApplicationUserExists(id, _context)) {
+		// 			return NotFound();
+		// 		} else {
+		// 			throw;
+		// 		}
+		// 	}
+
+		// 	return NoContent();
+		// }
 
 		// Account creation should not be available to a publically expose endpoint
-		public static async Task<ApplicationUser> PostApplicationUser(ApplicationUser applicationUser, ApplicationDbContext applicationDbContext) {
-			if (applicationDbContext.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(applicationDbContext.ApplicationUsers));
+		public static async Task<ApplicationUser> PostApplicationUser(ApplicationUser applicationUser, ApplicationDbContext databaseService) {
+			if (databaseService.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
-			applicationDbContext.ApplicationUsers.Add(applicationUser);
+			databaseService.ApplicationUsers.Add(applicationUser);
 			try {
-				await applicationDbContext.SaveChangesAsync();
+				await databaseService.SaveChangesAsync();
 			} catch (DbUpdateException) {
-				if (ApplicationUserExists(applicationUser.Id, applicationDbContext)) {
+				if (ApplicationUserExists(applicationUser.Id, databaseService)) {
 					throw new PostApplicationUserConflictException(
 						$" an application user with id, {applicationUser.Id}, already exists");
 				} else {
@@ -103,32 +129,32 @@ namespace zukte.Controllers {
 			return applicationUser;
 		}
 
-		// DELETE: api/ApplicationUsers/5
-		[HttpDelete("{id}")]
-		public async Task<ActionResult<ApplicationUser>> DeleteApplicationUser(string id) {
-			var applicationUser = await _context.ApplicationUsers.FindAsync(id);
+		// // DELETE: api/ApplicationUsers/5
+		// [HttpDelete("{id}")]
+		// public async Task<ActionResult<ApplicationUser>> DeleteApplicationUser(string id) {
+		// 	var applicationUser = await databaseService.ApplicationUsers.FindAsync(id);
 
-			AuthorizationResult authorizationResult = await _authorizationService.AuthorizeAsync(User, applicationUser, new DirectoryWriteRequirement());
-			if (!authorizationResult.Succeeded) {
-				return Forbid();
-			}
+		// 	AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(User, applicationUser, new DirectoryWriteRequirement());
+		// 	if (!authorizationResult.Succeeded) {
+		// 		return Forbid();
+		// 	}
 
-			if (applicationUser == null) {
-				return NotFound();
-			}
+		// 	if (applicationUser == null) {
+		// 		return NotFound();
+		// 	}
 
-			_context.ApplicationUsers.Remove(applicationUser);
-			await _context.SaveChangesAsync();
+		// 	databaseService.ApplicationUsers.Remove(applicationUser);
+		// 	await databaseService.SaveChangesAsync();
 
-			// #region Auth SignOut Hook
-			// string nameIdentifier = User.FindGoogleNameIdentifierValue();
-			// if (nameIdentifier == applicationUser.Id) {
-			// 	await HttpContext.SignOutAsync();
-			// }
-			// #endregion
+		// 	// #region Auth SignOut Hook
+		// 	// string nameIdentifier = User.FindGoogleNameIdentifierValue();
+		// 	// if (nameIdentifier == applicationUser.Id) {
+		// 	// 	await HttpContext.SignOutAsync();
+		// 	// }
+		// 	// #endregion
 
-			return applicationUser;
-		}
+		// 	return applicationUser;
+		// }
 
 		private static bool ApplicationUserExists(string id, ApplicationDbContext applicationDbContext) {
 			if (applicationDbContext.ApplicationUsers == null)

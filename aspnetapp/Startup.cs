@@ -9,10 +9,11 @@ using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using zukte.Authorization.Handlers;
-using zukte.Controllers;
 using zukte.Database;
 using Microsoft.EntityFrameworkCore;
 using zukte.Authentication;
+using Google.Apis.Auth.AspNetCore3;
+using Microsoft.AspNetCore.CookiePolicy;
 
 namespace zukte {
 	public class Startup {
@@ -72,6 +73,9 @@ namespace zukte {
 					o.Events = new CustomCookieAuthenticationEvents {
 						databaseService = databaseService
 					};
+
+					o.LoginPath = "/api/Account/Login";
+					o.LogoutPath = "/api/Account/Logout";
 				}).AddGoogleOpenIdConnect(o => {
 					o.ClientId = _configuration["Authentication:Google:ClientId"];
 					o.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
@@ -96,14 +100,6 @@ namespace zukte {
 			if (azureStorageConnectionString != null) {
 				BlobServiceClient blobServiceClient = new BlobServiceClient(azureStorageConnectionString);
 				_ = services.AddSingleton(blobServiceClient);
-			}
-			#endregion
-
-			#region Custom Dependency Injections
-			try {
-				_ = services.AddScoped<MineApplicationUserController>();
-				_ = services.AddScoped<ApplicationUsersController>();
-			} catch (System.Exception) {
 			}
 			#endregion
 		}
@@ -145,6 +141,8 @@ namespace zukte {
 
 			#region cookie policy
 			app.UseCookiePolicy(new CookiePolicyOptions {
+				Secure = CookieSecurePolicy.SameAsRequest,
+				HttpOnly = HttpOnlyPolicy.Always,
 				MinimumSameSitePolicy = SameSiteMode.None,
 			});
 			#endregion
