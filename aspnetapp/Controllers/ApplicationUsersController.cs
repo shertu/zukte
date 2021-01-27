@@ -54,7 +54,7 @@ namespace zukte.Controllers {
 		[HttpGet]
 		public async Task<ActionResult<ApplicationUserListRequest.ApplicationUserListResponse>> GetApplicationUsers([FromQuery] ApplicationUserListRequest request) {
 			if (request.Mine && !User.IsAuthenticated()) {
-				this.ChallengeToCurrentRequest();
+				return Challenge();
 			}
 
 			IQueryable<ApplicationUser> filteredQuery = ApplyApplicationUserListRequestFilters(request);
@@ -132,17 +132,13 @@ namespace zukte.Controllers {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
-			if (request.Mine && !User.IsAuthenticated()) {
-				this.ChallengeToCurrentRequest();
-			}
-
-			List<ApplicationUser> items = await ApplyApplicationUserListRequestFilters(request).ToListAsync();
+			var items = ApplyApplicationUserListRequestFilters(request);
 
 			// check user is permitted to delete specified application users
 			foreach (var applicationUser in items) {
 				AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(User, applicationUser, new DirectoryWriteRequirement());
 				if (!authorizationResult.Succeeded) {
-					return this.ForbidToCurrentRequest();
+					return Forbid();
 				}
 			}
 
@@ -156,7 +152,7 @@ namespace zukte.Controllers {
 			}
 
 			return new ApplicationUserDeleteRequest.ApplicationUserDeleteResponse {
-				Items = items
+				Items = await items.ToListAsync(),
 			};
 		}
 
