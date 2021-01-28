@@ -12,7 +12,6 @@ module.exports = {
   plugins: [
     // https://webpack.js.org/plugins/html-webpack-plugin/
     new HtmlWebpackPlugin({
-      title: "Production",
       template: path.resolve(__dirname, "src/index.html"),
       favicon: path.resolve(__dirname, "src/favicon.ico"),
     }),

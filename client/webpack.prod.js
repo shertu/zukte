@@ -16,8 +16,8 @@ module.exports = merge(common, {
 
   // https://webpack.js.org/concepts/output/
   output: {
-    path: path.resolve(__dirname, "../laravel/public/wwwroot"),
-    publicPath: "/wwwroot/",
+    path: path.resolve(__dirname, "../aspnetapp/wwwroot"),
+    publicPath: "/",
     //filename: '[name].bundle.js',
   },
 

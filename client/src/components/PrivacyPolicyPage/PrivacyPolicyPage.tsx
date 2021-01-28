@@ -1,8 +1,8 @@
-import {Typography} from 'antd';
+import { Typography } from 'antd';
 import * as React from 'react';
-import {AppPage} from '../AppPage/AppPage';
+import { AppPage } from '../AppPage/AppPage';
 
-const {Paragraph, Text, Title} = Typography;
+const { Paragraph, Text, Title } = Typography;
 
 /**
  * This page outlines the rights of the user in regards to their online privacy while using this web application.
@@ -32,13 +32,14 @@ export function PrivacyPolicyPage(): JSX.Element {
         <Title level={2}>How we collect and use your information</Title>
 
         <Paragraph>
-          This website will not store personal information such as your name,
+          This website will store personal information such as your name,
           email address, phone number, etc.
         </Paragraph>
 
         <Paragraph>
           This website will use https://www.googleapis.com/auth/userinfo.profile
-          to read the name of your Google profile.
+          to create an account in this web application from the information
+          which is publically available from your Google account.
         </Paragraph>
 
         <Title level={2}>Cookies</Title>

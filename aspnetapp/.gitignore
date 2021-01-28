@@ -1,3 +1,6 @@
+# ASP .NET public static files
+/wwwroot/
+
 # https://raw.githubusercontent.com/dotnet/core/master/.gitignore
 
 *.swp
