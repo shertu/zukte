@@ -1,0 +1,9 @@
+syntax = "proto3";
+package zukte.message.ApplicatonUser;
+
+/* represents a user account in the identity system */
+message ApplicationUser {
+  string id = 1;
+  string name = 2;
+  string picture = 3;
+}

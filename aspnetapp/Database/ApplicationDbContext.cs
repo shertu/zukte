@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using zukte.Models;
+using Zukte.Message.ApplicatonUser;
 
 namespace zukte.Database {
 	public class ApplicationDbContext : DbContext {
@@ -11,6 +11,7 @@ namespace zukte.Database {
 		/// <summary>
 		/// Further configure the database model.
 		/// </summary>
-		protected override void OnModelCreating(ModelBuilder modelBuilder) { }
+		protected override void OnModelCreating(ModelBuilder modelBuilder) {
+		}
 	}
 }

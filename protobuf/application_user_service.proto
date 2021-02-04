@@ -1,0 +1,16 @@
+syntax = "proto3";
+package zukte.message.ApplicatonUser;
+
+import "application_user_list_request.proto";
+import "application_user_delete_request.proto";
+import "google/protobuf/empty.proto";
+
+service ApplicationUserService {
+  // get a list of user accounts
+  rpc GetList(ApplicationUserListRequest)
+      returns (ApplicationUserListRequest.ApplicationUserListResponse) {}
+
+  // delete some user accounts
+  rpc Delete(ApplicationUserDeleteRequest)
+      returns (google.protobuf.Empty) {}
+}
