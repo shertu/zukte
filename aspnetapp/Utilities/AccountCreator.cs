@@ -2,8 +2,8 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using zukte.Database;
-using Zukte.Message.ApplicatonUser;
+using Zukte.Database;
+using Zukte.Message.ApplicationUser;
 
 namespace Zukte.Utilities {
 	public class AccountCreator {

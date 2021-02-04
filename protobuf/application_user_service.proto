@@ -1,8 +1,8 @@
 syntax = "proto3";
-package zukte.message.ApplicatonUser;
+package Zukte.Message.ApplicatonUser;
 
-import "application_user_list_request.proto";
-import "application_user_delete_request.proto";
+import "protobuf/application_user_list_request.proto";
+import "protobuf/application_user_delete_request.proto";
 import "google/protobuf/empty.proto";
 
 service ApplicationUserService {

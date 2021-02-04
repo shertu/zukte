@@ -2,11 +2,12 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Threading.Tasks;
+using Zukte.Utilities;
 
 namespace Zukte.Authentication {
 	// https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.Cookies/Events/CookieAuthenticationEvents.cs
 	public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents {
-		public AccountCreator? accountCreator;
+		public Utilities.AccountCreator? accountCreator;
 
 		public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context) {
 			context.Response.Headers["Location"] = context.RedirectUri;
@@ -40,8 +41,8 @@ namespace Zukte.Authentication {
 				return def;
 			}
 
-			var account = principal.CreateApplicationUserFrom();
-			var createAccountTask = accountCreator.PostApplicationUser(account);
+			var applicationUser = principal.CreateApplicationUser();
+			var createAccountTask = accountCreator.PostApplicationUser(applicationUser);
 
 			// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
 			try {

@@ -5,17 +5,13 @@ using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
-using zukte.Database;
-using zukte.Utilities.Pagination.TokenPagination;
-using Zukte.Message.ApplicatonUser;
-using static Zukte.Message.ApplicatonUser.ApplicationUserService;
+using Zukte.Utilities.Pagination.TokenPagination;
 
 namespace Zukte.Service {
-	public class ApplicationUserServiceImpl : ApplicationUserServiceBase, ITokenPaginationService<ApplicationUser> {
+	public class ApplicationUserServiceImpl : ITokenPaginationService<ApplicationUser> {
 		private readonly ApplicationDbContext databaseService;
 
-		// private readonly IAuthorizationService authorizationService;
+		private readonly IAuthorizationService authorizationService;
 
 		public ApplicationUserServiceImpl(ApplicationDbContext databaseService) {
 			this.databaseService = databaseService;

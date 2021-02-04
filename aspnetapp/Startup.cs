@@ -6,8 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using zukte.Authorization.Handlers;
-using zukte.Utilities.Account;
+using Zukte.Authorization.Handlers;
 
 namespace Zukte {
 	public class Startup {
@@ -27,12 +26,12 @@ namespace Zukte {
 			#endregion
 
 			#region Account Creator
-			AccountCreator? accountCreator = null;
+			Utilities.AccountCreator? accountCreator = null;
 			services.AddSingleton(serviceProvider => {
 				var options = serviceProvider.GetService<Database.ApplicationDbContext>() ??
 					throw new System.ArgumentNullException(nameof(Database.ApplicationDbContext));
 
-				accountCreator = new AccountCreator(options);
+				accountCreator = new Utilities.AccountCreator(options);
 				return accountCreator;
 			});
 			#endregion

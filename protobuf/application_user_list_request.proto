@@ -1,7 +1,7 @@
 syntax = "proto3";
-package zukte.message.ApplicatonUser;
+package Zukte.Message.ApplicatonUser;
 
-import "application_user.proto";
+import "protobuf/application_user.proto";
 
 /* represents a query for some user accounts */
 message ApplicationUserListRequest {

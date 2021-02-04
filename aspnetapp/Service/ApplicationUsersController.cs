@@ -7,11 +7,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using zukte.Authorization.Requirements;
-using zukte.Database;
-using zukte.Messages.ApplicationUsersController;
-using zukte.Models;
-using zukte.Utilities;
+using Zukte.Database;
 
 namespace Zukte.Service {
 	[ApiController]
