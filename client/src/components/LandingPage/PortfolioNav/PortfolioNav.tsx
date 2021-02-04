@@ -1,7 +1,7 @@
-import {Card, Col, Row} from 'antd';
+import { Card, Col, Row } from 'antd';
 import * as React from 'react';
-import {Link} from 'react-router-dom';
-import ApplicationRouteCollection from '../../../constants/ApplicationRouteCollection';
+import { Link } from 'react-router-dom';
+import AppRouteCollection from '../../../constants/AppRouteCollection';
 
 interface PortfolioNavItemProps {
   to: string;
@@ -12,20 +12,20 @@ interface PortfolioNavItemProps {
 
 const portfolioNavItemArr: PortfolioNavItemProps[] = [
   {
-    to: ApplicationRouteCollection.AuthenticationDemo,
+    to: AppRouteCollection.AuthenticationDemo,
     src: 'https://i.imgur.com/MawioTF.jpg',
     title: 'authentication demo',
     description: 'where the user can sign in to a web application',
   },
   {
-    to: ApplicationRouteCollection.ImageShareDemo,
+    to: AppRouteCollection.ImageShareDemo,
     src: 'https://i.imgur.com/iHoOXPu.jpg',
     title: 'image share demo',
     description:
       'where the user can upload images to blob storage',
   },
   {
-    to: ApplicationRouteCollection.MapDemo,
+    to: AppRouteCollection.MapDemo,
     src: 'https://i.stack.imgur.com/QKlat.png',
     title: 'map demo',
     description: 'where the user can mark locations on a map',

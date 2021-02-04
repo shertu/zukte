@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Threading.Tasks;
-using zukte.Controllers;
 using zukte.Utilities;
+using zukte.Utilities.Account;
 
 namespace zukte.Authentication {
 	// https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.Cookies/Events/CookieAuthenticationEvents.cs
 	public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents {
-		public CreateApplicationUsersController? controller;
+		public AccountCreator? accountCreator;
 
 		public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context) {
 			context.Response.Headers["Location"] = context.RedirectUri;
@@ -38,19 +38,19 @@ namespace zukte.Authentication {
 
 			Task def = base.SignedIn(context);
 
-			if (controller == null || !principal.IsAuthenticated()) {
+			if (accountCreator == null || !principal.IsAuthenticated()) {
 				return def;
 			}
 
 			var account = principal.CreateApplicationUserFrom();
-			var createAccountTask = controller.PostApplicationUser(account);
+			var createAccountTask = accountCreator.PostApplicationUser(account);
 
 			// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
 			try {
 				createAccountTask.Wait();
 			} catch (AggregateException ae) {
 				foreach (var e in ae.InnerExceptions) {
-					if (e is CreateApplicationUsersController.PostApplicationUserConflictException) {
+					if (e is AccountCreator.PostApplicationUserConflictException) {
 						Console.WriteLine(e.Message);
 					} else {
 						throw e;

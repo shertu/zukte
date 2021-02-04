@@ -3,10 +3,10 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using zukte.Database;
-using zukte.Models;
+using Zukte.Message.ApplicatonUser;
 
-namespace zukte.Controllers {
-	public class CreateApplicationUsersController {
+namespace zukte.Utilities.Account {
+	public class AccountCreator {
 		[System.Serializable]
 		public class PostApplicationUserConflictException : System.Exception {
 			public PostApplicationUserConflictException() { }
@@ -19,7 +19,7 @@ namespace zukte.Controllers {
 
 		private readonly ApplicationDbContext databaseService;
 
-		public CreateApplicationUsersController(ApplicationDbContext databaseService) {
+		public AccountCreator(ApplicationDbContext databaseService) {
 			this.databaseService = databaseService;
 		}
 

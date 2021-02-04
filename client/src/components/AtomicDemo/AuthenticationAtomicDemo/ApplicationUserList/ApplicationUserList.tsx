@@ -2,21 +2,17 @@ import { UserDeleteOutlined } from '@ant-design/icons';
 import { Alert, Avatar, Button, List, Skeleton, Space, Typography } from 'antd';
 import * as React from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import {
-  ApplicationUser,
-  ApplicationUserListResponse,
-  ApplicationUsersApi,
-  ApplicationUsersGetApplicationUsersRequest,
-} from '../../../../openapi-generator';
+import { ApplicationUser } from '../../../../grpc/application_user_pb';
+import { ApplicationUserListRequest } from '../../../../grpc/application_user_list_request_pb';
+import { ApplicationUserServiceClient } from '../../../../grpc/Application_user_serviceServiceClientPb';
 
 const { Text } = Typography;
 
-const APPLICATION_USERS_API: ApplicationUsersApi = new ApplicationUsersApi();
 const DEFAULT_PAGE_SIZE: number = 30;
 
-export function filterApplicationUserListWithList(a: ApplicationUser[], b: ApplicationUser[]): ApplicationUser[] {
-  return a.filter((aE) => b.find((bE) => bE.id === aE.id));
-}
+// export function filterApplicationUserListWithList(a: ApplicationUser[], b: ApplicationUser[]): ApplicationUser[] {
+//   return a.filter((aE) => b.find((bE) => bE.id === aE.id));
+// }
 
 /**
  * A list of the application users or accounts stored in the application.
@@ -27,15 +23,18 @@ export function filterApplicationUserListWithList(a: ApplicationUser[], b: Appli
 export function ApplicationUserList(props: {
   onChangeMineApplicationUserHook?: (user: ApplicationUser) => void;
 }): JSX.Element {
+  // const client = new ApplicationUserServiceClient(window.location.origin);
+  const client = new ApplicationUserServiceClient("http://localhost:5000");
+
   const { onChangeMineApplicationUserHook } = props;
 
   /** The known YouTube channels associated with the user. */
-  const [mineYouTubeChannels, setMineYouTubeChannels] =
-    React.useState<Array<ApplicationUser>>([]);
+  const [itemArr, setItemArr] =
+    React.useState<ApplicationUser[]>([]);
 
   /** The response from the latest item fetch. */
   const [currentResponse, setCurrentResponse] =
-    React.useState<ApplicationUserListResponse | null>(null);
+    React.useState<ApplicationUserListRequest.ApplicationUserListResponse | null>(null);
 
   /** The current page index of the pagination. */
   const [paginationCurrent, setPaginationCurrent] =
@@ -49,48 +48,47 @@ export function ApplicationUserList(props: {
   const [error, setError] =
     React.useState<boolean>(false);
 
-  const dataLength: number = mineYouTubeChannels.length;
-  const shouldLoadMore: boolean = dataLength < calculateWantedItemCount();
-  const hasMore: boolean = canLoadMore(currentResponse);
-  const shouldLoadMoreAndHasMore: boolean = shouldLoadMore && hasMore;
+  const shouldLoadMore: boolean = itemArr.length < paginationCurrent * paginationSize;
+  const canLoadMore: boolean = determineWhetherCanLoadMore(currentResponse);
 
-  console.log("MineYouTubeChannelRadioGroup State", mineYouTubeChannels, currentResponse, paginationCurrent, paginationSize, error);
-  console.log("MineYouTubeChannelRadioGroup", dataLength, shouldLoadMore, hasMore, shouldLoadMoreAndHasMore);
+  console.log("ApplicationUserList", {
+    itemArr: itemArr,
+    currentResponse: currentResponse,
+    paginationCurrent: paginationCurrent,
+    paginationSize: paginationSize,
+    error: error,
+    shouldLoadMore: shouldLoadMore,
+    canLoadMore: canLoadMore,
+  });
 
   /** On fetching additional items, append the new items to the data collection. */
   React.useEffect(() => {
-    if (currentResponse) {
-      const { items } = currentResponse;
-      if (items) {
-        setMineYouTubeChannels(mineYouTubeChannels.concat(items));
-      }
+    if (currentResponse == null) {
+      return;
     }
+
+    const additionalItems = currentResponse.getItemsList();
+    setItemArr(itemArr.concat(additionalItems));
   }, [currentResponse]);
 
   /** On the initial mount, load the first page. */
-  React.useEffect(() => {
-    onChangePagination(1, DEFAULT_PAGE_SIZE);
-  }, []);
+  // React.useEffect(() => {
+  //   onChangePagination(1, DEFAULT_PAGE_SIZE);
+  // }, []);
 
   /** Load items into the data collection until the length expectation is met or no additional item can be loaded. */
   React.useEffect(() => {
-    if (shouldLoadMoreAndHasMore) {
-      fetchNextPage(currentResponse)
-        .then((res: ApplicationUserListResponse) => setCurrentResponse(res))
-        .catch(() => setError(true));
-    }
-  }, [shouldLoadMoreAndHasMore, mineYouTubeChannels]);
+    if (shouldLoadMore && canLoadMore) {
+      // fetch the next page
+      var request: ApplicationUserListRequest = new ApplicationUserListRequest();
+      request.setMaxResults(paginationSize || DEFAULT_PAGE_SIZE)
 
-  /**
-  * Calculates the desired number of items in the item collection.
-  *
-  * @return {number}
-  */
-  function calculateWantedItemCount(): number {
-    const a: number = paginationCurrent || 0;
-    const b: number = paginationSize || 0;
-    return a * b;
-  }
+      client.getList(request, null, (err, res) => {
+        setError(Boolean(err));
+        setCurrentResponse(res);
+      });
+    }
+  }, [shouldLoadMore, canLoadMore, itemArr]);
 
   /**
    * Called when the page number is changed, and it takes the resulting page number and page size as its arguments.
@@ -105,31 +103,18 @@ export function ApplicationUserList(props: {
   }
 
   /**
-   * Constructs a fetch op to get the next page of data for the specified response.
-   *
-   * @param {ApplicationUserListResponse} response
-   * @param {number} maxResults
-   * @return {Promise<ApplicationUserListResponse>}
-   */
-  async function fetchNextPage(response: ApplicationUserListResponse | null, maxResults?: number): Promise<ApplicationUserListResponse> {
-    const request: ApplicationUsersGetApplicationUsersRequest = {
-      mine: true,
-      top: maxResults,
-      //skip: dataLength,
-      //pageToken: response?.nextPageToken,
-    };
-
-    return await APPLICATION_USERS_API.applicationUsersGetApplicationUsers(request);
-  }
-
-  /**
    * Checks if additional items can be loaded for the specified the response.
    *
-   * @param {ApplicationUserListResponse} response
+   * @param {ApplicationUserListRequest.ApplicationUserListResponse} res
    * @return {boolean}
    */
-  function canLoadMore(response: ApplicationUserListResponse | null): boolean {
-    return response == null || !(response.nextPageToken === null || response.nextPageToken === '');
+  function determineWhetherCanLoadMore(res: ApplicationUserListRequest.ApplicationUserListResponse | null): boolean {
+    if (res == null) {
+      return true;
+    } else {
+      const nextPageToken = res.getNextPageToken();
+      return !(nextPageToken);
+    }
   }
 
   // /** Used to hook into the on change value event. */
@@ -176,31 +161,29 @@ export function ApplicationUserList(props: {
   return (
     <Space className="max-cell" direction="vertical">
       {error &&
-        <Alert message="Error" description="Failed to load account information." type="error" showIcon />
+        <Alert message="ApplicationUserList: Fetch Error" type="error" showIcon />
       }
 
-      {!dataLength && !hasMore &&
+      {!itemArr.length && !canLoadMore &&
         <Alert message="Warning" description="No accounts are associated with this web application." type="warning" showIcon />
       }
 
       {!error &&
         <InfiniteScroll
-          dataLength={dataLength}
+          dataLength={itemArr.length}
           next={() => onChangePagination(paginationCurrent + 1)}
-          hasMore={hasMore}
+          hasMore={canLoadMore}
           loader={<Skeleton loading active />}
         >
-          {mineYouTubeChannels &&
+          {itemArr &&
             <List
-              dataSource={mineYouTubeChannels}
+              dataSource={itemArr}
               renderItem={(item: ApplicationUser) => {
-                const { id, avatar, name } = item;
-
                 const isMineApplicationUser: boolean = false;
 
                 return (
                   <List.Item
-                    key={id}
+                    key={item.getId()}
                     actions={[
                       isMineApplicationUser ? (
                         <Button
@@ -213,10 +196,10 @@ export function ApplicationUserList(props: {
                     ]}
                   >
                     <List.Item.Meta
-                      avatar={<Avatar src={avatar} />}
-                      title={name}
+                      avatar={<Avatar src={item.getPicture()} />}
+                      title={item.getName()}
                       description={
-                        <Text style={{ fontFamily: 'monospace' }}>{id}</Text>
+                        <Text style={{ fontFamily: 'monospace' }}>{item.getId()}</Text>
                       }
                     />
                   </List.Item>

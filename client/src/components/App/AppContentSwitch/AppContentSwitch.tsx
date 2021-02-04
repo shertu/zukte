@@ -1,14 +1,14 @@
-import {Result, Typography} from 'antd';
+import { Result, Typography } from 'antd';
 import * as React from 'react';
 import Mailto from 'react-mailto.js';
-import {Route, Switch} from 'react-router-dom';
-import ApplicationRouteCollection from '../../../constants/ApplicationRouteCollection';
-import {AuthenticationAtomicDemo} from '../../AtomicDemo/AuthenticationAtomicDemo/AuthenticationAtomicDemo';
-import {MapAtomicDemo} from '../../AtomicDemo/MapAtomicDemo/MapAtomicDemo';
-import {LandingPage} from '../../LandingPage/LandingPage';
-import {PrivacyPolicyPage} from '../../PrivacyPolicyPage/PrivacyPolicyPage';
+import { Route, Switch } from 'react-router-dom';
+import AppRouteCollection from '../../../constants/AppRouteCollection';
+import { AuthenticationAtomicDemo } from '../../AtomicDemo/AuthenticationAtomicDemo/AuthenticationAtomicDemo';
+import { MapAtomicDemo } from '../../AtomicDemo/MapAtomicDemo/MapAtomicDemo';
+import { LandingPage } from '../../LandingPage/LandingPage';
+import { PrivacyPolicyPage } from '../../PrivacyPolicyPage/PrivacyPolicyPage';
 
-const {Paragraph} = Typography;
+const { Paragraph } = Typography;
 
 /**
  * A switch component used to route URLs to core pages in the application.
@@ -18,19 +18,19 @@ const {Paragraph} = Typography;
 export function AppContentSwitch(): JSX.Element {
   return (
     <Switch>
-      <Route exact path={ApplicationRouteCollection.Home}>
+      <Route exact path={AppRouteCollection.Home}>
         <LandingPage />
       </Route>
 
-      <Route exact path={ApplicationRouteCollection.PrivacyPolicy}>
+      <Route exact path={AppRouteCollection.PrivacyPolicy}>
         <PrivacyPolicyPage />
       </Route>
 
-      <Route exact path={ApplicationRouteCollection.AuthenticationDemo}>
+      <Route exact path={AppRouteCollection.AuthenticationDemo}>
         <AuthenticationAtomicDemo />
       </Route>
 
-      <Route exact path={ApplicationRouteCollection.MapDemo}>
+      <Route exact path={AppRouteCollection.MapDemo}>
         <MapAtomicDemo />
       </Route>
 

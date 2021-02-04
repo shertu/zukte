@@ -1,5 +1,5 @@
 using System.Security.Claims;
-using zukte.Models;
+using Zukte.Message.ApplicatonUser;
 
 namespace zukte.Utilities {
 	public static class ClaimsPrincipalExtensions {
@@ -9,15 +9,15 @@ namespace zukte.Utilities {
 		public const string GooglePictureClaimType = "picture";
 
 		public static ApplicationUser CreateApplicationUserFrom(this ClaimsPrincipal principal) {
-			string? id = principal.FindFirstValue(ClaimTypes.NameIdentifier);
+			string? nameIdentifier = principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
 			ApplicationUser applicationUser = new ApplicationUser {
 				Name = principal.FindFirstValue(GoogleNameClaimType),
-				AvatarUrl = principal.FindFirstValue(GooglePictureClaimType),
+				Picture = principal.FindFirstValue(GooglePictureClaimType),
 			};
 
-			if (id != null) {
-				applicationUser.Id = id;
+			if (nameIdentifier != null) {
+				applicationUser.Id = nameIdentifier;
 			}
 
 			return applicationUser;

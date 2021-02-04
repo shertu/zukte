@@ -1,12 +1,5 @@
 version: "3.9"
 services:
-  # webapp:
-  #   build:
-  #     context: ./aspnetapp
-  #   ports:
-  #     - "80:80/tcp"
-  #   # environment:
-  #   #   - DB_HOST=database
   database:
     image: mysql
     # This line of code ensures that password authentication is the default authentication method used to connect to the database:

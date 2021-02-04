@@ -1,4 +1,4 @@
-const ApplicationRouteCollection = Object.freeze({
+const AppRouteCollection = Object.freeze({
   Home: '/',
   PrivacyPolicy: '/privacy-policy',
   AuthenticationDemo: '/authentication-demo',
@@ -6,4 +6,4 @@ const ApplicationRouteCollection = Object.freeze({
   MapDemo: '/map-demo',
 });
 
-export default ApplicationRouteCollection;
+export default AppRouteCollection;
