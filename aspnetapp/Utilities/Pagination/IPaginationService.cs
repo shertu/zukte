@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace zukte.Utilities.Pagination {
+namespace Zukte.Utilities.Pagination {
 
 	public interface IPaginationService<T> {
 		int MaxResultsMax { get; }

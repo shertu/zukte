@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Zukte.Message.ApplicatonUser;
 
-namespace zukte.Database {
+namespace Zukte.Database {
 	public class ApplicationDbContext : DbContext {
 		protected ApplicationDbContext() : base() { }
 		public ApplicationDbContext(DbContextOptions options) : base(options) { }

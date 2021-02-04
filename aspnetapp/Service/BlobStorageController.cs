@@ -11,7 +11,7 @@
 // using zukte.Responses;
 // using zukte.Utilities;
 
-// namespace zukte.Controllers {
+// namespace Zukte.Service {
 // 	[Route("api/[controller]")]
 // 	[ApiController]
 // 	public class BlobStorageController : ControllerBase {

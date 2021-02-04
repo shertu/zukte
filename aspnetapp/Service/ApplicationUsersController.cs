@@ -13,7 +13,7 @@ using zukte.Messages.ApplicationUsersController;
 using zukte.Models;
 using zukte.Utilities;
 
-namespace zukte.Controllers {
+namespace Zukte.Service {
 	[ApiController]
 	[Route("api/[controller]")]
 	[Produces("application/json")]

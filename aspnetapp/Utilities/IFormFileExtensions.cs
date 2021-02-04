@@ -7,7 +7,7 @@ using System.IO;
 using System.Net;
 using System.Threading.Tasks;
 
-namespace zukte.Utilities {
+namespace Zukte.Utilities {
 	public static class IFormFileExtensions {
 		public const uint MAX_FILE_SIZE = 8388608; //bytes
 

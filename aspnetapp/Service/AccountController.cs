@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
-namespace zukte.Controllers {
+namespace Zukte.Service {
 	[Route("api/[controller]")]
 	[ApiController]
 	public class AccountController : ControllerBase {

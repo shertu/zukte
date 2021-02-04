@@ -2,10 +2,8 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Threading.Tasks;
-using zukte.Utilities;
-using zukte.Utilities.Account;
 
-namespace zukte.Authentication {
+namespace Zukte.Authentication {
 	// https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.Cookies/Events/CookieAuthenticationEvents.cs
 	public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents {
 		public AccountCreator? accountCreator;

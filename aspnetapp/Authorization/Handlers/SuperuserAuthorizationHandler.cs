@@ -5,7 +5,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace zukte.Authorization.Handlers {
+namespace Zukte.Authorization.Handlers {
 	public class SuperuserAuthorizationHandler : IAuthorizationHandler {
 		private static readonly string[] superusers = {
 	  "112088567581740211952"

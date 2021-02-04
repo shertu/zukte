@@ -9,7 +9,7 @@ using Microsoft.Extensions.Hosting;
 using zukte.Authorization.Handlers;
 using zukte.Utilities.Account;
 
-namespace zukte {
+namespace Zukte {
 	public class Startup {
 		private readonly IConfiguration _configuration;
 

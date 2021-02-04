@@ -11,7 +11,7 @@ using zukte.Utilities.Pagination.TokenPagination;
 using Zukte.Message.ApplicatonUser;
 using static Zukte.Message.ApplicatonUser.ApplicationUserService;
 
-namespace zukte.Service {
+namespace Zukte.Service {
 	public class ApplicationUserServiceImpl : ApplicationUserServiceBase, ITokenPaginationService<ApplicationUser> {
 		private readonly ApplicationDbContext databaseService;
 

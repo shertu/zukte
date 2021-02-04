@@ -1,7 +1,7 @@
 using System.Security.Claims;
 using Zukte.Message.ApplicatonUser;
 
-namespace zukte.Utilities {
+namespace Zukte.Utilities {
 	public static class ClaimsPrincipalExtensions {
 		// assume Google is the only identity issuer in the claims principle
 		public const string GoogleClaimIssuer = "https://accounts.google.com";

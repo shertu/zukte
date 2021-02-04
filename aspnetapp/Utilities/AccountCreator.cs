@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using zukte.Database;
 using Zukte.Message.ApplicatonUser;
 
-namespace zukte.Utilities.Account {
+namespace Zukte.Utilities {
 	public class AccountCreator {
 		[System.Serializable]
 		public class PostApplicationUserConflictException : System.Exception {

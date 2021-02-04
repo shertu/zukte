@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 
-namespace zukte.Utilities.Pagination.TokenPagination {
+namespace Zukte.Utilities.Pagination.TokenPagination {
 	public interface ITokenPaginationService<T> : IPaginationService<T> {
 		T? DecryptPageToken(string? ciphertext);
 		string? EncryptPageToken(T? value);
