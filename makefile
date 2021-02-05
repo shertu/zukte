@@ -15,8 +15,8 @@
 # Generate messages and services
 codegen:
 	./protobuf.sh
-	make start_server
-	cd client && npm run openapi
+	# make start_server
+	# cd client && npm run openapi
 
 start_server:
 	docker-compose up -d

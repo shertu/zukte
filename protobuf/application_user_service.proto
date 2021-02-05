@@ -1,5 +1,5 @@
 syntax = "proto3";
-package Zukte.Message.ApplicatonUser;
+package Zukte.Message.ApplicationUser;
 
 import "protobuf/application_user_list_request.proto";
 import "protobuf/application_user_delete_request.proto";

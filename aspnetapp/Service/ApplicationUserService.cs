@@ -59,7 +59,7 @@ namespace Zukte.Service {
 		}
 
 		[HttpGet]
-		public ActionResult<ApplicationUserListRequest.ApplicationUserListResponse> GetList([FromQuery] ApplicationUserListRequest request) {
+		public ActionResult<ApplicationUserListRequest.Types.ApplicationUserListResponse> GetList([FromQuery] ApplicationUserListRequest request) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
@@ -85,8 +85,8 @@ namespace Zukte.Service {
 
 			// fetch maximum number of results
 			ApplicationUser[] items = ApplyMaxResults(query, (int)request.MaxResults).ToArray();
-			var res = new ApplicationUserListRequest.ApplicationUserListResponse();
-			res.Items = items;
+			var res = new ApplicationUserListRequest.Types.ApplicationUserListResponse();
+			res.Items.AddRange(items);
 
 			// generate seek pagination tokens
 			ApplicationUser? prevPageToken = GeneratePageToken(query, items, true);

@@ -1,5 +1,5 @@
 syntax = "proto3";
-package Zukte.Message.ApplicatonUser;
+package Zukte.Message.ApplicationUser;
 
 /* represents a user account in the identity system */
 message ApplicationUser {
