@@ -15,7 +15,6 @@
     "@babel/plugin-transform-typescript": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
-    "@openapitools/openapi-generator-cli": "^2.1.18",
     "@types/chance": "^1.1.1",
     "@types/classnames": "^2.2.11",
     "@types/jest": "^26.0.20",
@@ -65,5 +64,8 @@
     "webpack-cli": "^4.4.0",
     "webpack-dev-server": "^3.11.2",
     "webpack-merge": "^5.7.3"
+  },
+  "devDependencies": {
+    "@openapitools/openapi-generator-cli": "^2.1.22"
   }
 }
