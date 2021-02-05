@@ -58,6 +58,7 @@ namespace Zukte.Service {
 			return NoContent();
 		}
 
+		[HttpGet]
 		public ActionResult<ApplicationUserListRequest.ApplicationUserListResponse> GetList([FromQuery] ApplicationUserListRequest request) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
@@ -103,6 +104,7 @@ namespace Zukte.Service {
 			return res;
 		}
 
+		[NonAction]
 		private IQueryable<ApplicationUser> ApplyMineFitler(IQueryable<ApplicationUser> query, bool mineFilter, ClaimsPrincipal principle) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
@@ -118,6 +120,7 @@ namespace Zukte.Service {
 			return query;
 		}
 
+		[NonAction]
 		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, params string[] idFilter) {
 			foreach (var item in idFilter) {
 				string[] idCollection = item.Split(',');
@@ -127,6 +130,7 @@ namespace Zukte.Service {
 			return query;
 		}
 
+		[NonAction]
 		public ApplicationUser? DecryptPageToken(string? ciphertext) {
 			if (string.IsNullOrEmpty(ciphertext))
 				return null;
@@ -136,6 +140,7 @@ namespace Zukte.Service {
 				throw new SerializationException();
 		}
 
+		[NonAction]
 		public string? EncryptPageToken(ApplicationUser? value) {
 			if (value == null)
 				return null;
@@ -144,6 +149,7 @@ namespace Zukte.Service {
 			return JsonSerializer.Serialize(value);
 		}
 
+		[NonAction]
 		public IQueryable<ApplicationUser> ApplyPageToken(IQueryable<ApplicationUser> query, ApplicationUser? pageToken) {
 			if (pageToken == null)
 				return query;
@@ -156,10 +162,12 @@ namespace Zukte.Service {
 			return query;
 		}
 
+		[NonAction]
 		public IComparable SelectKeyFromPageToken(ApplicationUser pageToken) {
 			return pageToken.Id;
 		}
 
+		[NonAction]
 		public ApplicationUser? GeneratePageToken(IQueryable<ApplicationUser> query, ApplicationUser[] items, bool prevToken) {
 			ApplicationUser? pageToken = null;
 
@@ -187,10 +195,12 @@ namespace Zukte.Service {
 			return pageToken;
 		}
 
+		[NonAction]
 		public IQueryable<ApplicationUser> ApplyMaxResults(IQueryable<ApplicationUser> query) {
 			return ApplyMaxResults(query, MaxResultsDefault);
 		}
 
+		[NonAction]
 		public IQueryable<ApplicationUser> ApplyMaxResults(IQueryable<ApplicationUser> query, int top) {
 			if (top == 0) {
 				top = MaxResultsDefault;
@@ -203,14 +213,17 @@ namespace Zukte.Service {
 			return query.Take(top);
 		}
 
+		[NonAction]
 		public IQueryable<ApplicationUser> ApplyOrderTransform(IQueryable<ApplicationUser> query) {
 			return ApplyOrderTransform(query, SelectKeyFromPageToken);
 		}
 
+		[NonAction]
 		public IQueryable<ApplicationUser> ApplyOrderTransform(IQueryable<ApplicationUser> query, Func<ApplicationUser, IComparable> transform) {
 			return query.OrderBy(user => transform(user));
 		}
 
+		[NonAction]
 		public IQueryable<ApplicationUser> ApplySkipTransform(IQueryable<ApplicationUser> query, int skip) {
 			throw new NotImplementedException();
 		}

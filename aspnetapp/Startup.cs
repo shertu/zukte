@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Zukte.Authorization.Handlers;
 
 namespace Zukte {
@@ -69,9 +70,9 @@ namespace Zukte {
 
 					options.LoginPath = "/api/Account/Login";
 					options.LogoutPath = "/api/Account/Logout";
-				}).AddGoogleOpenIdConnect(options => {
-					options.ClientId = _configuration["Authentication:Google:ClientId"];
-					options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
+					// }).AddGoogleOpenIdConnect(options => {
+					// 	options.ClientId = _configuration["Authentication:Google:ClientId"];
+					// 	options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
 				});
 			#endregion
 
@@ -82,11 +83,17 @@ namespace Zukte {
 			#endregion
 
 			services.AddControllers();
+			services.AddSwaggerDocument();
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
-			if (env.IsDevelopment())
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger) {
+			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
+
+				foreach (var configurationSection in _configuration.GetChildren()) {
+					logger.LogTrace($"{configurationSection.Key} {configurationSection.Value}");
+				}
+			}
 
 			// // #region UseRewriter
 			// // RewriteOptions rewriteOptions = new RewriteOptions()
