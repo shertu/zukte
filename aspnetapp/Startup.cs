@@ -16,6 +16,16 @@ namespace Zukte {
 			_configuration = configuration;
 		}
 		public void ConfigureServices(IServiceCollection services) {
+			// #region Azure Blob Storage
+			// // Account -> Container -> Blob
+			// string? azureStorageConnectionString = _configuration.GetConnectionString("AzureStorageConnection");
+
+			// if (!string.IsNullOrEmpty(azureStorageConnectionString)) {
+			// 	BlobServiceClient blobServiceClient = new BlobServiceClient(azureStorageConnectionString);
+			// 	services.AddSingleton(blobServiceClient);
+			// }
+			// #endregion
+
 			#region database
 			string? databaseConnectionString = _configuration.GetConnectionString("DatabaseConnection");
 
@@ -25,7 +35,7 @@ namespace Zukte {
 			}
 			#endregion
 
-			#region Account Creator
+			#region AccountCreator instance
 			Utilities.AccountCreator? accountCreator = null;
 			services.AddSingleton(serviceProvider => {
 				var options = serviceProvider.GetService<Database.ApplicationDbContext>() ??
@@ -36,7 +46,7 @@ namespace Zukte {
 			});
 			#endregion
 
-			#region authentication
+			#region Authentication
 			// This configures Google.Apis.Auth.AspNetCore3 for use in this app.
 			services
 				.AddAuthentication(options => {
@@ -65,21 +75,13 @@ namespace Zukte {
 				});
 			#endregion
 
-			#region authorization
+			#region Authorization
 			services.AddAuthorization();
 			services.AddSingleton<IAuthorizationHandler, SuperuserAuthorizationHandler>();
 			services.AddSingleton<IAuthorizationHandler, MineApplicationUserAuthorizationHandler>();
 			#endregion
 
-			// #region Azure Blob Storage
-			// // Account -> Container -> Blob
-			// string? azureStorageConnectionString = _configuration.GetConnectionString("AzureStorageConnection");
-
-			// if (!string.IsNullOrEmpty(azureStorageConnectionString)) {
-			// 	BlobServiceClient blobServiceClient = new BlobServiceClient(azureStorageConnectionString);
-			// 	services.AddSingleton(blobServiceClient);
-			// }
-			// #endregion
+			services.AddControllers();
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
@@ -125,7 +127,7 @@ namespace Zukte {
 				_ = endpoints.MapControllers();
 			});
 
-			#region openapi
+			#region OpenApi
 			_ = app.UseOpenApi();
 			_ = app.UseSwaggerUi3();
 			#endregion

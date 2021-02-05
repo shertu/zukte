@@ -13,9 +13,10 @@
 # 	make start
 
 # Generate messages and services
-# grpc:
-# 	./protobuf/node.sh
-# 	dotnet build ./aspnetapp/zukte.csproj
+codegen:
+	./protobuf.sh
+	make start_server
+	cd client && npm run openapi
 
 start_server:
 	docker-compose up -d

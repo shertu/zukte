@@ -7,9 +7,9 @@
 // using Azure.Storage.Blobs.Models;
 // using Microsoft.AspNetCore.Http;
 // using Microsoft.AspNetCore.Mvc;
-// using zukte.Models;
-// using zukte.Responses;
-// using zukte.Utilities;
+// using Zukte.Models;
+// using Zukte.Responses;
+// using Zukte.Utilities;
 
 // namespace Zukte.Service {
 // 	[Route("api/[controller]")]

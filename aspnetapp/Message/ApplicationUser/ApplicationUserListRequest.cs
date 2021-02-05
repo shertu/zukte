@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
 namespace Zukte.Message.ApplicationUser {
@@ -21,7 +22,7 @@ namespace Zukte.Message.ApplicationUser {
 
 		public class ApplicationUserListResponse {
 			[JsonPropertyName("items")]
-			public ApplicationUser[] Items { get; set; } = new ApplicationUser[0];
+			public IList<ApplicationUser> Items { get; set; } = new ApplicationUser[0];
 
 			[JsonPropertyName("nextPageToken")]
 			public string NextPageToken { get; set; } = string.Empty;

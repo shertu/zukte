@@ -4,63 +4,73 @@ using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Google.Protobuf.WellKnownTypes;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Zukte.Database;
+using Zukte.Message.ApplicationUser;
+using Zukte.Utilities;
 using Zukte.Utilities.Pagination.TokenPagination;
 
 namespace Zukte.Service {
-	public class ApplicationUserServiceImpl : ITokenPaginationService<ApplicationUser> {
+	[ApiController]
+	[Route("api/[controller]")]
+	[Produces("application/json")]
+	public class ApplicationUserService : ControllerBase, ITokenPaginationService<ApplicationUser> {
 		private readonly ApplicationDbContext databaseService;
-
 		private readonly IAuthorizationService authorizationService;
 
-		public ApplicationUserServiceImpl(ApplicationDbContext databaseService) {
+		public ApplicationUserService(ApplicationDbContext databaseService, IAuthorizationService authorizationService) {
 			this.databaseService = databaseService;
+			this.authorizationService = authorizationService;
 		}
 
 		public int MaxResultsMax => 50;
 
 		public int MaxResultsDefault => 30;
 
-		public override Task<Empty> Delete(ApplicationUserDeleteRequest request, ServerCallContext context) {
+		[HttpDelete, Authorize]
+		public async Task<IActionResult> Delete([FromQuery] ApplicationUserDeleteRequest request) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
 			IQueryable<ApplicationUser> query = databaseService.ApplicationUsers;
 			query = ApplyIdFilter(query, request.Id);
 
-			// AuthorizationResult authorizationResult = await authorizationService.AuthorizeAsync(context.get, user, new DirectoryWriteRequirement());
-
-			// // check user is permitted to delete specified application users
-			// foreach (ApplicationUser user in query) {
-			// 	if (!authorizationResult.Succeeded) {
-			// 		return Forbid();
-			// 	}
-			// }
+			// check user is permitted to delete specified application users
+			foreach (ApplicationUser user in query) {
+				AuthorizationResult auth = await authorizationService.AuthorizeAsync(HttpContext.User, user, new Authorization.Requirements.DirectoryWriteRequirement());
+				if (!auth.Succeeded) {
+					return Forbid();
+				}
+			}
 
 			databaseService.ApplicationUsers.RemoveRange(query);
-			databaseService.SaveChangesAsync(context.CancellationToken);
+			await databaseService.SaveChangesAsync();
 
-			// // sign out if user deleted their own account
-			// string? id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			// if (!ApplicationUserExists(id)) {
-			// 	await HttpContext.SignOutAsync();
-			// }
+			// sign out if user deleted their own account
+			string? id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+			ApplicationUser? mine = await databaseService.ApplicationUsers.FindAsync(id);
+			if (mine == null) {
+				await HttpContext.SignOutAsync();
+			}
 
-			var res = new Empty();
-			return Task.FromResult(res);
+			return NoContent();
 		}
 
-		public override Task<ApplicationUserListRequest.Types.ApplicationUserListResponse> GetList(ApplicationUserListRequest request, ServerCallContext context) {
+		public ActionResult<ApplicationUserListRequest.ApplicationUserListResponse> GetList([FromQuery] ApplicationUserListRequest request) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
-			// if (request.Mine && !User.IsAuthenticated()) {
-			// 	return Challenge();
-			// }
+			// authorization check
+			if (request.Mine && !User.IsAuthenticated()) {
+				// issue a default challenge
+				return Challenge();
+			}
 
 			IQueryable<ApplicationUser> query = databaseService.ApplicationUsers;
 			query = ApplyIdFilter(query, request.Id);
-			query = ApplyMineFitler(query, request.Mine, context.GetHttpContext().User);
+			query = ApplyMineFitler(query, request.Mine, HttpContext.User);
 
 			// apply seek pagination
 			ApplicationUser? pageTokenDecrypted;
@@ -74,23 +84,23 @@ namespace Zukte.Service {
 
 			// fetch maximum number of results
 			ApplicationUser[] items = ApplyMaxResults(query, (int)request.MaxResults).ToArray();
-			var res = new ApplicationUserListRequest.Types.ApplicationUserListResponse();
-			res.Items.AddRange(items);
+			var res = new ApplicationUserListRequest.ApplicationUserListResponse();
+			res.Items = items;
 
 			// generate seek pagination tokens
 			ApplicationUser? prevPageToken = GeneratePageToken(query, items, true);
 			ApplicationUser? nextPageToken = GeneratePageToken(query, items, false);
 
 			if (prevPageToken != null) {
-				res.PrevPageToken = EncryptPageToken(prevPageToken);
+				res.PrevPageToken = EncryptPageToken(prevPageToken) ?? string.Empty;
 			}
 
 			if (nextPageToken != null) {
-				res.NextPageToken = EncryptPageToken(nextPageToken);
+				res.NextPageToken = EncryptPageToken(nextPageToken) ?? string.Empty;
 			}
 
 			// return result
-			return Task.FromResult(res);
+			return res;
 		}
 
 		private IQueryable<ApplicationUser> ApplyMineFitler(IQueryable<ApplicationUser> query, bool mineFilter, ClaimsPrincipal principle) {
