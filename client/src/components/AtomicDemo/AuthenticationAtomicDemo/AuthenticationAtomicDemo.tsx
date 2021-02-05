@@ -1,5 +1,5 @@
 import { Typography } from 'antd';
-import * as React from 'react';
+
 import { AppPage } from '../../AppPage/AppPage';
 import { ApplicationUserList } from './ApplicationUserList/ApplicationUserList';
 import { GoogleSignInButton } from './GoogleSignInButton/GoogleSignInButton';

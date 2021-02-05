@@ -12,6 +12,8 @@ namespace Zukte.Database {
 		/// Further configure the database model.
 		/// </summary>
 		protected override void OnModelCreating(ModelBuilder modelBuilder) {
+			modelBuilder.Entity<ApplicationUser>()
+				.HasKey(model => model.Id);
 		}
 	}
 }

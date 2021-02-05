@@ -1,8 +1,7 @@
 import { Button, Layout, Space } from 'antd';
-import * as React from 'react';
+
 import { Link, Route, Switch } from 'react-router-dom';
 import AppRouteCollection from '../../../constants/AppRouteCollection';
-import { AppPage } from '../../AppPage/AppPage';
 import { LandingScreen } from '../../LandingScreen/LandingScreen';
 import { LocationBreadcrumb } from '../../LocationBreadcrumb/LocationBreadcrumb';
 import { AppContentSwitch } from '../AppContentSwitch/AppContentSwitch';

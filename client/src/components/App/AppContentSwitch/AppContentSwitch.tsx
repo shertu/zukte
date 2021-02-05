@@ -1,10 +1,8 @@
 import { Result, Typography } from 'antd';
-import * as React from 'react';
 import Mailto from 'react-mailto.js';
 import { Route, Switch } from 'react-router-dom';
 import AppRouteCollection from '../../../constants/AppRouteCollection';
 import { AuthenticationAtomicDemo } from '../../AtomicDemo/AuthenticationAtomicDemo/AuthenticationAtomicDemo';
-import { MapAtomicDemo } from '../../AtomicDemo/MapAtomicDemo/MapAtomicDemo';
 import { LandingPage } from '../../LandingPage/LandingPage';
 import { PrivacyPolicyPage } from '../../PrivacyPolicyPage/PrivacyPolicyPage';
 
@@ -30,9 +28,7 @@ export function AppContentSwitch(): JSX.Element {
         <AuthenticationAtomicDemo />
       </Route>
 
-      <Route exact path={AppRouteCollection.MapDemo}>
-        <MapAtomicDemo />
-      </Route>
+
 
       <Route>
         <Result
@@ -56,6 +52,10 @@ export function AppContentSwitch(): JSX.Element {
 }
 
 /*
+<Route exact path={AppRouteCollection.MapDemo}>
+<MapAtomicDemo />
+</Route>
+
 <Route exact path={ApplicationRouteCollection.ImageShareDemo}>
 <ImageShareAtomicDemo />
 </Route>

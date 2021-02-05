@@ -10,7 +10,7 @@ namespace Zukte.Utilities.Pagination.TokenPagination {
 		// pagination seek fields are required to be unique, ordinal, and immutable
 		IQueryable<T> ApplyPageToken(IQueryable<T> query, T? pageToken);
 
-		IComparable SelectKeyFromPageToken(T pageToken);
+		// IComparable SelectKeyFromPageToken(T pageToken);
 
 		T? GeneratePageToken(IQueryable<T> query, T[] items, bool prevToken);
 	}

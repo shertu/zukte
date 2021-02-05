@@ -1,8 +1,8 @@
-import {HomeFilled} from '@ant-design/icons';
-import {Breadcrumb} from 'antd';
-import * as React from 'react';
-import {Link, useLocation} from 'react-router-dom';
-import {BreadcrumbProps} from 'antd/lib/breadcrumb';
+import { HomeFilled } from '@ant-design/icons';
+import { Breadcrumb } from 'antd';
+
+import { Link, useLocation } from 'react-router-dom';
+import { BreadcrumbProps } from 'antd/lib/breadcrumb';
 
 /**
  * A breadcrumb component for the window's location.

@@ -1,12 +1,11 @@
-import {PageHeader} from 'antd';
+import { PageHeader } from 'antd';
 import classNames from 'classnames';
-import * as React from 'react';
-import './style.less';
+// import './style.less';
 
 export interface PageProps
   extends React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLElement>,
-    HTMLElement
+  React.HTMLAttributes<HTMLElement>,
+  HTMLElement
   > {
   pageTitle?: string;
 }
@@ -18,7 +17,7 @@ export interface PageProps
  * @return {JSX.Element}
  */
 export function AppPage(props: PageProps): JSX.Element {
-  const {className, pageTitle, children, ...other} = props;
+  const { className, pageTitle, children, ...other } = props;
 
   return (
     <section

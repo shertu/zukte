@@ -1,3 +1,4 @@
+using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -6,11 +7,13 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Zukte.Authorization.Handlers;
+using Zukte.Database;
+using Zukte.Database.Seeder;
 
 namespace Zukte {
 	public class Startup {
+		private const string CORS_POLICY_NAME_DEVLOPMENT = "AllowAllOrigins";
 		private readonly IConfiguration _configuration;
 
 		public Startup(IConfiguration configuration) {
@@ -31,7 +34,7 @@ namespace Zukte {
 			string? databaseConnectionString = _configuration.GetConnectionString("DatabaseConnection");
 
 			if (!string.IsNullOrEmpty(databaseConnectionString)) {
-				services.AddDbContext<Database.ApplicationDbContext>(options =>
+				services.AddDbContext<ApplicationDbContext>(options =>
 				  options.UseMySQL(databaseConnectionString));
 			}
 			#endregion
@@ -39,8 +42,8 @@ namespace Zukte {
 			#region AccountCreator instance
 			Utilities.AccountCreator? accountCreator = null;
 			services.AddSingleton(serviceProvider => {
-				var options = serviceProvider.GetService<Database.ApplicationDbContext>() ??
-					throw new System.ArgumentNullException(nameof(Database.ApplicationDbContext));
+				var options = serviceProvider.GetService<ApplicationDbContext>() ??
+					throw new System.ArgumentNullException(nameof(ApplicationDbContext));
 
 				accountCreator = new Utilities.AccountCreator(options);
 				return accountCreator;
@@ -55,9 +58,9 @@ namespace Zukte {
 					// // need to add an AccountController that emits challenges for Login.
 					// o.DefaultChallengeScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
 
-					// // This forces forbid results to be handled by Google OpenID Handler, which checks if
-					// // extra scopes are required and does automatic incremental auth.
-					// o.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+					// This forces forbid results to be handled by Google OpenID Handler, which checks if
+					// extra scopes are required and does automatic incremental auth.
+					options.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
 
 					// Default scheme that will handle everything else.
 					// Once a user is authenticated, the OAuth2 token info is stored in cookies.
@@ -70,9 +73,9 @@ namespace Zukte {
 
 					options.LoginPath = "/api/Account/Login";
 					options.LogoutPath = "/api/Account/Logout";
-					// }).AddGoogleOpenIdConnect(options => {
-					// 	options.ClientId = _configuration["Authentication:Google:ClientId"];
-					// 	options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
+				}).AddGoogleOpenIdConnect(options => {
+					options.ClientId = _configuration["Authentication:Google:ClientId"];
+					options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
 				});
 			#endregion
 
@@ -82,17 +85,22 @@ namespace Zukte {
 			services.AddSingleton<IAuthorizationHandler, MineApplicationUserAuthorizationHandler>();
 			#endregion
 
+			#region CORS
+			services.AddCors(options => {
+				options.AddPolicy(name: CORS_POLICY_NAME_DEVLOPMENT, builder => {
+					builder.AllowAnyOrigin();
+				});
+			});
+			#endregion
+
 			services.AddControllers();
 			services.AddSwaggerDocument();
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILogger<Startup> logger) {
+		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext) {
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
-
-				foreach (var configurationSection in _configuration.GetChildren()) {
-					logger.LogTrace($"{configurationSection.Key} {configurationSection.Value}");
-				}
+				SeedForDevelopment(dbContext);
 			}
 
 			// // #region UseRewriter
@@ -127,6 +135,10 @@ namespace Zukte {
 			// });
 			// #endregion
 
+			if (env.IsDevelopment()) {
+				app.UseCors(CORS_POLICY_NAME_DEVLOPMENT);
+			}
+
 			app.UseAuthentication();
 			app.UseAuthorization();
 
@@ -138,6 +150,13 @@ namespace Zukte {
 			_ = app.UseOpenApi();
 			_ = app.UseSwaggerUi3();
 			#endregion
+		}
+
+
+		public void SeedForDevelopment(ApplicationDbContext dbContext) {
+			bool created = dbContext.Database.EnsureCreated();
+			_ = new ApplicationUserSeeder().SeedTask(dbContext);
+			dbContext.SaveChanges();
 		}
 	}
 }

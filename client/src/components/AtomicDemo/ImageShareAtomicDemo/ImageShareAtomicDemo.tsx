@@ -1,15 +1,15 @@
-import {Typography} from 'antd';
-import * as React from 'react';
+import { Typography } from 'antd';
+
 import Mailto from 'react-mailto.js';
-import {AppPage} from '../../AppPage/AppPage';
+import { AppPage } from '../../AppPage/AppPage';
 import {
   AutoColumnRow,
   AutoColumnRowGutterDefault,
 } from '../../AutoColumnRow/AutoColumnRow';
-import {ImageShareList} from './ImageShareList/ImageShareList';
-import {ImageShareUpload} from './ImageShareUpload/ImageShareUpload';
+import { ImageShareList } from './ImageShareList/ImageShareList';
+import { ImageShareUpload } from './ImageShareUpload/ImageShareUpload';
 
-const {Paragraph} = Typography;
+const { Paragraph } = Typography;
 
 /**
  * A demonstration where the user can upload and share images with others.

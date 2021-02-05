@@ -1,8 +1,6 @@
-import {Button, message} from 'antd';
-import * as React from 'react';
-import {AccountApi, AccountHttpContextSignOutRequest, BASE_PATH} from '../../../../openapi-generator';
+import { Button } from 'antd';
 
-const ACCOUNT_API: AccountApi = new AccountApi();
+import { AccountHttpContextSignOutRequest, BASE_PATH } from '../../../../openapi-generator';
 
 /**
  * A button component used to sign out of the application.
@@ -11,12 +9,13 @@ const ACCOUNT_API: AccountApi = new AccountApi();
  * @return {JSX.Element}
  */
 export function SignOutButton(props: { redirect?: string }): JSX.Element {
-  const {redirect} = props;
+  const { redirect } = props;
+
+  // const ACCOUNT_API: AccountApi = new AccountApi();
 
   /** The click event for this button. */
   function onClick(): void {
     const redirectUri: string = redirect || window.location.pathname;
-
     // ACCOUNT_API.accountHttpContextSignOut();
 
     const requestParameters: AccountHttpContextSignOutRequest = {

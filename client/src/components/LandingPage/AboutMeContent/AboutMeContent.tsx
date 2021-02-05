@@ -1,5 +1,5 @@
 import { Col, Divider, Row, Space, Typography } from 'antd';
-import * as React from 'react';
+
 import Mailto from 'react-mailto.js';
 import { calculateAgeFromBirthdate } from '../../../utilities/AgeCalculator';
 import './style.less';

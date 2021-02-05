@@ -1,0 +1,55 @@
+  // /**
+  //  * Checks if additional items can be loaded for the specified the response.
+  //  *
+  //  * @param {ApplicationUserListResponse} res
+  //  * @return {boolean}
+  //  */
+  // function determineWhetherCanLoadMore(res: ApplicationUserListResponse | null): boolean {
+  //   if (res == null) {
+  //     return true;
+  //   } else {
+  //     const nextPageToken = res.nextPageToken;
+  //     return Boolean(nextPageToken);
+  //   }
+  // }
+
+  // /** Used to hook into the on change value event. */
+  // useEffect(() => {
+  //   const channel: Channel = findMineYouTubeChannelById(radioGroupValue);
+  //   if (onChangeChannel) {
+  //     onChangeChannel(channel);
+  //   }
+  // }, [radioGroupValue]);
+
+  // /** Sorts the data in the list. */
+  // useEffect(() => {
+  //   if (data) {
+  //     let newDataSortedValue: ApplicationUser[] = data;
+
+  //     if (mineApplicationUsers) {
+  //       // Move the user's application user or account to the start of the list.
+  //       const filteredDataValue: ApplicationUser[] = filterApplicationUserListWithList(
+  //         data,
+  //         mineApplicationUsers,
+  //       );
+  //       newDataSortedValue = mineApplicationUsers.concat(filteredDataValue);
+  //     }
+
+  //     setDataSorted(newDataSortedValue);
+  //   }
+  // }, [data, mineApplicationUsers]);
+
+  // /** The event called when the user's application user or account is removed from the list. */
+  // function onRemoveMineApplicationUser(): void {
+  //   if (data && mineApplicationUsers) {
+  //     const filteredDataValue: ApplicationUser[] = filterApplicationUserListWithList(
+  //       data,
+  //       mineApplicationUsers,
+  //     );
+  //     setData(filteredDataValue);
+  //   }
+
+  //   if (onRemoveMineApplicationUserHook) {
+  //     onRemoveMineApplicationUserHook();
+  //   }
+  // }

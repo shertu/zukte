@@ -23,7 +23,6 @@ start_server:
 	cd aspnetapp && dotnet run
 
 start_client:
-	cd client && npm run grpc
 	cd client && npm run start
 
 # Build the client for production

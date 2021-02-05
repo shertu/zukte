@@ -1,5 +1,6 @@
-import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import * as ThreeJs from 'three';
+// @ts-ignore
 import NET from 'vanta/dist/vanta.net.min.js';
 
 /**
@@ -9,24 +10,24 @@ import NET from 'vanta/dist/vanta.net.min.js';
  * @return {JSX.Element}
  */
 export function VantaNetContainer(
-    props: React.DetailedHTMLProps<
+  props: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   >,
 ): JSX.Element {
-  const [vantaEffect, setVantaEffect] = React.useState<any>(0);
+  const [vantaEffect, setVantaEffect] = useState<any>(0);
 
-  const vantaRef = React.useRef(null);
+  const vantaRef = useRef(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!vantaEffect) {
       setVantaEffect(
-          NET({
-            el: vantaRef.current,
-            THREE: ThreeJs, // use a custom THREE when initializing
-            color: 0xd8412f,
-            backgroundColor: 0xfcfdfe,
-          }),
+        NET({
+          el: vantaRef.current,
+          THREE: ThreeJs, // use a custom THREE when initializing
+          color: 0xd8412f,
+          backgroundColor: 0xfcfdfe,
+        }),
       );
     }
 

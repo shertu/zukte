@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Text.Json;
@@ -88,8 +89,8 @@ namespace Zukte.Service {
 			var res = new ApplicationUserListRequest.Types.ApplicationUserListResponse();
 			res.Items.AddRange(items);
 
-			// generate seek pagination tokens
-			ApplicationUser? prevPageToken = GeneratePageToken(query, items, true);
+			#region generate seek pagination tokens
+			ApplicationUser? prevPageToken = null; // only support generate next page token
 			ApplicationUser? nextPageToken = GeneratePageToken(query, items, false);
 
 			if (prevPageToken != null) {
@@ -99,6 +100,7 @@ namespace Zukte.Service {
 			if (nextPageToken != null) {
 				res.NextPageToken = EncryptPageToken(nextPageToken) ?? string.Empty;
 			}
+			#endregion
 
 			// return result
 			return res;
@@ -121,9 +123,12 @@ namespace Zukte.Service {
 		}
 
 		[NonAction]
-		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, params string[] idFilter) {
-			foreach (var item in idFilter) {
-				string[] idCollection = item.Split(',');
+		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, params string[] idFilters) {
+			foreach (var idFilter in idFilters) {
+				if (string.IsNullOrEmpty(idFilter))
+					continue;
+
+				string[] idCollection = idFilter.Split(',');
 				query = query.Where(user => idCollection.Contains(user.Id));
 			}
 
@@ -151,20 +156,13 @@ namespace Zukte.Service {
 
 		[NonAction]
 		public IQueryable<ApplicationUser> ApplyPageToken(IQueryable<ApplicationUser> query, ApplicationUser? pageToken) {
-			if (pageToken == null)
-				return query;
+			if (pageToken != null) {
+				string compareToValue = pageToken.Id;
+				// current support ascend order only
+				query = query.Where(user => (user.Id).CompareTo(compareToValue) > 0);
+			}
 
-			var idKeyCompareValue = SelectKeyFromPageToken(pageToken);
-
-			// current support ascend order only
-			query = query.Where(user => SelectKeyFromPageToken(user).CompareTo(idKeyCompareValue) > 0);
-
-			return query;
-		}
-
-		[NonAction]
-		public IComparable SelectKeyFromPageToken(ApplicationUser pageToken) {
-			return pageToken.Id;
+			return ApplyOrderTransform(query);
 		}
 
 		[NonAction]
@@ -183,8 +181,8 @@ namespace Zukte.Service {
 					querySelection = query.Last();
 				}
 
-				var itemsSelectionValue = SelectKeyFromPageToken(itemsSelection);
-				var querySelectionValue = SelectKeyFromPageToken(querySelection);
+				var itemsSelectionValue = itemsSelection.Id;
+				var querySelectionValue = querySelection.Id;
 				int comparison = itemsSelectionValue.CompareTo(querySelectionValue);
 
 				if ((prevToken && comparison > 0) || (!prevToken && comparison < 0)) {
@@ -215,12 +213,7 @@ namespace Zukte.Service {
 
 		[NonAction]
 		public IQueryable<ApplicationUser> ApplyOrderTransform(IQueryable<ApplicationUser> query) {
-			return ApplyOrderTransform(query, SelectKeyFromPageToken);
-		}
-
-		[NonAction]
-		public IQueryable<ApplicationUser> ApplyOrderTransform(IQueryable<ApplicationUser> query, Func<ApplicationUser, IComparable> transform) {
-			return query.OrderBy(user => transform(user));
+			return query.OrderBy(user => user.Id);
 		}
 
 		[NonAction]

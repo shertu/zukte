@@ -1,10 +1,10 @@
-import {Button, Card, Row, Space, Typography} from 'antd';
-import * as React from 'react';
-import {Link as ScrollLink} from 'react-scroll';
-import './style.less';
-import {VantaNetContainer} from './VantaNetContainer/VantaNetContainer';
+import { Button, Card, Row, Space, Typography } from 'antd';
 
-const {Title} = Typography;
+import { Link as ScrollLink } from 'react-scroll';
+import './style.less';
+import { VantaNetContainer } from './VantaNetContainer/VantaNetContainer';
+
+const { Title } = Typography;
 
 /**
  * The first screen of content which the user will see.

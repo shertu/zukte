@@ -1,18 +1,24 @@
 import { UserDeleteOutlined } from '@ant-design/icons';
-import { Alert, Avatar, Button, List, Skeleton, Space, Typography } from 'antd';
-import * as React from 'react';
+import { Avatar, Button, List, message, Typography } from 'antd';
+import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { ApplicationUser } from '../../../../grpc/application_user_pb';
-import { ApplicationUserListRequest } from '../../../../grpc/application_user_list_request_pb';
-import { ApplicationUserServiceClient } from '../../../../grpc/Application_user_serviceServiceClientPb';
+import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
+import { PaginationContainer } from '../../../PaginationContainer/PaginationContainer';
 
 const { Text } = Typography;
 
-const DEFAULT_PAGE_SIZE: number = 30;
+interface ApplicationUserListData {
+  itemArr: ApplicationUser[];
+  nextPageToken?: string;
+  hasMore: boolean;
+}
 
-// export function filterApplicationUserListWithList(a: ApplicationUser[], b: ApplicationUser[]): ApplicationUser[] {
-//   return a.filter((aE) => b.find((bE) => bE.id === aE.id));
-// }
+const APPLICATION_USER_LIST_DATA_DEFAULT: ApplicationUserListData = {
+  itemArr: [],
+  hasMore: true,
+}
+
+const DEFAULT_PAGE_SIZE: number = 30;
 
 /**
  * A list of the application users or accounts stored in the application.
@@ -23,72 +29,71 @@ const DEFAULT_PAGE_SIZE: number = 30;
 export function ApplicationUserList(props: {
   onChangeMineApplicationUserHook?: (user: ApplicationUser) => void;
 }): JSX.Element {
-  // const client = new ApplicationUserServiceClient(window.location.origin);
-  const client = new ApplicationUserServiceClient("http://localhost:5000");
-
   const { onChangeMineApplicationUserHook } = props;
+  const client = new ApplicationUserServiceApi();
+
+  // assume the current response contains the page token for the last loaded page
 
   /** The known YouTube channels associated with the user. */
-  const [itemArr, setItemArr] =
-    React.useState<ApplicationUser[]>([]);
-
-  /** The response from the latest item fetch. */
-  const [currentResponse, setCurrentResponse] =
-    React.useState<ApplicationUserListRequest.ApplicationUserListResponse | null>(null);
+  const [datum, setDatum] =
+    useState<ApplicationUserListData>(APPLICATION_USER_LIST_DATA_DEFAULT);
 
   /** The current page index of the pagination. */
   const [paginationCurrent, setPaginationCurrent] =
-    React.useState<number>(0);
+    useState<number>(1);
 
   /** The current page size of the pagination. */
   const [paginationSize, setPaginationSize] =
-    React.useState<number>(0);
+    useState<number>(DEFAULT_PAGE_SIZE);
 
-  /** Has an error occured during a fetch op? */
-  const [error, setError] =
-    React.useState<boolean>(false);
+  const [onLoadMoreError, setOnLoadMoreError] =
+    useState<boolean>(false);
 
-  const shouldLoadMore: boolean = itemArr.length < paginationCurrent * paginationSize;
-  const canLoadMore: boolean = determineWhetherCanLoadMore(currentResponse);
+  const shouldLoadMore: boolean = datum.itemArr.length < paginationCurrent * paginationSize;
 
   console.log("ApplicationUserList", {
-    itemArr: itemArr,
-    currentResponse: currentResponse,
+    datum: datum,
     paginationCurrent: paginationCurrent,
     paginationSize: paginationSize,
-    error: error,
     shouldLoadMore: shouldLoadMore,
-    canLoadMore: canLoadMore,
   });
 
-  /** On fetching additional items, append the new items to the data collection. */
-  React.useEffect(() => {
-    if (currentResponse == null) {
-      return;
-    }
-
-    const additionalItems = currentResponse.getItemsList();
-    setItemArr(itemArr.concat(additionalItems));
-  }, [currentResponse]);
-
-  /** On the initial mount, load the first page. */
-  // React.useEffect(() => {
-  //   onChangePagination(1, DEFAULT_PAGE_SIZE);
-  // }, []);
-
   /** Load items into the data collection until the length expectation is met or no additional item can be loaded. */
-  React.useEffect(() => {
-    if (shouldLoadMore && canLoadMore) {
-      // fetch the next page
-      var request: ApplicationUserListRequest = new ApplicationUserListRequest();
-      request.setMaxResults(paginationSize || DEFAULT_PAGE_SIZE)
-
-      client.getList(request, null, (err, res) => {
-        setError(Boolean(err));
-        setCurrentResponse(res);
-      });
+  useEffect(() => {
+    if (shouldLoadMore && datum.hasMore) {
+      onLoadMore();
     }
-  }, [shouldLoadMore, canLoadMore, itemArr]);
+  }, [shouldLoadMore]);
+
+  async function onLoadMore(): Promise<void> {
+    // fetch the next page
+    const request: ApplicationUserServiceGetListRequest = {
+      maxResults: paginationSize || DEFAULT_PAGE_SIZE,
+    };
+
+    if (datum.nextPageToken) {
+      request.pageToken = datum.nextPageToken;
+    }
+
+    try {
+      const res: ApplicationUserListResponse = await client.applicationUserServiceGetList(request);
+      const { items = [], nextPageToken } = res;
+
+      const newDatum: ApplicationUserListData = {
+        itemArr: datum.itemArr.concat(items),
+        hasMore: Boolean(nextPageToken),
+      }
+
+      if (nextPageToken) {
+        newDatum.nextPageToken = nextPageToken;
+      }
+
+      setDatum(newDatum);
+    } catch (error) {
+      const checkError = Boolean(error);
+      setOnLoadMoreError(checkError);
+    }
+  }
 
   /**
    * Called when the page number is changed, and it takes the resulting page number and page size as its arguments.
@@ -102,113 +107,73 @@ export function ApplicationUserList(props: {
     setPaginationSize(pageSize);
   }
 
-  /**
-   * Checks if additional items can be loaded for the specified the response.
-   *
-   * @param {ApplicationUserListRequest.ApplicationUserListResponse} res
-   * @return {boolean}
-   */
-  function determineWhetherCanLoadMore(res: ApplicationUserListRequest.ApplicationUserListResponse | null): boolean {
-    if (res == null) {
-      return true;
-    } else {
-      const nextPageToken = res.getNextPageToken();
-      return !(nextPageToken);
+  async function onExecuteDeleteUserAction(id: string | null | undefined): Promise<void> {
+    // fetch the next page
+    const request: ApplicationUserServiceDeleteRequest = {
+      id: id,
+    };
+
+    try {
+      await client.applicationUserServiceDelete(request);
+    } catch (error) {
+      message.error("delete user action failed")
     }
   }
 
-  // /** Used to hook into the on change value event. */
-  // React.useEffect(() => {
-  //   const channel: Channel = findMineYouTubeChannelById(radioGroupValue);
-  //   if (onChangeChannel) {
-  //     onChangeChannel(channel);
-  //   }
-  // }, [radioGroupValue]);
-
-  // /** Sorts the data in the list. */
-  // React.useEffect(() => {
-  //   if (data) {
-  //     let newDataSortedValue: ApplicationUser[] = data;
-
-  //     if (mineApplicationUsers) {
-  //       // Move the user's application user or account to the start of the list.
-  //       const filteredDataValue: ApplicationUser[] = filterApplicationUserListWithList(
-  //         data,
-  //         mineApplicationUsers,
-  //       );
-  //       newDataSortedValue = mineApplicationUsers.concat(filteredDataValue);
-  //     }
-
-  //     setDataSorted(newDataSortedValue);
-  //   }
-  // }, [data, mineApplicationUsers]);
-
-  // /** The event called when the user's application user or account is removed from the list. */
-  // function onRemoveMineApplicationUser(): void {
-  //   if (data && mineApplicationUsers) {
-  //     const filteredDataValue: ApplicationUser[] = filterApplicationUserListWithList(
-  //       data,
-  //       mineApplicationUsers,
-  //     );
-  //     setData(filteredDataValue);
-  //   }
-
-  //   if (onRemoveMineApplicationUserHook) {
-  //     onRemoveMineApplicationUserHook();
-  //   }
-  // }
+  async function onClickReloadButton(): Promise<void> {
+    setOnLoadMoreError(false);
+    await onLoadMore();
+  }
 
   return (
-    <Space className="max-cell" direction="vertical">
-      {error &&
-        <Alert message="ApplicationUserList: Fetch Error" type="error" showIcon />
-      }
+    <PaginationContainer
+      className="max-cell"
+      noItemsFetched={datum.itemArr.length == 0 && !datum.hasMore}
+      onLoadMoreError={onLoadMoreError}
+      onClickReload={onClickReloadButton}
+    >
+      <InfiniteScroll
+        dataLength={datum.itemArr.length}
+        next={() => onChangePagination(paginationCurrent + 1)}
+        hasMore={datum.hasMore}
+        loader={null}
+      >
+        <List
+          loading={datum.hasMore && shouldLoadMore && !onLoadMoreError}
+          dataSource={datum.itemArr}
+          renderItem={(item: ApplicationUser) => {
+            const { id, name, picture } = item;
 
-      {!itemArr.length && !canLoadMore &&
-        <Alert message="Warning" description="No accounts are associated with this web application." type="warning" showIcon />
-      }
+            const isMineApplicationUser: boolean = false;
 
-      {!error &&
-        <InfiniteScroll
-          dataLength={itemArr.length}
-          next={() => onChangePagination(paginationCurrent + 1)}
-          hasMore={canLoadMore}
-          loader={<Skeleton loading active />}
-        >
-          {itemArr &&
-            <List
-              dataSource={itemArr}
-              renderItem={(item: ApplicationUser) => {
-                const isMineApplicationUser: boolean = false;
+            let deleteUserAction: JSX.Element | undefined;
+            if (isMineApplicationUser) {
+              deleteUserAction = (
+                <Button icon={<UserDeleteOutlined />}
+                  onClick={() => onExecuteDeleteUserAction(id)}
+                >
+                  remove account from {window.location.hostname}
+                </Button>
+              )
+            }
 
-                return (
-                  <List.Item
-                    key={item.getId()}
-                    actions={[
-                      isMineApplicationUser ? (
-                        <Button
-                          icon={<UserDeleteOutlined />}
-                          onClick={() => { }}
-                        >
-                          remove account
-                        </Button>
-                      ) : null,
-                    ]}
-                  >
-                    <List.Item.Meta
-                      avatar={<Avatar src={item.getPicture()} />}
-                      title={item.getName()}
-                      description={
-                        <Text style={{ fontFamily: 'monospace' }}>{item.getId()}</Text>
-                      }
-                    />
-                  </List.Item>
-                );
-              }}
-            />
-          }
-        </InfiniteScroll>
-      }
-    </Space>
+            return (
+              <List.Item
+                key={id}
+                actions={[deleteUserAction]}
+              >
+                <List.Item.Meta
+                  avatar={<Avatar src={picture} />}
+                  title={name}
+                  description={
+                    <Text style={{ fontFamily: 'monospace' }}>{id}</Text>
+                  }
+                />
+              </List.Item>
+            );
+          }}
+        />
+      </InfiniteScroll>
+    </PaginationContainer>
   );
 }

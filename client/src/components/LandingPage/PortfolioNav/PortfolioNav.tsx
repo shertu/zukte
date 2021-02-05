@@ -1,5 +1,5 @@
 import { Card, Col, Row } from 'antd';
-import * as React from 'react';
+
 import { Link } from 'react-router-dom';
 import AppRouteCollection from '../../../constants/AppRouteCollection';
 
