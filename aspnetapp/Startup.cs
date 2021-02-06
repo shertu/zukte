@@ -28,8 +28,12 @@ namespace Zukte {
 		/// </summary>
 		private readonly IConfiguration _configuration;
 
+		private readonly DatabaseSeeder<ApplicationDbContext> seedDatabaseMiddleware;
+
 		public Startup(IConfiguration configuration) {
 			_configuration = configuration;
+			seedDatabaseMiddleware = new DatabaseSeeder<ApplicationDbContext>();
+			seedDatabaseMiddleware.Seeders.Add(new ApplicationUserSeeder());
 		}
 
 		public void ConfigureServices(IServiceCollection services) {
@@ -116,11 +120,12 @@ namespace Zukte {
 		public void Configure(
 			IApplicationBuilder app,
 			IWebHostEnvironment env,
-			ILogger<Startup> logger) {
+			ILogger<Startup> logger,
+			ApplicationDbContext dbContext) {
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				LogConfigurationRecursive(logger, _configuration.GetChildren());
-				app.UseMiddleware<SeedDatabaseMiddleware<ApplicationDbContext>>();
+				_ = seedDatabaseMiddleware.InvokeAsync(dbContext);
 			}
 
 			// // #region UseRewriter

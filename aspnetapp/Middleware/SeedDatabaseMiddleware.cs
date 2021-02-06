@@ -10,25 +10,20 @@ namespace Zukte.Middleware {
 	/// Middleware to seed a <see cref="DbContext"/> database for development and testing.
 	/// </summary>
 	public class SeedDatabaseMiddleware<T> where T : DbContext {
-		private readonly RequestDelegate _next;
-
-		public SeedDatabaseMiddleware(RequestDelegate next) {
-			_next = next;
-		}
-
-		public async Task InvokeAsync(HttpContext context, T dbContext) {
+		public static async Task InvokeAsync(T dbContext) {
 			bool created = dbContext.Database.EnsureCreated();
 
 			foreach (var item in GetDatabaseSeeders()) {
-				if (item is IDatabaseSeeder<T> seeder) {
-					await seeder.InvokeSeed(dbContext);
+				IDatabaseSeeder<T>? instance = Activator.CreateInstance(item) as IDatabaseSeeder<T>;
+
+				if (instance == null) {
+					continue;
 				}
+
+				await instance.InvokeSeed(dbContext);
 			}
 
 			dbContext.SaveChanges();
-
-			// Call the next delegate/middleware in the pipeline
-			await _next(context);
 		}
 
 		private static IEnumerable<Type> GetDatabaseSeeders() {
