@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -7,9 +9,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using Zukte.Authorization.Handlers;
 using Zukte.Database;
 using Zukte.Database.Seeder;
+using Zukte.Middleware;
 
 namespace Zukte {
 	public class Startup {
@@ -109,10 +113,14 @@ namespace Zukte {
 			#endregion
 		}
 
-		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext) {
+		public void Configure(
+			IApplicationBuilder app,
+			IWebHostEnvironment env,
+			ILogger<Startup> logger) {
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
-				SeedForDevelopment(dbContext);
+				LogConfigurationRecursive(logger, _configuration.GetChildren());
+				app.UseMiddleware<SeedDatabaseMiddleware<ApplicationDbContext>>();
 			}
 
 			// // #region UseRewriter
@@ -165,12 +173,18 @@ namespace Zukte {
 		}
 
 		/// <summary>
-		/// Seeds the database with data for testing and development.
+		/// Log the values in the application configuration.
 		/// </summary>
-		public void SeedForDevelopment(ApplicationDbContext dbContext) {
-			bool created = dbContext.Database.EnsureCreated();
-			_ = new ApplicationUserSeeder().SeedTask(dbContext);
-			dbContext.SaveChanges();
+		private void LogConfigurationRecursive(ILogger logger, IEnumerable<IConfigurationSection> sections) {
+			foreach (var section in sections) {
+				var children = section.GetChildren();
+
+				if (children.Count() == 0) {
+					logger.LogInformation($"{section.Path} {section.Value}");
+				}
+
+				LogConfigurationRecursive(logger, children);
+			}
 		}
 	}
 }

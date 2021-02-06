@@ -1,7 +1,7 @@
 using Zukte.Message.ApplicationUser;
 
 namespace Zukte.Database.Factory {
-	public class ApplicationUserFactory : DatabaseFactory<ApplicationUser> {
+	public class ApplicationUserFactory : ModelFactory<ApplicationUser> {
 		public override ApplicationUser CreateInstance() {
 			ApplicationUser user = new ApplicationUser();
 			user.Id = chance.Guid();

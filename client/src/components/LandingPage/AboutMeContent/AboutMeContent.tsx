@@ -53,8 +53,8 @@ export function AboutMeContent(): JSX.Element {
             style={{ fontSize: 'large', maxWidth: aboutMeStyleMaxWidth }}
           >
             <Paragraph>
-              Hello and welcome to my personal website. My name is Jared Michael
-              Blackman and my profession and occupation is software development.
+              Hello and welcome to my personal website.
+              As you may have guessed, my profession and occupation is software development.
             </Paragraph>
             <Paragraph>
               For those who wish to know more please&nbsp;

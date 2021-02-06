@@ -1,5 +1,5 @@
 import { UserDeleteOutlined } from '@ant-design/icons';
-import { Avatar, Button, List, message, Typography } from 'antd';
+import { Avatar, Button, List, message, Skeleton, Typography } from 'antd';
 import { useEffect, useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
@@ -7,15 +7,10 @@ import { PaginationContainer } from '../../../PaginationContainer/PaginationCont
 
 const { Text } = Typography;
 
-interface ApplicationUserListData {
+interface ApplicationUserListPageInfomation {
   itemArr: ApplicationUser[];
   nextPageToken?: string;
-  hasMore: boolean;
-}
-
-const APPLICATION_USER_LIST_DATA_DEFAULT: ApplicationUserListData = {
-  itemArr: [],
-  hasMore: true,
+  hasMadeAtLeastOneFetch: boolean;
 }
 
 const DEFAULT_PAGE_SIZE: number = 30;
@@ -35,12 +30,15 @@ export function ApplicationUserList(props: {
   // assume the current response contains the page token for the last loaded page
 
   /** The known YouTube channels associated with the user. */
-  const [datum, setDatum] =
-    useState<ApplicationUserListData>(APPLICATION_USER_LIST_DATA_DEFAULT);
+  const [pageInfomation, setPageInfomation] =
+    useState<ApplicationUserListPageInfomation>({
+      itemArr: [],
+      hasMadeAtLeastOneFetch: false,
+    });
 
   /** The current page index of the pagination. */
   const [paginationCurrent, setPaginationCurrent] =
-    useState<number>(1);
+    useState<number>(0);
 
   /** The current page size of the pagination. */
   const [paginationSize, setPaginationSize] =
@@ -49,18 +47,24 @@ export function ApplicationUserList(props: {
   const [onLoadMoreError, setOnLoadMoreError] =
     useState<boolean>(false);
 
-  const shouldLoadMore: boolean = datum.itemArr.length < paginationCurrent * paginationSize;
+  const { itemArr, nextPageToken, hasMadeAtLeastOneFetch } = pageInfomation;
+  const itemCount = itemArr.length;
+  const hasMore: boolean = Boolean(nextPageToken);
+  const shouldLoadMore: boolean = itemCount < paginationCurrent * paginationSize;
 
   console.log("ApplicationUserList", {
-    datum: datum,
     paginationCurrent: paginationCurrent,
     paginationSize: paginationSize,
+    itemCount: itemCount,
     shouldLoadMore: shouldLoadMore,
+    nextPageToken: nextPageToken,
+    hasMadeAtLeastOneFetch: hasMadeAtLeastOneFetch,
+    hasMore: hasMore,
   });
 
   /** Load items into the data collection until the length expectation is met or no additional item can be loaded. */
   useEffect(() => {
-    if (shouldLoadMore && datum.hasMore) {
+    if (shouldLoadMore && (hasMore || !hasMadeAtLeastOneFetch)) {
       onLoadMore();
     }
   }, [shouldLoadMore]);
@@ -71,24 +75,21 @@ export function ApplicationUserList(props: {
       maxResults: paginationSize || DEFAULT_PAGE_SIZE,
     };
 
-    if (datum.nextPageToken) {
-      request.pageToken = datum.nextPageToken;
+    if (nextPageToken) {
+      request.pageToken = nextPageToken;
     }
 
     try {
       const res: ApplicationUserListResponse = await client.applicationUserServiceGetList(request);
-      const { items = [], nextPageToken } = res;
+      const { items = [], nextPageToken: npt } = res;
 
-      const newDatum: ApplicationUserListData = {
-        itemArr: datum.itemArr.concat(items),
-        hasMore: Boolean(nextPageToken),
+      const newPageInformation: ApplicationUserListPageInfomation = {
+        itemArr: itemArr.concat(items),
+        nextPageToken: npt,
+        hasMadeAtLeastOneFetch: true,
       }
 
-      if (nextPageToken) {
-        newDatum.nextPageToken = nextPageToken;
-      }
-
-      setDatum(newDatum);
+      setPageInfomation(newPageInformation);
     } catch (error) {
       const checkError = Boolean(error);
       setOnLoadMoreError(checkError);
@@ -128,19 +129,19 @@ export function ApplicationUserList(props: {
   return (
     <PaginationContainer
       className="max-cell"
-      noItemsFetched={datum.itemArr.length == 0 && !datum.hasMore}
+      noItemsFetched={!itemCount && !hasMore}
       onLoadMoreError={onLoadMoreError}
       onClickReload={onClickReloadButton}
     >
       <InfiniteScroll
-        dataLength={datum.itemArr.length}
+        dataLength={itemCount}
         next={() => onChangePagination(paginationCurrent + 1)}
-        hasMore={datum.hasMore}
-        loader={null}
+        hasMore={hasMore || !hasMadeAtLeastOneFetch}
+        loader={<Skeleton active />}
       >
         <List
-          loading={datum.hasMore && shouldLoadMore && !onLoadMoreError}
-          dataSource={datum.itemArr}
+          loading={(hasMore && shouldLoadMore) && !onLoadMoreError}
+          dataSource={itemArr}
           renderItem={(item: ApplicationUser) => {
             const { id, name, picture } = item;
 

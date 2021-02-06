@@ -4,26 +4,30 @@
 #    command
 
 # Start the web app for local development for the first time
-# newstart: 
-# 	docker-compose up -d --build
-# 	cd client && npm install
-# 	cd laravel && composer install
-# 	cd laravel && php artisan migrate:fresh --seed
-# 	make openapi
-# 	make start
-
-# Generate messages and services
-codegen:
+server_newstart:
+	docker-compose up -d --build
 	./protobuf.sh
-	# make start_server
-	# cd client && npm run openapi
-
-start_server:
-	docker-compose up -d
 	cd aspnetapp && dotnet run
 
-start_client:
+client_newstart:
+	cd client && npm install
+	-rm -r client/src/openapi-generator
+	# mkdir client/src/openapi-generator
+	cd client && npm run openapi
 	cd client && npm run start
+
+# # Generate messages and services
+# codegen:
+# 	./protobuf.sh
+# 	make start_server
+# 	# cd client && npm run openapi
+
+# start_server:
+# 	docker-compose up -d
+# 	cd aspnetapp && dotnet run
+
+# start_client:
+# 	cd client && npm run start
 
 # Build the client for production
 # build:
