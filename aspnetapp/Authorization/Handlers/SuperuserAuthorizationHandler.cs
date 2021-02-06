@@ -6,6 +6,9 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Zukte.Authorization.Handlers {
+	/// <summary>
+	/// Authorization handler for superusers with unrestricted authorization.
+	/// </summary>
 	public class SuperuserAuthorizationHandler : IAuthorizationHandler {
 		private static readonly string[] superusers = {
 	  "112088567581740211952"

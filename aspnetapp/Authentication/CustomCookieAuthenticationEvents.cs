@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Zukte.Utilities;
 
 namespace Zukte.Authentication {
+	// Same as base class with some additional generalizations
 	// https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.Cookies/Events/CookieAuthenticationEvents.cs
 	public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents {
 		public Utilities.AccountCreator? accountCreator;
@@ -31,33 +32,35 @@ namespace Zukte.Authentication {
 			return Task.CompletedTask;
 		}
 
+		/// <summary>
+		/// This variation on the base method will attempt to
+		/// create an account in the system after sign in has completed.
+		/// </summary>
 		public override Task SignedIn(CookieSignedInContext context) {
-			var principal = context.Principal ??
-				throw new ArgumentNullException();
+			// create an account in the system if possible
+			if (accountCreator != null) {
+				var principal = context.Principal ?? throw new ArgumentNullException();
+				var applicationUser = principal.CreateApplicationUser();
+				var createAccountTask = accountCreator.PostApplicationUser(applicationUser);
 
-			Task def = base.SignedIn(context);
+				// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
+				try {
+					createAccountTask.Wait();
+				} catch (AggregateException ae) {
+					// Call the Handle method to handle the custom exception,
+					// otherwise rethrow the exception.
+					ae.Handle(ex => {
+						if (ex is AccountCreator.PostApplicationUserConflictException) {
+							Console.WriteLine(ex.Message);
+							return true;
+						}
 
-			if (accountCreator == null || !principal.IsAuthenticated()) {
-				return def;
-			}
-
-			var applicationUser = principal.CreateApplicationUser();
-			var createAccountTask = accountCreator.PostApplicationUser(applicationUser);
-
-			// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
-			try {
-				createAccountTask.Wait();
-			} catch (AggregateException ae) {
-				foreach (var e in ae.InnerExceptions) {
-					if (e is AccountCreator.PostApplicationUserConflictException) {
-						Console.WriteLine(e.Message);
-					} else {
-						throw e;
-					}
+						return false;
+					});
 				}
 			}
 
-			return def;
+			return base.SignedIn(context);
 		}
 
 		public override Task SigningIn(CookieSigningInContext context) {

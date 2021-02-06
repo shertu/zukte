@@ -5,6 +5,9 @@ using System.Threading.Tasks;
 using Zukte.Message.ApplicationUser;
 
 namespace Zukte.Authorization.Handlers {
+	/// <summary>
+	/// Authorization handler for ownership of zukte.com accounts.
+	/// </summary>
 	public class MineApplicationUserAuthorizationHandler : AuthorizationHandler<IAuthorizationRequirement, ApplicationUser> {
 		protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IAuthorizationRequirement requirement, ApplicationUser resource) {
 			IEnumerable<Claim> idCollection = context.User.FindAll(e => e.Type == ClaimTypes.NameIdentifier);
