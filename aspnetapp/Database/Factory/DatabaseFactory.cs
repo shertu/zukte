@@ -1,9 +1,8 @@
-using System.Collections.Generic;
 using ChanceNET;
 
 namespace Zukte.Database.Factory {
 	/// <summary>
-	/// A base class for factories which create entities to seed a database.
+	/// Represents a factory which creates entities to seed a database.
 	/// </summary>
 	/// <typeparam name="T">The type of entity created.</typeparam>
 	public abstract class DatabaseFactory<T> {

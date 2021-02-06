@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Zukte.Authorization.Handlers {
 	/// <summary>
-	/// Authorization handler for superusers with unrestricted authorization.
+	/// Authorization handler for superusers.
 	/// </summary>
 	public class SuperuserAuthorizationHandler : IAuthorizationHandler {
 		private static readonly string[] superusers = {

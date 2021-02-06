@@ -8,6 +8,9 @@ namespace Zukte.Utilities {
 		public const string GoogleNameClaimType = "name";
 		public const string GooglePictureClaimType = "picture";
 
+		/// <summary>
+		/// Creates an <see cref="ApplicationUser"/> instance from the user info.
+		/// </summary>
 		public static ApplicationUser CreateApplicationUser(this ClaimsPrincipal principal) {
 			string? firstNameIdentifier = principal.FindFirstValue(ClaimTypes.NameIdentifier);
 
@@ -23,6 +26,9 @@ namespace Zukte.Utilities {
 			return applicationUser;
 		}
 
+		/// <summary>
+		/// A shorthand method to check if the user is signed in.
+		/// </summary>
 		public static bool IsAuthenticated(this ClaimsPrincipal principal) {
 			return principal.Identity?.IsAuthenticated ?? false;
 		}

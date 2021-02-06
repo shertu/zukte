@@ -13,12 +13,21 @@ using Zukte.Database.Seeder;
 
 namespace Zukte {
 	public class Startup {
+		/// <summary>
+		/// The name of the CORS policy used during development to allow
+		/// webpack-dev-server origins to connect to the .NET server.
+		/// </summary>
 		private const string CORS_POLICY_NAME_DEVLOPMENT = "AllowAllOrigins";
+
+		/// <summary>
+		/// The appliction configuration.
+		/// </summary>
 		private readonly IConfiguration _configuration;
 
 		public Startup(IConfiguration configuration) {
 			_configuration = configuration;
 		}
+
 		public void ConfigureServices(IServiceCollection services) {
 			// #region Azure Blob Storage
 			// // Account -> Container -> Blob
@@ -94,7 +103,10 @@ namespace Zukte {
 			#endregion
 
 			services.AddControllers();
+
+			#region OpenAPI
 			services.AddSwaggerDocument();
+			#endregion
 		}
 
 		public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ApplicationDbContext dbContext) {
@@ -146,13 +158,15 @@ namespace Zukte {
 				_ = endpoints.MapControllers();
 			});
 
-			#region OpenApi
+			#region OpenAPI
 			_ = app.UseOpenApi();
 			_ = app.UseSwaggerUi3();
 			#endregion
 		}
 
-
+		/// <summary>
+		/// Seeds the database with data for testing and development.
+		/// </summary>
 		public void SeedForDevelopment(ApplicationDbContext dbContext) {
 			bool created = dbContext.Database.EnsureCreated();
 			_ = new ApplicationUserSeeder().SeedTask(dbContext);

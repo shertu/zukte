@@ -7,6 +7,9 @@ using Zukte.Message.ApplicationUser;
 
 namespace Zukte.Utilities {
 	public class AccountCreator {
+		/// <summary>
+		/// An error that occur when creating an application user which already exists.
+		/// </summary>
 		[System.Serializable]
 		public class PostApplicationUserConflictException : System.Exception {
 			public PostApplicationUserConflictException() { }
@@ -23,7 +26,11 @@ namespace Zukte.Utilities {
 			this.databaseService = databaseService;
 		}
 
-		// do not expose this endpoint publically
+		/// <summary>
+		/// Creates an account in the system.
+		/// </summary>
+		/// <param name="applicationUser">The application user to be created.</param>
+		/// <returns>The newly created application user.</returns>
 		public async Task<ApplicationUser> PostApplicationUser(ApplicationUser applicationUser) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
@@ -43,6 +50,10 @@ namespace Zukte.Utilities {
 			return applicationUser;
 		}
 
+		/// <summary>
+		/// Checks if an application user exists in the system.
+		/// </summary>
+		/// <param name="id">The id of the application user to check for.</param>
 		private bool ApplicationUserExists(string id) {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));

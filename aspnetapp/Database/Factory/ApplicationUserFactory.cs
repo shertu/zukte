@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using Zukte.Message.ApplicationUser;
 
 namespace Zukte.Database.Factory {

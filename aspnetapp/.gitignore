@@ -1,6 +1,9 @@
 # ASP .NET public static files
 /wwwroot/
 
+# protobuf code generation
+/protobuf
+
 # https://raw.githubusercontent.com/dotnet/core/master/.gitignore
 
 *.swp

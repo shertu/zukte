@@ -6,7 +6,7 @@ using Zukte.Message.ApplicationUser;
 
 namespace Zukte.Authorization.Handlers {
 	/// <summary>
-	/// Authorization handler for ownership of zukte.com accounts.
+	/// Authorization handler for ownership of accounts.
 	/// </summary>
 	public class MineApplicationUserAuthorizationHandler : AuthorizationHandler<IAuthorizationRequirement, ApplicationUser> {
 		protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IAuthorizationRequirement requirement, ApplicationUser resource) {

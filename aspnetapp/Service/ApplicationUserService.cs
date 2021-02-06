@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Text.Json;
@@ -14,11 +13,15 @@ using Zukte.Utilities;
 using Zukte.Utilities.Pagination.TokenPagination;
 
 namespace Zukte.Service {
+	/// <inheritdoc/>
 	[ApiController]
 	[Route("api/[controller]")]
 	[Produces("application/json")]
 	public class ApplicationUserService : ControllerBase, ITokenPaginationService<ApplicationUser> {
+		// The database sevice
 		private readonly ApplicationDbContext databaseService;
+
+		// The authorization service
 		private readonly IAuthorizationService authorizationService;
 
 		public ApplicationUserService(ApplicationDbContext databaseService, IAuthorizationService authorizationService) {
@@ -30,6 +33,9 @@ namespace Zukte.Service {
 
 		public int MaxResultsDefault => 30;
 
+		/// <summary>
+		/// Deletes an account from the system.
+		/// </summary>
 		[HttpDelete, Authorize]
 		public async Task<IActionResult> Delete([FromQuery] ApplicationUserDeleteRequest request) {
 			if (databaseService.ApplicationUsers == null)
@@ -59,6 +65,9 @@ namespace Zukte.Service {
 			return NoContent();
 		}
 
+		/// <summary>
+		/// Gets a list of accounts in the system.
+		/// </summary>
 		[HttpGet]
 		public ActionResult<ApplicationUserListRequest.Types.ApplicationUserListResponse> GetList([FromQuery] ApplicationUserListRequest request) {
 			if (databaseService.ApplicationUsers == null)
@@ -106,6 +115,9 @@ namespace Zukte.Service {
 			return res;
 		}
 
+		/// <summary>
+		/// Applies a filter to select accounts owned by the user.
+		/// </summary>
 		[NonAction]
 		private IQueryable<ApplicationUser> ApplyMineFitler(IQueryable<ApplicationUser> query, bool mineFilter, ClaimsPrincipal principle) {
 			if (databaseService.ApplicationUsers == null)
@@ -122,6 +134,9 @@ namespace Zukte.Service {
 			return query;
 		}
 
+		/// <summary>
+		/// Applies a filter to select accounts with the specified ids.
+		/// </summary>
 		[NonAction]
 		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, params string[] idFilters) {
 			foreach (var idFilter in idFilters) {
@@ -158,7 +173,6 @@ namespace Zukte.Service {
 		public IQueryable<ApplicationUser> ApplyPageToken(IQueryable<ApplicationUser> query, ApplicationUser? pageToken) {
 			if (pageToken != null) {
 				string compareToValue = pageToken.Id;
-				// current support ascend order only
 				query = query.Where(user => (user.Id).CompareTo(compareToValue) > 0);
 			}
 

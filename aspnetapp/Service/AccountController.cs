@@ -4,8 +4,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Zukte.Service {
-	[Route("api/[controller]")]
 	[ApiController]
+	[Route("api/[controller]")]
 	public class AccountController : ControllerBase {
 		public const string RETURN_URL_DEFAULT = "/";
 
@@ -33,7 +33,7 @@ namespace Zukte.Service {
 		}
 
 		/// <summary>
-		/// An action result that on execution will sign out the user.
+		/// Creates an action result that on execution will sign out the user.
 		/// </summary>
 		[HttpDelete("Logout")]
 		public IActionResult HttpContextSignOut([FromQuery] string? ReturnUrl) {
