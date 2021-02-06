@@ -1,26 +1,26 @@
 import 'ol/ol.css';
 import './style.less';
 
-import { Control, defaults as defaultControls } from 'ol/control';
-import { OSM as OSMSource, Vector as VectorSource } from 'ol/source';
-import { Feature as OlFeature, Map as OlMap, View as OlView } from 'ol';
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
+import {Control, defaults as defaultControls} from 'ol/control';
+import {OSM as OSMSource, Vector as VectorSource} from 'ol/source';
+import {Feature as OlFeature, Map as OlMap, View as OlView} from 'ol';
+import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer';
 
-import { AppPage } from '../../AppPage/AppPage';
-import { Coordinate } from 'ol/coordinate';
-import { Draw as DrawInteraction } from 'ol/interaction';
-import { Point as GeomPoint } from 'ol/geom';
+import {AppPage} from '../../AppPage/AppPage';
+import {Coordinate} from 'ol/coordinate';
+import {Draw as DrawInteraction} from 'ol/interaction';
+import {Point as GeomPoint} from 'ol/geom';
 import GeometryType from 'ol/geom/GeometryType';
-import { PushpinOutlined } from '@ant-design/icons';
+import {PushpinOutlined} from '@ant-design/icons';
 import React from 'react';
-import { Style } from 'ol/style';
-import { Switch } from 'antd';
-import { fromLonLat } from 'ol/proj';
-import { mapPushpinIcon } from './MapPushpinIcon';
+import {Style} from 'ol/style';
+import {Switch} from 'antd';
+import {fromLonLat} from 'ol/proj';
+import {mapPushpinIcon} from './MapPushpinIcon';
 
 const melbourneCoordinate: Coordinate = fromLonLat([144.9631, -37.8136]);
 const pointFeatureMelbourne = new OlFeature(new GeomPoint(melbourneCoordinate));
-const osmLayer: TileLayer = new TileLayer({ source: new OSMSource() });
+const osmLayer: TileLayer = new TileLayer({source: new OSMSource()});
 
 /**
  * A demonstration where the user can mark locations on a map.
@@ -32,11 +32,11 @@ export function MapAtomicDemo(): JSX.Element {
   const pushpinControlRef = React.createRef<HTMLDivElement>();
 
   const [pushpinModeActive, setPushpinModeActive] = React.useState<boolean>(
-    false,
+      false,
   );
 
   const [drawInteraction, setDrawInteraction] = React.useState<DrawInteraction>(
-    null,
+      null,
   );
 
   const [map, setMap] = React.useState<OlMap>(null);
@@ -44,9 +44,9 @@ export function MapAtomicDemo(): JSX.Element {
   const [pushpinLayerSource, setPushpinLayerSource] = React.useState<
     VectorSource<GeomPoint>
   >(
-    new VectorSource({
-      features: [pointFeatureMelbourne],
-    }),
+      new VectorSource({
+        features: [pointFeatureMelbourne],
+      }),
   );
 
   /** Sets up the initial values for the open layers map. */
@@ -120,11 +120,11 @@ export function MapAtomicDemo(): JSX.Element {
 
   return (
     <AppPage pageTitle="Map Demo">
-      <div style={{ padding: 8 }}>
+      <div style={{padding: 8}}>
         <div
           ref={mapContainerRef}
           className="max-cell-xl"
-          style={{ height: 720 }}
+          style={{height: 720}}
         />
         <div
           ref={pushpinControlRef}

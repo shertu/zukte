@@ -1,8 +1,8 @@
-import { AppPage } from '../AppPage/AppPage';
+import {AppPage} from '../AppPage/AppPage';
 import React from 'react';
-import { Typography } from 'antd';
+import {Typography} from 'antd';
 
-const { Paragraph, Text, Title } = Typography;
+const {Paragraph, Text, Title} = Typography;
 
 /**
  * This page outlines the rights of the user in regards to their online privacy while using this web application.

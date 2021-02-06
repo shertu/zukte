@@ -1,5 +1,5 @@
-import { Alert, List, Skeleton } from 'antd';
-import { BlobStorageApi, StringListResponse } from '../../../../openapi-generator';
+import {Alert, List, Skeleton} from 'antd';
+import {BlobStorageApi, StringListResponse} from '../../../../openapi-generator';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 import React from 'react';
@@ -19,7 +19,7 @@ export function ImageShareList(props: {
   itemCollection: string[];
   setItemCollection: (value: string[]) => void;
 }): JSX.Element {
-  const { itemCollection, setItemCollection } = props;
+  const {itemCollection, setItemCollection} = props;
 
   /** The response from the latest item fetch. */
   const [
@@ -46,7 +46,7 @@ export function ImageShareList(props: {
   React.useEffect(() => {
     if (currentResponse) {
       const data: string[] = itemCollection || []; // important to default data value
-      const { items } = currentResponse;
+      const {items} = currentResponse;
 
       if (items) {
         setItemCollection(data.concat(items));
@@ -63,8 +63,8 @@ export function ImageShareList(props: {
   React.useEffect(() => {
     if (shouldAndCanLoadMore) {
       fetchNextResponse(currentResponse)
-        .then((res: StringListResponse) => setCurrentResponse(res))
-        .catch(() => setError(true));
+          .then((res: StringListResponse) => setCurrentResponse(res))
+          .catch(() => setError(true));
     }
   }, [shouldAndCanLoadMore, itemCollection]);
 
@@ -88,14 +88,14 @@ export function ImageShareList(props: {
    * @return {StringListResponse}
    */
   async function fetchNextResponse(
-    response: StringListResponse,
-    maxResults?: number,
+      response: StringListResponse,
+      maxResults?: number,
   ): Promise<StringListResponse> {
     const res: StringListResponse = await BLOB_STORAGE_API.apiBlobStorageListGet(
-      {
-        maxResults: maxResults,
-        pageToken: response?.nextPageToken,
-      },
+        {
+          maxResults: maxResults,
+          pageToken: response?.nextPageToken,
+        },
     );
 
     return res;

@@ -1,4 +1,4 @@
-import { PageHeader } from 'antd';
+import {PageHeader} from 'antd';
 import React from 'react';
 import classNames from 'classnames';
 
@@ -17,7 +17,7 @@ export interface PageProps
  * @return {JSX.Element}
  */
 export function AppPage(props: PageProps): JSX.Element {
-  const { className, pageTitle, children, ...other } = props;
+  const {className, pageTitle, children, ...other} = props;
 
   return (
     <section

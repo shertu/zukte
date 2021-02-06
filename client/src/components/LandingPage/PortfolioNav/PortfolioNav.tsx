@@ -1,7 +1,7 @@
-import { Card, Col, Row } from 'antd';
+import {Card, Col, Row} from 'antd';
 
 import AppRouteCollection from '../../../constants/AppRouteCollection';
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import React from 'react';
 
 interface PortfolioNavItemProps {

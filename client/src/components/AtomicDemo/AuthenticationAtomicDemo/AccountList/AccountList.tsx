@@ -1,13 +1,13 @@
-import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
-import { Avatar, Button, List, PaginationProps, Typography, message } from 'antd';
-import { useEffect, useState } from 'react';
+import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
+import {Avatar, Button, List, PaginationProps, Typography, message} from 'antd';
+import {useEffect, useState} from 'react';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { PaginationContainer } from '../../../PaginationContainer/PaginationContainer';
+import {PaginationContainer} from '../../../PaginationContainer/PaginationContainer';
 import React from 'react';
-import { UserDeleteOutlined } from '@ant-design/icons';
+import {UserDeleteOutlined} from '@ant-design/icons';
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 /** The ongoing pagination response state information. */
 interface AccountListMessageInfomation {
@@ -23,9 +23,9 @@ interface AccountListMessageInfomation {
  * @return {JSX.Element}
  */
 export function AccountList(
-  // props: {
-  // onChangeMineApplicationUserHook?: (user: ApplicationUser) => void;
-  // }
+// props: {
+// onChangeMineApplicationUserHook?: (user: ApplicationUser) => void;
+// }
 ): JSX.Element {
   // const {onChangeMineApplicationUserHook} = props;
   const client = new ApplicationUserServiceApi();
@@ -169,7 +169,7 @@ export function AccountList(
           loading={potentialForMore && shouldLoadMore && !onLoadMoreError}
           dataSource={itemArr}
           renderItem={(item: ApplicationUser) => {
-            const { id, name, picture } = item;
+            const {id, name, picture} = item;
 
             const isMineApplicationUser: boolean = false;
 
@@ -193,7 +193,7 @@ export function AccountList(
                   avatar={<Avatar src={picture} />}
                   title={name}
                   description={
-                    <Text style={{ fontFamily: 'monospace' }}>{id}</Text>
+                    <Text style={{fontFamily: 'monospace'}}>{id}</Text>
                   }
                 />
               </List.Item>

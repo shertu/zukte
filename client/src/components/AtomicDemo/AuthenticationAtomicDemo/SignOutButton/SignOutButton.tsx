@@ -1,6 +1,6 @@
-import { AccountHttpContextSignOutRequest, BASE_PATH } from '../../../../openapi-generator';
+import {AccountHttpContextSignOutRequest, BASE_PATH} from '../../../../openapi-generator';
 
-import { Button } from 'antd';
+import {Button} from 'antd';
 import React from 'react';
 
 /**
@@ -10,7 +10,7 @@ import React from 'react';
  * @return {JSX.Element}
  */
 export function SignOutButton(props: { redirect?: string }): JSX.Element {
-  const { redirect } = props;
+  const {redirect} = props;
 
   // const ACCOUNT_API: AccountApi = new AccountApi();
 

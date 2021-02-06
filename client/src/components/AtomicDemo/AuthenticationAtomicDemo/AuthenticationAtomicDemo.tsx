@@ -1,11 +1,11 @@
-import { AccountList } from './AccountList/AccountList';
-import { AppPage } from '../../AppPage/AppPage';
-import { GoogleSignInButton } from './GoogleSignInButton/GoogleSignInButton';
+import {AccountList} from './AccountList/AccountList';
+import {AppPage} from '../../AppPage/AppPage';
+import {GoogleSignInButton} from './GoogleSignInButton/GoogleSignInButton';
 import React from 'react';
-import { SignOutButton } from './SignOutButton/SignOutButton';
-import { Typography } from 'antd';
+import {SignOutButton} from './SignOutButton/SignOutButton';
+import {Typography} from 'antd';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
 /**
  * A demonstration where the user can sign in to the application.

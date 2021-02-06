@@ -1,5 +1,5 @@
 import Canvg from 'canvg';
-import { Icon } from 'ol/style';
+import {Icon} from 'ol/style';
 import React from 'react';
 
 const mapPushpinImage: HTMLImageElement = new Image(20, 25);
@@ -24,4 +24,4 @@ if (ctx) {
   });
 }
 
-export { mapPushpinIcon, mapPushpinImage };
+export {mapPushpinIcon, mapPushpinImage};

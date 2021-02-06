@@ -1,15 +1,15 @@
 import './style.less';
 
-import { Button, Layout, Space } from 'antd';
-import { Link, Route, Switch } from 'react-router-dom';
+import {Button, Layout, Space} from 'antd';
+import {Link, Route, Switch} from 'react-router-dom';
 
-import { AppContentSwitch } from '../AppContentSwitch/AppContentSwitch';
+import {AppContentSwitch} from '../AppContentSwitch/AppContentSwitch';
 import AppRouteCollection from '../../../constants/AppRouteCollection';
-import { LandingScreen } from '../../LandingScreen/LandingScreen';
-import { LocationBreadcrumb } from '../../LocationBreadcrumb/LocationBreadcrumb';
+import {LandingScreen} from '../../LandingScreen/LandingScreen';
+import {LocationBreadcrumb} from '../../LocationBreadcrumb/LocationBreadcrumb';
 import React from 'react';
 
-const { Header, Content, Footer } = Layout;
+const {Header, Content, Footer} = Layout;
 
 /**
  * A layout component used to describe general structure of
@@ -26,7 +26,7 @@ export function AppLayout(): JSX.Element {
         </Route>
 
         <Route>
-          <Header style={{ backgroundColor: 'transparent' }}>
+          <Header style={{backgroundColor: 'transparent'}}>
             <Space className="max-height" align="center">
               <LocationBreadcrumb />
             </Space>

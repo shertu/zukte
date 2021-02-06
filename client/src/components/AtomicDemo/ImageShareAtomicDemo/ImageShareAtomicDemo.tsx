@@ -1,13 +1,13 @@
-import { AutoColumnRow, AutoColumnRowGutterDefault } from '../../AutoColumnRow/AutoColumnRow';
+import {AutoColumnRow, AutoColumnRowGutterDefault} from '../../AutoColumnRow/AutoColumnRow';
 
-import { AppPage } from '../../AppPage/AppPage';
-import { ImageShareList } from './ImageShareList/ImageShareList';
-import { ImageShareUpload } from './ImageShareUpload/ImageShareUpload';
+import {AppPage} from '../../AppPage/AppPage';
+import {ImageShareList} from './ImageShareList/ImageShareList';
+import {ImageShareUpload} from './ImageShareUpload/ImageShareUpload';
 import Mailto from 'react-mailto.js';
 import React from 'react';
-import { Typography } from 'antd';
+import {Typography} from 'antd';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
 /**
  * A demonstration where the user can upload and share images with others.

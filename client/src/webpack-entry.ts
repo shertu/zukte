@@ -1,8 +1,8 @@
 import 'antd/dist/antd.less';
 import './style/index.less';
 
-import { App } from './components/App/App';
-import { render } from 'react-dom';
+import {App} from './components/App/App';
+import {render} from 'react-dom';
 
 /* eslint-disable new-cap */
 const element: JSX.Element = App();

@@ -1,8 +1,8 @@
-import { Divider, Space } from 'antd';
+import {Divider, Space} from 'antd';
 
-import { AboutMeContent } from './AboutMeContent/AboutMeContent';
-import { AppPage } from '../AppPage/AppPage';
-import { PortfolioNav } from './PortfolioNav/PortfolioNav';
+import {AboutMeContent} from './AboutMeContent/AboutMeContent';
+import {AppPage} from '../AppPage/AppPage';
+import {PortfolioNav} from './PortfolioNav/PortfolioNav';
 import React from 'react';
 
 /**
@@ -12,7 +12,7 @@ import React from 'react';
  */
 export function LandingPage(): JSX.Element {
   return (
-    <AppPage style={{ minHeight: '100vh' }}>
+    <AppPage style={{minHeight: '100vh'}}>
       <Space direction="vertical" align="center" size={40}>
         <AboutMeContent />
 

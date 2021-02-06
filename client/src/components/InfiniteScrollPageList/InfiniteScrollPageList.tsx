@@ -1,4 +1,4 @@
-import { Alert, List, Space, SpaceProps } from 'antd';
+import {Alert, List, Space, SpaceProps} from 'antd';
 
 import InfiniteScroll from 'react-infinite-scroll-component';
 import React from 'react';
@@ -18,32 +18,32 @@ export function InfiniteScrollPageList<T>(props: {
   noItemsFound?: React.ReactNode,
   onLoadMoreError?: typeof Alert,
 }): JSX.Element {
-  const { spaceProps, noItemsFound, onLoadMoreError } = props;
+  const {spaceProps, noItemsFound, onLoadMoreError} = props;
 
   onLoadMoreError.
 
-    return(
-      <Space
-        {...spaceProps}
-        direction="vertical"
-      >
-        <InfiniteScroll
-          dataLength={itemCount}
-          next={() => onChangePagination(paginationCurrent + 1)}
-          hasMore={potentialForMore}
-          loader={null}
-        >
-          <List
-            loading={potentialForMore && shouldLoadMore && !onLoadMoreError}
-          />
-        </InfiniteScroll>
+      return(
+          <Space
+            {...spaceProps}
+            direction="vertical"
+          >
+            <InfiniteScroll
+              dataLength={itemCount}
+              next={() => onChangePagination(paginationCurrent + 1)}
+              hasMore={potentialForMore}
+              loader={null}
+            >
+              <List
+                loading={potentialForMore && shouldLoadMore && !onLoadMoreError}
+              />
+            </InfiniteScroll>
 
 
-        {true &&
+            {true &&
           noItemsFound
-        }
+            }
 
-        {true &&
+            {true &&
           <Alert
             message={onLoadMoreErrorTextDefault}
             type="error"
@@ -52,16 +52,16 @@ export function InfiniteScrollPageList<T>(props: {
               <Button size="small" danger onClick={onClickRetry}>retry</Button>
             }
           />
-        }
-      </Space>,
+            }
+          </Space>,
 
-      // <PaginationContainer
-      //   className="max-cell"
-      //   noItemsFetched={!itemCount && hasMadeAtLeastOneFetch}
-      //   onLoadMoreError={onLoadMoreError}
-      //   onClickReload={onClickReloadButton}
-      // >
+          // <PaginationContainer
+          //   className="max-cell"
+          //   noItemsFetched={!itemCount && hasMadeAtLeastOneFetch}
+          //   onLoadMoreError={onLoadMoreError}
+          //   onClickReload={onClickReloadButton}
+          // >
 
       // </PaginationContainer>
-    );
+      );
 }
