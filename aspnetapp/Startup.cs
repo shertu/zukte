@@ -12,7 +12,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Zukte.Authorization.Handlers;
 using Zukte.Database;
-using Zukte.Database.Seeder;
 using Zukte.Middleware;
 
 namespace Zukte {
@@ -28,12 +27,8 @@ namespace Zukte {
 		/// </summary>
 		private readonly IConfiguration _configuration;
 
-		private readonly DatabaseSeeder<ApplicationDbContext> seedDatabaseMiddleware;
-
 		public Startup(IConfiguration configuration) {
 			_configuration = configuration;
-			seedDatabaseMiddleware = new DatabaseSeeder<ApplicationDbContext>();
-			seedDatabaseMiddleware.Seeders.Add(new ApplicationUserSeeder());
 		}
 
 		public void ConfigureServices(IServiceCollection services) {
@@ -125,7 +120,7 @@ namespace Zukte {
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
 				LogConfigurationRecursive(logger, _configuration.GetChildren());
-				_ = seedDatabaseMiddleware.InvokeAsync(dbContext);
+				_ = SeedDatabaseMiddleware.InvokeAsync(dbContext);
 			}
 
 			// // #region UseRewriter
