@@ -1,6 +1,7 @@
-import { Button } from 'antd';
-
 import { AccountHttpContextSignOutRequest, BASE_PATH } from '../../../../openapi-generator';
+
+import { Button } from 'antd';
+import React from 'react';
 
 /**
  * A button component used to sign out of the application.

@@ -4,15 +4,14 @@
 #    command
 
 # Start the web app for local development for the first time
-server_newstart:
+newstart_server:
 	docker-compose up -d --build
 	./protobuf.sh
 	cd aspnetapp && dotnet run
 
-client_newstart:
+newstart_client:
 	cd client && npm install
 	-rm -r client/src/openapi-generator
-	# mkdir client/src/openapi-generator
 	cd client && npm run openapi
 	cd client && npm run start
 
@@ -36,9 +35,9 @@ client_newstart:
 # Execute code linters to fix code style
 # lint_server:
 # 	cd laravel && php-cs-fixer fix . --rules=@Symfony
-# lint_client:
-# 	cd client && npm run eslint
-# 	cd client && npm run stylelint
+lint_client:
+	cd client && npm run eslint
+	cd client && npm run stylelint
 
 # Test web application in a variety of ways
 # test_server:

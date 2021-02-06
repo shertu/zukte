@@ -1,6 +1,6 @@
-import { Typography } from 'antd';
-
 import { AppPage } from '../AppPage/AppPage';
+import React from 'react';
+import { Typography } from 'antd';
 
 const { Paragraph, Text, Title } = Typography;
 

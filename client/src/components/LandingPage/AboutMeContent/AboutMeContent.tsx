@@ -1,8 +1,10 @@
+import './style.less';
+
 import { Col, Divider, Row, Space, Typography } from 'antd';
 
 import Mailto from 'react-mailto.js';
+import React from 'react';
 import { calculateAgeFromBirthdate } from '../../../utilities/AgeCalculator';
-import './style.less';
 
 const { Paragraph } = Typography;
 

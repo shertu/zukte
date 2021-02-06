@@ -15,15 +15,14 @@ module.exports = {
   plugins: ["react", "@typescript-eslint"],
   // https://github.com/google/eslint-config-google/blob/master/index.js
   rules: {
-    "max-len": [
-      "error",
-      {
-        code: 80,
-        tabWidth: 2,
-        ignoreUrls: true,
-        ignorePattern: "import .*",
-      },
-    ],
+    "react/react-in-jsx-scope": "off",
+    "max-len": ["error", {
+      code: 80,
+      tabWidth: 2,
+      ignoreUrls: true,
+      ignorePattern: "import .*",
+    }],
+    "sort-imports": ["error"],
   },
   settings: {
     react: {

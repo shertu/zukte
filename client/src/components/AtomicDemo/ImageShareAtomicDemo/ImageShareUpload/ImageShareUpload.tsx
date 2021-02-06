@@ -1,9 +1,10 @@
+import { Alert, Space, Typography, Upload, message } from 'antd';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import { Alert, message, Space, Typography, Upload } from 'antd';
-import { UploadChangeParam } from 'antd/lib/upload';
 
 import { BlobStorageApi } from '../../../../openapi-generator';
 import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
+import React from 'react';
+import { UploadChangeParam } from 'antd/lib/upload';
 
 const { Dragger } = Upload;
 const { Paragraph } = Typography;
@@ -97,7 +98,7 @@ export function ImageShareUpload(props: {
               </Paragraph>
               <Paragraph className="ant-upload-text">
                 click or drag file to this area to upload
-            </Paragraph>
+              </Paragraph>
             </div>
           )}
       </Dragger>

@@ -19,11 +19,6 @@ module.exports = {
 
     // https://webpack.js.org/plugins/mini-css-extract-plugin/
     new MiniCssExtractPlugin(),
-
-    // https://webpack.js.org/plugins/provide-plugin/
-    new webpack.ProvidePlugin({
-      "React": "react",
-    }),
   ],
 
   // https://webpack.js.org/configuration/resolve/

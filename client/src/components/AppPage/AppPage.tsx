@@ -1,6 +1,6 @@
 import { PageHeader } from 'antd';
+import React from 'react';
 import classNames from 'classnames';
-// import './style.less';
 
 export interface PageProps
   extends React.DetailedHTMLProps<

@@ -1,9 +1,9 @@
-import { Typography } from 'antd';
-
+import { AccountList } from './AccountList/AccountList';
 import { AppPage } from '../../AppPage/AppPage';
-import { ApplicationUserList } from './ApplicationUserList/ApplicationUserList';
 import { GoogleSignInButton } from './GoogleSignInButton/GoogleSignInButton';
+import React from 'react';
 import { SignOutButton } from './SignOutButton/SignOutButton';
+import { Typography } from 'antd';
 
 const { Paragraph } = Typography;
 
@@ -34,7 +34,7 @@ export function AuthenticationAtomicDemo(): JSX.Element {
       </div>
 
       <AppPage pageTitle="Accounts">
-        <ApplicationUserList
+        <AccountList
 
         />
       </AppPage>

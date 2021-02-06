@@ -1,8 +1,9 @@
 import { Divider, Space } from 'antd';
 
-import { AppPage } from '../AppPage/AppPage';
 import { AboutMeContent } from './AboutMeContent/AboutMeContent';
+import { AppPage } from '../AppPage/AppPage';
 import { PortfolioNav } from './PortfolioNav/PortfolioNav';
+import React from 'react';
 
 /**
  * The page the user scrolls down to after seeing the landing screen.

@@ -1,7 +1,9 @@
+import './style.less';
+
 import { Button, Card, Row, Space, Typography } from 'antd';
 
+import React from 'react';
 import { Link as ScrollLink } from 'react-scroll';
-import './style.less';
 import { VantaNetContainer } from './VantaNetContainer/VantaNetContainer';
 
 const { Title } = Typography;

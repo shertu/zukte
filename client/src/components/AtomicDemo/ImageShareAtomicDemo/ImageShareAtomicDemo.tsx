@@ -1,13 +1,11 @@
-import { Typography } from 'antd';
+import { AutoColumnRow, AutoColumnRowGutterDefault } from '../../AutoColumnRow/AutoColumnRow';
 
-import Mailto from 'react-mailto.js';
 import { AppPage } from '../../AppPage/AppPage';
-import {
-  AutoColumnRow,
-  AutoColumnRowGutterDefault,
-} from '../../AutoColumnRow/AutoColumnRow';
 import { ImageShareList } from './ImageShareList/ImageShareList';
 import { ImageShareUpload } from './ImageShareUpload/ImageShareUpload';
+import Mailto from 'react-mailto.js';
+import React from 'react';
+import { Typography } from 'antd';
 
 const { Paragraph } = Typography;
 

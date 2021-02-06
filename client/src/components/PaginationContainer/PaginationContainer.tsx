@@ -1,6 +1,8 @@
 import { Alert, Button, List, Space } from 'antd';
-import classNames from 'classnames';
+
 import { MouseEventHandler } from 'react';
+import React from 'react';
+import classNames from 'classnames';
 
 export interface PaginationContainer {
   className?: string;
@@ -24,8 +26,8 @@ export function PaginationContainer(props: PaginationContainer): JSX.Element {
     onLoadMoreError, onLoadMoreErrorText,
     onClickReload: onClickRetry } = props;
 
-  const noItemsFetchedTextDefault: string = noItemsFetchedText || "No data was found.";
-  const onLoadMoreErrorTextDefault: string = onLoadMoreErrorText || "The request for additional data failed.";
+  const noItemsFetchedTextDefault: string = noItemsFetchedText || 'No data was found.';
+  const onLoadMoreErrorTextDefault: string = onLoadMoreErrorText || 'The request for additional data failed.';
 
   return (
     <Space

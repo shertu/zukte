@@ -1,6 +1,7 @@
+import { AccountGoogleOpenIdConnectChallengeRequest, BASE_PATH } from '../../../../openapi-generator';
 
 import GoogleButton from 'react-google-button';
-import { AccountGoogleOpenIdConnectChallengeRequest, BASE_PATH } from '../../../../openapi-generator';
+import React from 'react';
 
 /**
  * A button component used to sign in to the application via the Google Auth API.

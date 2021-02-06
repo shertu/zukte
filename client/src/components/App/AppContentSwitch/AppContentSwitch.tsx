@@ -1,10 +1,12 @@
 import { Result, Typography } from 'antd';
-import Mailto from 'react-mailto.js';
 import { Route, Switch } from 'react-router-dom';
+
 import AppRouteCollection from '../../../constants/AppRouteCollection';
 import { AuthenticationAtomicDemo } from '../../AtomicDemo/AuthenticationAtomicDemo/AuthenticationAtomicDemo';
 import { LandingPage } from '../../LandingPage/LandingPage';
+import Mailto from 'react-mailto.js';
 import { PrivacyPolicyPage } from '../../PrivacyPolicyPage/PrivacyPolicyPage';
+import React from 'react';
 
 const { Paragraph } = Typography;
 
@@ -14,6 +16,9 @@ const { Paragraph } = Typography;
  * @return {JSX.Element}
  */
 export function AppContentSwitch(): JSX.Element {
+  const mailToSubject: string =
+    `An error occured when I visited ${window.location.href}`;
+
   return (
     <Switch>
       <Route exact path={AppRouteCollection.Home}>
@@ -28,8 +33,6 @@ export function AppContentSwitch(): JSX.Element {
         <AuthenticationAtomicDemo />
       </Route>
 
-
-
       <Route>
         <Result
           status="404"
@@ -38,7 +41,7 @@ export function AppContentSwitch(): JSX.Element {
             <Paragraph>
               please&nbsp;
               <Mailto
-                subject={`An error occured when I visited ${window.location.href}`}
+                subject={mailToSubject}
                 to="djared.xeknau@outlook.com"
               >
                 report this error to a developer

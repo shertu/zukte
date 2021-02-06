@@ -1,7 +1,10 @@
-import { useEffect, useRef, useState } from 'react';
 import * as ThreeJs from 'three';
+
+import { useEffect, useRef, useState } from 'react';
+
 // @ts-ignore
 import NET from 'vanta/dist/vanta.net.min.js';
+import React from 'react';
 
 /**
  * A component which renders a Vanta NET 3D visual effect.
