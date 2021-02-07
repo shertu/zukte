@@ -8,7 +8,7 @@ namespace Zukte.Authentication {
 	// Same as base class with some additional generalizations
 	// https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.Cookies/Events/CookieAuthenticationEvents.cs
 	public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents {
-		public Utilities.AccountCreator? accountCreator;
+		public Utilities.AccountCreator? accountService;
 
 		public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context) {
 			context.Response.Headers["Location"] = context.RedirectUri;
@@ -38,10 +38,10 @@ namespace Zukte.Authentication {
 		/// </summary>
 		public override Task SignedIn(CookieSignedInContext context) {
 			// create an account in the system if possible
-			if (accountCreator != null) {
+			if (accountService != null) {
 				var principal = context.Principal ?? throw new ArgumentNullException();
 				var applicationUser = principal.CreateApplicationUser();
-				var createAccountTask = accountCreator.PostApplicationUser(applicationUser);
+				var createAccountTask = accountService.PostApplicationUser(applicationUser);
 
 				// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
 				try {

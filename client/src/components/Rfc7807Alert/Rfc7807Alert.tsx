@@ -1,0 +1,58 @@
+import {Alert, Button, Descriptions, Space} from 'antd';
+
+import React from 'react';
+
+export interface Rfc7807Props {
+  type?: string;
+  title?: string;
+  status?: number;
+  detail?: string;
+  instance?: string;
+  onClickRetry?: React.MouseEventHandler<HTMLElement>;
+};
+
+/**
+ * A view for an implementation of the https://tools.ietf.org/html/rfc7807 standard.
+ *
+ * @param {object} props
+ * @return {JSX.Element}
+ */
+export function Rfc7807Alert(props: Rfc7807Props): JSX.Element {
+  const {
+    type = 'about:blank',
+    title = 'HTTP API error',
+    status,
+    detail,
+    instance,
+    onClickRetry,
+  } = props;
+
+  const [showDetails, setShowDetails] =
+    React.useState<boolean>(false);
+
+  return (
+    <Alert
+      message={title}
+      type="error"
+      action={
+        <Space>
+          {!showDetails &&
+            <Button size="small" onClick={() => setShowDetails(true)}>details</Button>
+          }
+          {onClickRetry &&
+            <Button size="small" danger onClick={onClickRetry}>retry</Button>
+          }
+        </Space>
+      }
+      description={
+        showDetails &&
+        <Descriptions title="Error Information">
+          <Descriptions.Item label="Problem Classification">{type}</Descriptions.Item>
+          <Descriptions.Item label="Detail">{detail}</Descriptions.Item>
+          <Descriptions.Item label="HTTP Status Code">{status}</Descriptions.Item>
+          <Descriptions.Item label="Trace Instance">{instance}</Descriptions.Item>
+        </Descriptions>
+      }
+    />
+  );
+}

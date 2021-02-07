@@ -1,7 +1,8 @@
-import {ApplicationUser, ApplicationUserServiceApi} from '../../../../../openapi-generator';
+import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest} from '../../../../../openapi-generator';
 import {Avatar, Button, List, Typography} from 'antd';
 
 import React from 'react';
+import {Rfc7807Alert} from '../../../../Rfc7807Alert/Rfc7807Alert';
 import {UserDeleteOutlined} from '@ant-design/icons';
 
 const {Text} = Typography;
@@ -16,9 +17,14 @@ export function ApplicationUserListItem(props: {
   user: ApplicationUser;
   mineApplicationUsers?: ApplicationUser[];
 }): JSX.Element {
+  const {mineApplicationUsers} = props;
   const {id, name, picture} = props.user;
-
   const client = new ApplicationUserServiceApi();
+
+  const [errorOccurred, setErrorOccurred] =
+    React.useState<boolean>(false);
+
+  const isMineApplicationUser: boolean = Boolean(mineApplicationUsers?.find((elem) => elem.id && elem.id === id));
 
   /**
    * Executes a simple request to delete an application user.
@@ -31,15 +37,15 @@ export function ApplicationUserListItem(props: {
     };
 
     client.applicationUserServiceDelete(request)
-        .catch((error) => message.error('operation failed'));
+        .then(() => window.location.reload())
+        .catch((error) => setErrorOccurred(Boolean(error)));
   }
 
-  const isMineApplicationUser: boolean = false;
-
-  let deleteUserAction: JSX.Element | undefined;
+  let deleteApplicationUserAction: JSX.Element | undefined;
   if (isMineApplicationUser) {
-    deleteUserAction = (
-      <Button icon={<UserDeleteOutlined />}
+    deleteApplicationUserAction = (
+      <Button
+        icon={<UserDeleteOutlined />}
         onClick={() => onDeleteApplicationUser(id)}
       >
         remove account from {window.location.hostname}
@@ -47,13 +53,10 @@ export function ApplicationUserListItem(props: {
     );
   }
 
-  const [errorOccurred, setErrorOccurred] =
-    React.useState<boolean>(false);
-
   return (
     <List.Item
       key={id}
-      actions={[deleteUserAction]}
+      actions={[deleteApplicationUserAction]}
     >
       <List.Item.Meta
         avatar={<Avatar src={picture} />}
@@ -64,7 +67,11 @@ export function ApplicationUserListItem(props: {
       />
 
       {errorOccurred &&
-        null
+        <Rfc7807Alert
+          type="/error/failed-network-request"
+          title="The request to delete your account was unsuccessful."
+          detail="ApplicationUserListItem"
+        />
       }
     </List.Item>
   );

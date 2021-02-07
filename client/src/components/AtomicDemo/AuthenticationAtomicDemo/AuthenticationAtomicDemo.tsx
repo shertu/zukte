@@ -1,5 +1,5 @@
-import {Alert, Button, Typography, message} from 'antd';
 import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
+import {Space, Typography} from 'antd';
 
 import {AppPage} from '../../AppPage/AppPage';
 import {ApplicationUserList} from './ApplicationUserList/ApplicationUserList';
@@ -18,7 +18,7 @@ const {Paragraph} = Typography;
 export function AuthenticationAtomicDemo(): JSX.Element {
   const client = new ApplicationUserServiceApi();
 
-  const [mineApplicationUserArr, setMineApplicationUserArr] =
+  const [mineApplicationUsers, setMineApplicationUsers] =
     React.useState<ApplicationUser[]>([]);
 
   const [onLoadMineApplicationUserError, setOnLoadMineApplicationUserError] =
@@ -32,39 +32,26 @@ export function AuthenticationAtomicDemo(): JSX.Element {
 
   async function onLoadMineApplicationUser(): Promise<void> {
     const request: ApplicationUserServiceGetListRequest = {
-      maxResults: 1,
+      mine: true,
+      maxResults: 1, // can the user have more than one account?
     };
 
     try {
       const res: ApplicationUserListResponse =
         await client.applicationUserServiceGetList(request);
 
-      setMineApplicationUserArr(res.items || []);
+      setMineApplicationUsers(res.items || []);
     } catch (error) {
       setOnLoadMineApplicationUserError(Boolean(error));
     }
   }
 
-  function onClickRetry() {
-    setOnLoadMineApplicationUserError(false);
-  }
-
-  const isSignedIn: boolean = Boolean(mineApplicationUserArr.length);
+  const isSignedIn: boolean = Boolean(mineApplicationUsers.length);
 
   return (
-    <MineApplicationUserContext.Provider value={mineApplicationUserArr}>
-      {onLoadMineApplicationUserError &&
-        <Alert
-          message="The request for your account data was not successful"
-          type="error"
-          action={
-            <Button size="small" danger onClick={onClickRetry}>retry</Button>
-          }
-        />
-      }
-
+    <MineApplicationUserContext.Provider value={mineApplicationUsers}>
       <AppPage pageTitle="Authentication Demo">
-        <Typography className="max-cell-xs">
+        <Typography>
           <Paragraph>
             To use this demo service please sign in to Google and authorize this
             application to access your Google profile. The application will
@@ -74,13 +61,15 @@ export function AuthenticationAtomicDemo(): JSX.Element {
           </Paragraph>
         </Typography>
 
-        <AppPage pageTitle="Actions">
+        <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
           {isSignedIn && <SignOutButton />}
           {!isSignedIn && <GoogleSignInButton />}
-        </AppPage>
+        </Space>
 
         <AppPage pageTitle="Accounts">
-          <ApplicationUserList />
+          <ApplicationUserList
+            mineApplicationUsers={mineApplicationUsers}
+          />
         </AppPage>
       </AppPage>
     </MineApplicationUserContext.Provider>

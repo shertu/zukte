@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Zukte.Authorization.Handlers;
 using Zukte.Database;
 using Zukte.Middleware;
+using Zukte.Utilities;
 
 namespace Zukte {
 	public class Startup {
@@ -51,16 +52,23 @@ namespace Zukte {
 			}
 			#endregion
 
+
+			System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", "before AccountCreator instance");
+
 			#region AccountCreator instance
-			Utilities.AccountCreator? accountCreator = null;
-			services.AddSingleton(serviceProvider => {
-				var options = serviceProvider.GetService<ApplicationDbContext>() ??
+			AccountCreator? accountCreator = null;
+			services.AddSingleton<AccountCreator>(serviceProvider => {
+				System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", "during AccountCreator instance");
+
+				var databaseService = serviceProvider.GetService<ApplicationDbContext>() ??
 					throw new System.ArgumentNullException(nameof(ApplicationDbContext));
 
-				accountCreator = new Utilities.AccountCreator(options);
+				accountCreator = new AccountCreator(databaseService);
 				return accountCreator;
 			});
 			#endregion
+
+			//System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", accountCreator?.ToString());
 
 			#region Authentication
 			// This configures Google.Apis.Auth.AspNetCore3 for use in this app.
@@ -80,7 +88,7 @@ namespace Zukte {
 					options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				}).AddCookie(options => {
 					options.Events = new Authentication.CustomCookieAuthenticationEvents {
-						accountCreator = accountCreator,
+						accountService = accountCreator,
 					};
 
 					options.LoginPath = "/api/Account/Login";
@@ -115,11 +123,10 @@ namespace Zukte {
 		public void Configure(
 			IApplicationBuilder app,
 			IWebHostEnvironment env,
-			ILogger<Startup> logger,
 			ApplicationDbContext dbContext) {
 			if (env.IsDevelopment()) {
 				app.UseDeveloperExceptionPage();
-				LogConfigurationRecursive(logger, _configuration.GetChildren());
+				//LogConfigurationRecursive(logger, _configuration.GetChildren());
 				_ = SeedDatabaseMiddleware.InvokeAsync(dbContext);
 			}
 

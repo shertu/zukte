@@ -4,6 +4,7 @@ import {ListProps, PaginationProps, SpaceProps} from 'antd';
 import {ApplicationUserListItem} from './ApplicationUserListItem/ApplicationUserListItem';
 import {InfiniteScrollPageList} from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
 import React from 'react';
+import {Rfc7807Props} from '../../../Rfc7807Alert/Rfc7807Alert';
 
 /** The ongoing pagination response state information. */
 interface MessageInfomation {
@@ -21,6 +22,7 @@ interface MessageInfomation {
 export function ApplicationUserList(props: {
   mineApplicationUsers?: ApplicationUser[];
 }): JSX.Element {
+  const {mineApplicationUsers} = props;
   const client = new ApplicationUserServiceApi();
 
   const [messageInfomation, setMessageInfomation] =
@@ -116,7 +118,7 @@ export function ApplicationUserList(props: {
     setPaginationInfomation(newPaginationInformation);
   }
 
-  function onClickRetryLoadMore(): void {
+  function onClickRetry(): void {
     setOnLoadMoreError(false);
   }
 
@@ -126,7 +128,13 @@ export function ApplicationUserList(props: {
 
   const listProps: ListProps<ApplicationUser> = {
     dataSource: items,
-    renderItem: (item: ApplicationUser, index: number) => <ApplicationUserListItem user={item} />,
+    renderItem: (item: ApplicationUser, index: number) => <ApplicationUserListItem
+      user={item} mineApplicationUsers={mineApplicationUsers} />,
+  };
+
+  const onLoadMoreErrorProps: Rfc7807Props = {
+    onClickRetry: onClickRetry,
+    type: '/ApplicationUserList/applicationUserServiceGetList',
   };
 
   return (
@@ -135,7 +143,7 @@ export function ApplicationUserList(props: {
       itemCount={items.length}
       hasMadeAtLeastOneFetch={hasMadeAtLeastOneFetch}
       onLoadMoreErrorOccur={onLoadMoreError}
-      onLoadMoreError={{onClickRetry: onClickRetryLoadMore, errorDetail: 'ApplicationUserList'}}
+      onLoadMoreError={onLoadMoreErrorProps}
       paginationProps={paginationInfomation}
       nextPageToken={nextPageToken}
       listProps={listProps}

@@ -73,10 +73,9 @@ namespace Zukte.Service {
 			if (databaseService.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
-			// authorization check
+			// the MINE version of this endpoint requires an authorization check
 			if (request.Mine && !User.IsAuthenticated()) {
-				// issue a default challenge
-				return Challenge();
+				return Challenge(); // issue a default challenge
 			}
 
 			IQueryable<ApplicationUser> query = databaseService.ApplicationUsers;

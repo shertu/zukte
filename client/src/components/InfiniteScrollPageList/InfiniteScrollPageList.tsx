@@ -1,13 +1,13 @@
 import {Alert, AlertProps, List, ListProps, PaginationProps, Space, SpaceProps} from 'antd';
-import {FailedNetworkRequestAlert, FailedNetworkRequestAlertProps} from '../FailedNetworkRequestAlert/FailedNetworkRequestAlert';
 import InfiniteScroll, {Props as InfiniteScrollProps} from 'react-infinite-scroll-component';
+import {Rfc7807Alert, Rfc7807Props} from '../Rfc7807Alert/Rfc7807Alert';
 
 import React from 'react';
 
 export interface InfiniteScrollPageListProps<T> {
   spaceProps?: Omit<SpaceProps, 'direction'>;
   noItemsFound?: AlertProps;
-  onLoadMoreError?: Omit<FailedNetworkRequestAlertProps, 'errorClassification' | 'errorTitle'>;
+  onLoadMoreError?: Omit<Rfc7807Props, 'title'>;
   infiniteScrollProps?: Omit<InfiniteScrollProps, 'dataLength' | 'next' | 'hasMore' | 'loader'>;
   itemCount: number;
   hasMadeAtLeastOneFetch?: boolean;
@@ -78,10 +78,9 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
       }
 
       {onLoadMoreErrorOccur &&
-        <FailedNetworkRequestAlert
+        <Rfc7807Alert
           {...onLoadMoreError}
-          errorClassification="/error/failed-network-request"
-          errorTitle="The request for additional data was unsuccessful."
+          title="The request to fetch additional resources was unsuccessful."
         />
       }
     </Space>
