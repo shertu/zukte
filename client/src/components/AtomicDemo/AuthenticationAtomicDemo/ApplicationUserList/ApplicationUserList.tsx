@@ -1,10 +1,10 @@
-import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
+import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
 
-import {ApplicationUserListItem} from './ApplicationUserListItem/ApplicationUserListItem';
-import {InfiniteScrollPageList} from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
-import {ListProps} from 'antd';
+import { ApplicationUserListItem } from './ApplicationUserListItem/ApplicationUserListItem';
+import { InfiniteScrollPageList } from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
+import { ListProps } from 'antd';
 import React from 'react';
-import {Rfc7807Props} from '../../../Rfc7807Alert/Rfc7807Alert';
+import { Rfc7807Props } from '../../../Rfc7807Alert/Rfc7807Alert';
 
 /** The ongoing pagination response state information. */
 interface MessageInfomation {
@@ -24,7 +24,7 @@ const APPLICATION_USER_LIST_PAGE_SIZE: number = 30;
 export function ApplicationUserList(props: {
   mineApplicationUsers?: ApplicationUser[];
 }): JSX.Element {
-  const {mineApplicationUsers} = props;
+  const { mineApplicationUsers } = props;
 
   const client = new ApplicationUserServiceApi();
 
@@ -47,10 +47,11 @@ export function ApplicationUserList(props: {
     hasMadeAtLeastOneFetch,
   } = messageInfomation;
 
+  // this should be set using state mutations but it works for now
   let itemsUsed: ApplicationUser[] | undefined;
   if (mineApplicationUsers?.length) {
     const filteredForMine: ApplicationUser[] = messageInfomation.items
-        .filter((a) => !mineApplicationUsers.find((b) => b.id === a.id));
+      .filter((a) => !mineApplicationUsers.find((b) => b.id === a.id));
     itemsUsed = mineApplicationUsers.concat(filteredForMine);
   } else {
     itemsUsed = messageInfomation.items;
