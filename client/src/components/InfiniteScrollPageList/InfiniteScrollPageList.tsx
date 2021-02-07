@@ -1,24 +1,23 @@
-import {Alert, AlertProps, List, ListProps, Space} from 'antd';
+import {Alert, List, ListProps, Space} from 'antd';
 import InfiniteScroll, {Props as InfiniteScrollProps} from 'react-infinite-scroll-component';
-import {Rfc7807Alert, Rfc7807Props} from '../Rfc7807Alert/Rfc7807Alert';
 
 import React from 'react';
+import {Rfc7807Alert} from '../Rfc7807Alert/Rfc7807Alert';
 
 export interface InfiniteScrollPageListProps<T> {
-  noItemsFound?: AlertProps;
-  onLoadMoreError?: Rfc7807Props;
-  items?: T[];
-  infiniteScrollProps?: Omit<InfiniteScrollProps, 'dataLength' | 'next' | 'hasMore' | 'loader'>;
-  hasMadeAtLeastOneFetch?: boolean;
-  onLoadMoreErrorOccur?: boolean;
-  listProps?: Omit<ListProps<T>, 'loading' | 'dataSource'>;
-  paginationCurrent: number;
+  onLoadInformation?: OnLoadInformation<T>;
+  onLoadNextAsync: (info: OnLoadInformation<T>) => Promise<void>;
   paginationPageSize?: number;
-  paginationOnChange?: (page: number, pageSize?: number) => void;
-  nextPageToken?: string;
+  infiniteScroll?: Omit<InfiniteScrollProps, 'dataLength' | 'next' | 'hasMore' | 'loader'>;
+  list?: Omit<ListProps<T>, 'loading' | 'dataSource'>;
+  rfc7807Type?: string;
 };
 
-const PAGINATION_PAGE_SIZE_DEFAULT = 10;
+export interface OnLoadInformation<T> {
+  items?: T[];
+  nextPageToken?: string;
+  hasMadeAtLeastOneFetch?: boolean;
+}
 
 /**
  * An infinite scroll list of items which loads using pagination.
@@ -28,28 +27,61 @@ const PAGINATION_PAGE_SIZE_DEFAULT = 10;
  */
 export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>): JSX.Element {
   const {
-    noItemsFound,
-    onLoadMoreError,
-    infiniteScrollProps,
-    items,
-    hasMadeAtLeastOneFetch,
-    onLoadMoreErrorOccur,
-    listProps,
-    paginationCurrent,
-    paginationPageSize = PAGINATION_PAGE_SIZE_DEFAULT,
-    paginationOnChange,
-    nextPageToken,
+    onLoadInformation = {
+      items: [],
+      hasMadeAtLeastOneFetch: false,
+    },
+    onLoadNextAsync: onLoadNext,
+    paginationPageSize = 10,
+    rfc7807Type,
   } = props;
+
+  const {
+    items,
+    nextPageToken,
+    hasMadeAtLeastOneFetch,
+  } = onLoadInformation;
+
+  const [paginationCurrent, setPaginationCurrent] =
+    React.useState<number>(1);
+
+  const [errOccur, setErrOccur] =
+    React.useState<boolean>(false);
 
   const itemCount = items?.length || 0;
   const hasMore: boolean = Boolean(nextPageToken);
   const shouldLoadMore: boolean = itemCount < paginationCurrent * paginationPageSize;
   const potentialForMore: boolean = hasMore || !hasMadeAtLeastOneFetch;
 
-  function onNext(): void {
-    if (paginationOnChange) {
-      paginationOnChange(paginationCurrent + 1);
+  console.log('InfiniteScrollPageList', {
+    itemCount: itemCount,
+    hasMore: hasMore,
+    shouldLoadMore: shouldLoadMore,
+    potentialForMore: potentialForMore,
+    errOccur: errOccur,
+  });
+
+  /** an automatic trigger for onLoadMore event. */
+  React.useEffect(() => {
+    if (potentialForMore && shouldLoadMore && !errOccur) {
+      onLoadNext(onLoadInformation)
+          .catch((error) => setErrOccur(Boolean(error)));
     }
+  }, [potentialForMore, shouldLoadMore, errOccur]);
+
+  /**
+   * Called when the page number is changed, and it takes
+   * the resulting page number and page size as its arguments.
+   *
+   * @param {number} page
+   * @param {number} pageSize
+   */
+  function onChangePagination(page: number, pageSize?: number): void {
+    setPaginationCurrent(page);
+  }
+
+  function onClickRetry(): void {
+    setErrOccur(false);
   }
 
   return (
@@ -58,15 +90,15 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
       direction="vertical"
     >
       <InfiniteScroll
-        {...infiniteScrollProps}
+        {...props.infiniteScroll}
         dataLength={itemCount}
-        next={onNext}
+        next={() => onChangePagination(paginationCurrent + 1)}
         hasMore={potentialForMore}
         loader={null}
       >
         <List
-          {...listProps}
-          loading={potentialForMore && shouldLoadMore && !onLoadMoreErrorOccur}
+          {...props.list}
+          loading={potentialForMore && shouldLoadMore && !errOccur}
           dataSource={items}
         />
       </InfiniteScroll>
@@ -74,15 +106,16 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
 
       {(!itemCount && hasMadeAtLeastOneFetch) &&
         <Alert
+          type="warning"
           message="No resources were found."
-          {...noItemsFound}
         />
       }
 
-      {onLoadMoreErrorOccur &&
+      {errOccur &&
         <Rfc7807Alert
           title="The request to fetch additional resources was unsuccessful."
-          {...onLoadMoreError}
+          type={rfc7807Type}
+          onClickRetry={onClickRetry}
         />
       }
     </Space>

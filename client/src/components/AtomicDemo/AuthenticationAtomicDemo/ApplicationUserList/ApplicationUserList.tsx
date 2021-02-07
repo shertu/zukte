@@ -1,19 +1,9 @@
-import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
+import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
+import {InfiniteScrollPageList, OnLoadInformation} from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
 
-import { ApplicationUserListItem } from './ApplicationUserListItem/ApplicationUserListItem';
-import { InfiniteScrollPageList } from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
-import { ListProps } from 'antd';
+import {ApplicationUserListItem} from './ApplicationUserListItem/ApplicationUserListItem';
+import {ListProps} from 'antd';
 import React from 'react';
-import { Rfc7807Props } from '../../../Rfc7807Alert/Rfc7807Alert';
-
-/** The ongoing pagination response state information. */
-interface MessageInfomation {
-  items: ApplicationUser[];
-  nextPageToken?: string;
-  hasMadeAtLeastOneFetch: boolean;
-}
-
-const APPLICATION_USER_LIST_PAGE_SIZE: number = 30;
 
 /**
  * A list of the application users or accounts stored in the application.
@@ -24,101 +14,74 @@ const APPLICATION_USER_LIST_PAGE_SIZE: number = 30;
 export function ApplicationUserList(props: {
   mineApplicationUsers?: ApplicationUser[];
 }): JSX.Element {
-  const { mineApplicationUsers } = props;
+  const {mineApplicationUsers} = props;
 
   const client = new ApplicationUserServiceApi();
+  const paginationPageSize: number = 30;
 
-  window.scrollTo(window.scrollX, window.scrollY - 1);
+  const [infoState, setInfoState] =
+    React.useState<OnLoadInformation<ApplicationUser>>();
 
-  const [messageInfomation, setMessageInfomation] =
-    React.useState<MessageInfomation>({
-      items: [],
-      hasMadeAtLeastOneFetch: false,
-    });
-
-  const [paginationCurrent, setPaginationCurrent] =
-    React.useState<number>(1);
-
-  const [onLoadMoreError, setOnLoadMoreError] =
-    React.useState<boolean>(false);
-
-  const {
-    nextPageToken,
-    hasMadeAtLeastOneFetch,
-  } = messageInfomation;
+  let items = infoState?.items || [];
 
   // this should be set using state mutations but it works for now
-  let itemsUsed: ApplicationUser[] | undefined;
   if (mineApplicationUsers?.length) {
-    const filteredForMine: ApplicationUser[] = messageInfomation.items
-      .filter((a) => !mineApplicationUsers.find((b) => b.id === a.id));
-    itemsUsed = mineApplicationUsers.concat(filteredForMine);
-  } else {
-    itemsUsed = messageInfomation.items;
+    const filteredForMine: ApplicationUser[] = items
+        .filter((a) => !mineApplicationUsers.find((b) => b.id === a.id));
+    items = mineApplicationUsers.concat(filteredForMine);
   }
-
-  const itemCount = itemsUsed?.length || 0;
-  const hasMore: boolean = Boolean(nextPageToken);
-  const shouldLoadMore: boolean = itemCount < paginationCurrent * APPLICATION_USER_LIST_PAGE_SIZE;
-  const potentialForMore: boolean = hasMore || !hasMadeAtLeastOneFetch;
-
-  // console.log('ApplicationUserList', {
-  //   itemCount: itemCount,
-  //   hasMore: hasMore,
-  //   shouldLoadMore: shouldLoadMore,
-  //   potentialForMore: potentialForMore,
-  //   onLoadMoreError: onLoadMoreError,
-  // });
-
-  /** an automatic trigger for onLoadMore event. */
-  React.useEffect(() => {
-    if (potentialForMore && shouldLoadMore && !onLoadMoreError) {
-      onLoadMore();
-    }
-  }, [potentialForMore, shouldLoadMore, onLoadMoreError]);
 
   /** an event which will attempt to load additional items */
-  async function onLoadMore(): Promise<void> {
+  async function onLoadMore(info: OnLoadInformation<ApplicationUser>) {
     const request: ApplicationUserServiceGetListRequest = {
-      maxResults: APPLICATION_USER_LIST_PAGE_SIZE,
+      maxResults: paginationPageSize,
     };
 
-    if (nextPageToken) {
-      request.pageToken = nextPageToken;
+    if (info.nextPageToken) {
+      request.pageToken = info.nextPageToken;
     }
 
-    try {
-      const response: ApplicationUserListResponse =
-        await client.applicationUserServiceGetList(request);
+    const response: ApplicationUserListResponse =
+      await client.applicationUserServiceGetList(request);
 
-      const additionalItems: ApplicationUser[] = response.items || [];
+    const currItems: ApplicationUser[] = info.items || [];
+    const additionalItems: ApplicationUser[] = response.items || [];
 
-      const newMessageInfomation: MessageInfomation = {
-        items: messageInfomation.items.concat(additionalItems),
-        nextPageToken: response.nextPageToken,
-        hasMadeAtLeastOneFetch: true,
-      };
+    const newInfoState: OnLoadInformation<ApplicationUser> = {
+      items: currItems.concat(additionalItems),
+      nextPageToken: response.nextPageToken,
+      hasMadeAtLeastOneFetch: true,
+    };
 
-      setMessageInfomation(newMessageInfomation);
-    } catch (error) {
-      setOnLoadMoreError(Boolean(error));
-    }
+    setInfoState(newInfoState);
   }
 
-  /**
-   * Called when the page number is changed, and it takes
-   * the resulting page number and page size as its arguments.
-   *
-   * @param {number} page
-   * @param {number} pageSize
-   */
-  function onChangePagination(page: number, pageSize?: number): void {
-    setPaginationCurrent(page);
-  }
+  // /** an event which will attempt to load additional items */
+  // function onLoadMore(info: OnLoadInformation<ApplicationUser>): Promise<void> {
+  //   const request: ApplicationUserServiceGetListRequest = {
+  //     maxResults: paginationPageSize,
+  //   };
 
-  function onClickRetry(): void {
-    setOnLoadMoreError(false);
-  }
+  //   if (info.nextPageToken) {
+  //     request.pageToken = info.nextPageToken;
+  //   }
+
+  //   client.applicationUserServiceGetList(request)
+  //     .then((response: ApplicationUserListResponse) => {
+  //       const currItems: ApplicationUser[] = info.items || [];
+  //       const additionalItems: ApplicationUser[] = response.items || [];
+
+  //       const newInfoState: OnLoadInformation<ApplicationUser> = {
+  //         items: currItems.concat(additionalItems),
+  //         nextPageToken: response.nextPageToken,
+  //         hasMadeAtLeastOneFetch: true,
+  //       };
+
+  //       setInfoState(newInfoState);
+  //     });
+
+  //   return;
+  // }
 
   const listProps: ListProps<ApplicationUser> = {
     renderItem: (item: ApplicationUser, index: number) => <ApplicationUserListItem
@@ -126,22 +89,12 @@ export function ApplicationUserList(props: {
     itemLayout: 'vertical',
   };
 
-  const onLoadMoreErrorProps: Rfc7807Props = {
-    onClickRetry: onClickRetry,
-    // type: '/ApplicationUserList/applicationUserServiceGetList',
-  };
-
   return (
     <InfiniteScrollPageList
-      items={itemsUsed}
-      hasMadeAtLeastOneFetch={hasMadeAtLeastOneFetch}
-      onLoadMoreErrorOccur={onLoadMoreError}
-      onLoadMoreError={onLoadMoreErrorProps}
-      paginationCurrent={paginationCurrent}
-      paginationPageSize={APPLICATION_USER_LIST_PAGE_SIZE}
-      paginationOnChange={onChangePagination}
-      nextPageToken={nextPageToken}
-      listProps={listProps}
+      onLoadInformation={infoState}
+      onLoadNextAsync={onLoadMore}
+      paginationPageSize={paginationPageSize}
+      list={listProps}
     />
   );
 }
