@@ -1,19 +1,13 @@
-import { Alert, AlertProps, Button, List, ListProps, PaginationProps, Space, SpaceProps } from 'antd';
+import { Alert, AlertProps, List, ListProps, PaginationProps, Space, SpaceProps } from 'antd';
+import { FailedNetworkRequestAlert, FailedNetworkRequestAlertProps } from '../FailedNetworkRequestAlert/FailedNetworkRequestAlert';
 import InfiniteScroll, { Props as InfiniteScrollProps } from 'react-infinite-scroll-component';
 
 import React from 'react';
 
-/**
- * An infinite scroll list of items which loads using pagination.
- *
- * @param {object} props
- * @return {JSX.Element}
- */
-export function InfiniteScrollPageList<T>(props: {
+export interface InfiniteScrollPageListProps<T> {
   spaceProps?: Omit<SpaceProps, 'direction'>;
   noItemsFound?: AlertProps;
-  onLoadMoreError?: Omit<AlertProps, 'action' | 'type'>;
-  onClickRetry: React.MouseEventHandler<HTMLElement>;
+  onLoadMoreError?: Omit<FailedNetworkRequestAlertProps, 'errorClassification' | 'errorTitle'>;
   infiniteScrollProps?: Omit<InfiniteScrollProps, 'dataLength' | 'next' | 'hasMore' | 'loader'>;
   itemCount: number;
   hasMadeAtLeastOneFetch?: boolean;
@@ -21,16 +15,21 @@ export function InfiniteScrollPageList<T>(props: {
   listProps?: Omit<ListProps<T>, 'loading'>;
   paginationProps?: PaginationProps;
   nextPageToken?: string;
-}): JSX.Element {
+};
+
+/**
+ * An infinite scroll list of items which loads using pagination.
+ *
+ * @param {InfiniteScrollPageListProps<T>} props
+ * @return {JSX.Element}
+ */
+export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>): JSX.Element {
   const {
     spaceProps,
     noItemsFound = {
-      message: 'No items were found',
+      message: 'No items were found.',
     },
-    onLoadMoreError = {
-      message: 'The request for additional data was not successful',
-    },
-    onClickRetry,
+    onLoadMoreError,
     infiniteScrollProps,
     itemCount,
     hasMadeAtLeastOneFetch,
@@ -67,7 +66,7 @@ export function InfiniteScrollPageList<T>(props: {
       >
         <List
           {...listProps}
-          loading={potentialForMore && shouldLoadMore && !onLoadMoreError}
+          loading={potentialForMore && shouldLoadMore && !onLoadMoreErrorOccur}
         />
       </InfiniteScroll>
 
@@ -79,14 +78,21 @@ export function InfiniteScrollPageList<T>(props: {
       }
 
       {onLoadMoreErrorOccur &&
-        <Alert
+        <FailedNetworkRequestAlert
           {...onLoadMoreError}
-          type="error"
-          action={
-            <Button size="small" danger onClick={onClickRetry}>retry</Button>
-          }
+          errorClassification="/error/failed-network-request"
+          errorTitle="The request for additional data was unsuccessful."
         />
       }
     </Space>
   );
 }
+
+// ...onLoadMoreError
+
+/* <Alert
+  type="error"
+  action={
+    <Button size="small" danger onClick={onClickRetry}>retry</Button>
+  }
+/> */
