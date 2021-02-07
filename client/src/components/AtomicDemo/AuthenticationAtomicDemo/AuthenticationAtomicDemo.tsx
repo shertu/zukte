@@ -1,10 +1,9 @@
 import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
-import {Space, Typography} from 'antd';
+import {Space, Typography, message} from 'antd';
 
 import {AppPage} from '../../AppPage/AppPage';
 import {ApplicationUserList} from './ApplicationUserList/ApplicationUserList';
 import {GoogleSignInButton} from './GoogleSignInButton/GoogleSignInButton';
-import MineApplicationUserContext from './MineApplicationUserContext/MineApplicationUserContext';
 import React from 'react';
 import {SignOutButton} from './SignOutButton/SignOutButton';
 
@@ -21,14 +20,9 @@ export function AuthenticationAtomicDemo(): JSX.Element {
   const [mineApplicationUsers, setMineApplicationUsers] =
     React.useState<ApplicationUser[]>([]);
 
-  const [onLoadMineApplicationUserError, setOnLoadMineApplicationUserError] =
-    React.useState<boolean>(false);
-
   React.useEffect(() => {
-    if (!onLoadMineApplicationUserError) {
-      onLoadMineApplicationUser();
-    }
-  }, [onLoadMineApplicationUserError]);
+    onLoadMineApplicationUser();
+  }, []);
 
   async function onLoadMineApplicationUser(): Promise<void> {
     const request: ApplicationUserServiceGetListRequest = {
@@ -42,36 +36,37 @@ export function AuthenticationAtomicDemo(): JSX.Element {
 
       setMineApplicationUsers(res.items || []);
     } catch (error) {
-      setOnLoadMineApplicationUserError(Boolean(error));
+      if (error.status === 401) {
+      } else {
+        message.error('an unexpected error occurred while fetching your account information');
+      }
     }
   }
 
-  const isSignedIn: boolean = Boolean(mineApplicationUsers.length);
+  const isSignedIn: boolean = Boolean(mineApplicationUsers?.length);
 
   return (
-    <MineApplicationUserContext.Provider value={mineApplicationUsers}>
-      <AppPage pageTitle="Authentication Demo">
-        <Typography>
-          <Paragraph>
-            To use this demo service please sign in to Google and authorize this
-            application to access your Google profile. The application will
-            automatically create an account from the information in your Google
-            profile. You can delete this account at anytime; this will not
-            affect your Google profile.
-          </Paragraph>
-        </Typography>
+    <AppPage pageTitle="Authentication Demo">
+      <Typography>
+        <Paragraph>
+          To use this demo service please sign in to Google and authorize this
+          application to access your Google profile. The application will
+          automatically create an account from the information in your Google
+          profile. You can delete this account at anytime; this will not
+          affect your Google profile.
+        </Paragraph>
+      </Typography>
 
-        <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
-          {isSignedIn && <SignOutButton />}
-          {!isSignedIn && <GoogleSignInButton />}
-        </Space>
+      <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
+        {isSignedIn && <SignOutButton />}
+        {!isSignedIn && <GoogleSignInButton />}
+      </Space>
 
-        <AppPage pageTitle="Accounts">
-          <ApplicationUserList
-            mineApplicationUsers={mineApplicationUsers}
-          />
-        </AppPage>
+      <AppPage pageTitle="Accounts">
+        <ApplicationUserList
+          mineApplicationUsers={mineApplicationUsers}
+        />
       </AppPage>
-    </MineApplicationUserContext.Provider>
+    </AppPage>
   );
 }

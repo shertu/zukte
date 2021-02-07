@@ -48,7 +48,7 @@ export function ApplicationUserListItem(props: {
         icon={<UserDeleteOutlined />}
         onClick={() => onDeleteApplicationUser(id)}
       >
-        remove account from {window.location.hostname}
+        remove account
       </Button>
     );
   }
@@ -65,12 +65,9 @@ export function ApplicationUserListItem(props: {
           <Text style={{fontFamily: 'monospace'}}>{id}</Text>
         }
       />
-
       {errorOccurred &&
         <Rfc7807Alert
-          type="/error/failed-network-request"
           title="The request to delete your account was unsuccessful."
-          detail="ApplicationUserListItem"
         />
       }
     </List.Item>

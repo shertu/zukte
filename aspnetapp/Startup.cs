@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -130,16 +131,16 @@ namespace Zukte {
 				_ = SeedDatabaseMiddleware.InvokeAsync(dbContext);
 			}
 
-			// // #region UseRewriter
-			// // RewriteOptions rewriteOptions = new RewriteOptions()
-			// //   //   .AddRewrite("privacy-policy", "index.html", true)
-			// //   //   .AddRewrite("authentication-demo", SPA_ENTRY_FILENAME, true)
-			// //   //   .AddRewrite("image-share-demo", SPA_ENTRY_FILENAME, true)
-			// //   //   .AddRewrite("map-demo", SPA_ENTRY_FILENAME, true)
-			// //   ;
+			#region UseRewriter
+			RewriteOptions rewriteOptions = new RewriteOptions()
+				//   .AddRewrite("privacy-policy", "index.html", true)
+				.AddRewrite("authentication-demo", "/", true)
+			  //   .AddRewrite("image-share-demo", SPA_ENTRY_FILENAME, true)
+			  //   .AddRewrite("map-demo", SPA_ENTRY_FILENAME, true)
+			  ;
 
-			// // app.UseRewriter(rewriteOptions);
-			// // #endregion
+			app.UseRewriter(rewriteOptions);
+			#endregion
 
 			app.UseDefaultFiles();
 

@@ -1,4 +1,4 @@
-import { AccountGoogleOpenIdConnectChallengeRequest, BASE_PATH } from '../../../../openapi-generator';
+import {AccountGoogleOpenIdConnectChallengeRequest, BASE_PATH} from '../../../../openapi-generator';
 
 import GoogleButton from 'react-google-button';
 import React from 'react';
@@ -12,7 +12,7 @@ import React from 'react';
 export function GoogleSignInButton(props: {
   redirect?: string;
 }): JSX.Element {
-  const { redirect } = props;
+  const {redirect} = props;
   // const ACCOUNT_API: AccountApi = new AccountApi();
 
   /** The click event for this button. */
