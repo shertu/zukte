@@ -11,7 +11,7 @@ import React from 'react';
  * @return {JSX.Element}
  */
 export function VantaNetContainer(
-  props: React.DetailedHTMLProps<
+    props: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   >,
@@ -23,12 +23,12 @@ export function VantaNetContainer(
   React.useEffect(() => {
     if (!vantaEffect) {
       setVantaEffect(
-        NET({
-          el: vantaRef.current,
-          THREE: ThreeJs, // use a custom THREE when initializing
-          color: 0xd8412f,
-          backgroundColor: 0xfcfdfe,
-        }),
+          NET({
+            el: vantaRef.current,
+            THREE: ThreeJs, // use a custom THREE when initializing
+            color: 0xd8412f,
+            backgroundColor: 0xfcfdfe,
+          }),
       );
     }
 

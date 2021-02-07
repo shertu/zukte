@@ -1,10 +1,10 @@
-import { ApplicationUser, ApplicationUserServiceApi } from '../../../../../openapi-generator';
-import { Avatar, Button, List, Typography } from 'antd';
+import {ApplicationUser, ApplicationUserServiceApi} from '../../../../../openapi-generator';
+import {Avatar, Button, List, Typography} from 'antd';
 
 import React from 'react';
-import { UserDeleteOutlined } from '@ant-design/icons';
+import {UserDeleteOutlined} from '@ant-design/icons';
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 /**
  * A list of the application users or accounts stored in the application.
@@ -14,8 +14,9 @@ const { Text } = Typography;
  */
 export function ApplicationUserListItem(props: {
   user: ApplicationUser;
+  mineApplicationUsers?: ApplicationUser[];
 }): JSX.Element {
-  const { id, name, picture } = props.user;
+  const {id, name, picture} = props.user;
 
   const client = new ApplicationUserServiceApi();
 
@@ -30,7 +31,7 @@ export function ApplicationUserListItem(props: {
     };
 
     client.applicationUserServiceDelete(request)
-      .catch((error) => message.error('operation failed'));
+        .catch((error) => message.error('operation failed'));
   }
 
   const isMineApplicationUser: boolean = false;
@@ -58,7 +59,7 @@ export function ApplicationUserListItem(props: {
         avatar={<Avatar src={picture} />}
         title={name}
         description={
-          <Text style={{ fontFamily: 'monospace' }}>{id}</Text>
+          <Text style={{fontFamily: 'monospace'}}>{id}</Text>
         }
       />
 

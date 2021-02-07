@@ -1,4 +1,4 @@
-import { Alert, Button, Descriptions, Space } from 'antd';
+import {Alert, Button, Descriptions, Space} from 'antd';
 
 import React from 'react';
 
@@ -19,7 +19,7 @@ export interface FailedNetworkRequestAlertProps {
  * @return {JSX.Element}
  */
 export function FailedNetworkRequestAlert(props: FailedNetworkRequestAlertProps): JSX.Element {
-  const { errorClassification, errorTitle, errorHttpStatus, errorDetail, errorInstance, onClickRetry } = props;
+  const {errorClassification, errorTitle, errorHttpStatus, errorDetail, errorInstance, onClickRetry} = props;
 
   const [showDetails, setShowDetails] =
     React.useState<boolean>(false);
@@ -42,7 +42,7 @@ export function FailedNetworkRequestAlert(props: FailedNetworkRequestAlertProps)
         showDetails &&
         <Descriptions title="Error Information">
           <Descriptions.Item label="Classification">{errorClassification}</Descriptions.Item>
-          <Descriptions.Item label="Detail" span={3}>{errorDetail}</Descriptions.Item>
+          <Descriptions.Item label="Detail" span={2}>{errorDetail}</Descriptions.Item>
           <Descriptions.Item label="Trace">{errorInstance}</Descriptions.Item>
           <Descriptions.Item label="HTTP Status Code">{errorHttpStatus}</Descriptions.Item>
         </Descriptions>

@@ -1,6 +1,6 @@
-import { Alert, AlertProps, List, ListProps, PaginationProps, Space, SpaceProps } from 'antd';
-import { FailedNetworkRequestAlert, FailedNetworkRequestAlertProps } from '../FailedNetworkRequestAlert/FailedNetworkRequestAlert';
-import InfiniteScroll, { Props as InfiniteScrollProps } from 'react-infinite-scroll-component';
+import {Alert, AlertProps, List, ListProps, PaginationProps, Space, SpaceProps} from 'antd';
+import {FailedNetworkRequestAlert, FailedNetworkRequestAlertProps} from '../FailedNetworkRequestAlert/FailedNetworkRequestAlert';
+import InfiniteScroll, {Props as InfiniteScrollProps} from 'react-infinite-scroll-component';
 
 import React from 'react';
 

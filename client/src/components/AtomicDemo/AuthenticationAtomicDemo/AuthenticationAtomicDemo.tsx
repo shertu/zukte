@@ -1,14 +1,14 @@
-import { Alert, Button, Typography, message } from 'antd';
-import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../openapi-generator';
+import {Alert, Button, Typography, message} from 'antd';
+import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
 
-import { AppPage } from '../../AppPage/AppPage';
-import { ApplicationUserList } from './ApplicationUserList/ApplicationUserList';
-import { GoogleSignInButton } from './GoogleSignInButton/GoogleSignInButton';
+import {AppPage} from '../../AppPage/AppPage';
+import {ApplicationUserList} from './ApplicationUserList/ApplicationUserList';
+import {GoogleSignInButton} from './GoogleSignInButton/GoogleSignInButton';
 import MineApplicationUserContext from './MineApplicationUserContext/MineApplicationUserContext';
 import React from 'react';
-import { SignOutButton } from './SignOutButton/SignOutButton';
+import {SignOutButton} from './SignOutButton/SignOutButton';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
 /**
  * A demonstration where the user can sign in to the application.
@@ -22,7 +22,7 @@ export function AuthenticationAtomicDemo(): JSX.Element {
     React.useState<ApplicationUser[]>([]);
 
   const [onLoadMineApplicationUserError, setOnLoadMineApplicationUserError] =
-    React.useState<boolean>(false)
+    React.useState<boolean>(false);
 
   React.useEffect(() => {
     if (!onLoadMineApplicationUserError) {

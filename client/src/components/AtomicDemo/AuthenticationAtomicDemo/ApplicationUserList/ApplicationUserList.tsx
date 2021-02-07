@@ -1,8 +1,8 @@
-import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
-import { ListProps, PaginationProps, SpaceProps } from 'antd';
+import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
+import {ListProps, PaginationProps, SpaceProps} from 'antd';
 
-import { ApplicationUserListItem } from './ApplicationUserListItem/ApplicationUserListItem';
-import { InfiniteScrollPageList } from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
+import {ApplicationUserListItem} from './ApplicationUserListItem/ApplicationUserListItem';
+import {InfiniteScrollPageList} from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
 import React from 'react';
 
 /** The ongoing pagination response state information. */
@@ -18,7 +18,9 @@ interface MessageInfomation {
  * @param {object} props
  * @return {JSX.Element}
  */
-export function ApplicationUserList(): JSX.Element {
+export function ApplicationUserList(props: {
+  mineApplicationUsers?: ApplicationUser[];
+}): JSX.Element {
   const client = new ApplicationUserServiceApi();
 
   const [messageInfomation, setMessageInfomation] =
@@ -77,13 +79,13 @@ export function ApplicationUserList(): JSX.Element {
     }
 
     try {
-      const res: ApplicationUserListResponse =
+      const response: ApplicationUserListResponse =
         await client.applicationUserServiceGetList(request);
 
       const {
         items: additionalItems = [],
         nextPageToken: responseNextPageToken,
-      } = res;
+      } = response;
 
       const newMessageInfomation: MessageInfomation = {
         items: items.concat(additionalItems),
@@ -118,19 +120,13 @@ export function ApplicationUserList(): JSX.Element {
     setOnLoadMoreError(false);
   }
 
-  function renderApplicationUserItem(item: ApplicationUser, index: number): React.ReactNode {
-    return (
-      <ApplicationUserListItem user={item} />
-    );
-  }
-
   const spaceProps: SpaceProps = {
     className: 'max-cell',
   };
 
   const listProps: ListProps<ApplicationUser> = {
     dataSource: items,
-    renderItem: renderApplicationUserItem,
+    renderItem: (item: ApplicationUser, index: number) => <ApplicationUserListItem user={item} />,
   };
 
   return (
@@ -139,7 +135,7 @@ export function ApplicationUserList(): JSX.Element {
       itemCount={items.length}
       hasMadeAtLeastOneFetch={hasMadeAtLeastOneFetch}
       onLoadMoreErrorOccur={onLoadMoreError}
-      onLoadMoreError={{ onClickRetry: onClickRetryLoadMore }}
+      onLoadMoreError={{onClickRetry: onClickRetryLoadMore, errorDetail: 'ApplicationUserList'}}
       paginationProps={paginationInfomation}
       nextPageToken={nextPageToken}
       listProps={listProps}

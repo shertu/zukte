@@ -23,6 +23,7 @@ module.exports = {
       ignorePattern: "import .*",
     }],
     "sort-imports": ["error"],
+    "@typescript-eslint/member-delimiter-style": ["error"],
   },
   settings: {
     react: {

@@ -1,4 +1,4 @@
-import { ApplicationUser } from '../../../../openapi-generator';
+import {ApplicationUser} from '../../../../openapi-generator';
 import React from 'react';
 
 // interface MineApplicationUserContext {
