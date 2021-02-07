@@ -15,22 +15,15 @@ newstart_client:
 	cd client && npm run openapi
 	cd client && npm run start
 
-# # Generate messages and services
-# codegen:
-# 	./protobuf.sh
-# 	make start_server
-# 	# cd client && npm run openapi
+start_server:
+	docker-compose up -d
+	cd aspnetapp && dotnet run
 
-# start_server:
-# 	docker-compose up -d
-# 	cd aspnetapp && dotnet run
+start_client:
+	cd client && npm run start
 
-# start_client:
-# 	cd client && npm run start
-
-# Build the client for production
-# build:
-# 	cd client && npm run build
+build_client:
+	cd client && npm run build
 
 # Execute code linters to fix code style
 # lint_server:

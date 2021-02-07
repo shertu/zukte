@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 using Zukte.Authorization.Handlers;
 using Zukte.Database;
 using Zukte.Middleware;
-using Zukte.Utilities;
+using Zukte.Utilities.Account;
 
 namespace Zukte {
 	public class Startup {
@@ -52,21 +52,21 @@ namespace Zukte {
 			}
 			#endregion
 
+			services.AddScoped<IAccountCreationService, AccountCreationService>();
+			var _accountCreationService = services.BuildServiceProvider().GetService<IAccountCreationService>();
 
-			System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", "before AccountCreator instance");
+			// #region AccountCreator instance
+			// AccountCreation? accountCreator = null;
+			// services.AddSingleton<AccountCreation>(serviceProvider => {
+			// 	System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", "during AccountCreator instance");
 
-			#region AccountCreator instance
-			AccountCreator? accountCreator = null;
-			services.AddSingleton<AccountCreator>(serviceProvider => {
-				System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", "during AccountCreator instance");
+			// 	var databaseService = serviceProvider.GetService<ApplicationDbContext>() ??
+			// 		throw new System.ArgumentNullException(nameof(ApplicationDbContext));
 
-				var databaseService = serviceProvider.GetService<ApplicationDbContext>() ??
-					throw new System.ArgumentNullException(nameof(ApplicationDbContext));
-
-				accountCreator = new AccountCreator(databaseService);
-				return accountCreator;
-			});
-			#endregion
+			// 	accountCreator = new AccountCreation(databaseService);
+			// 	return accountCreator;
+			// });
+			// #endregion
 
 			//System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", accountCreator?.ToString());
 
@@ -88,7 +88,7 @@ namespace Zukte {
 					options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				}).AddCookie(options => {
 					options.Events = new Authentication.CustomCookieAuthenticationEvents {
-						accountService = accountCreator,
+						accountCreationService = _accountCreationService,
 					};
 
 					options.LoginPath = "/api/Account/Login";

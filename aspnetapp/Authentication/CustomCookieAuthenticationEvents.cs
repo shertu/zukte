@@ -3,12 +3,13 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
 using System.Threading.Tasks;
 using Zukte.Utilities;
+using Zukte.Utilities.Account;
 
 namespace Zukte.Authentication {
 	// Same as base class with some additional generalizations
 	// https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.Cookies/Events/CookieAuthenticationEvents.cs
 	public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents {
-		public Utilities.AccountCreator? accountService;
+		public IAccountCreationService? accountCreationService = null;
 
 		public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context) {
 			context.Response.Headers["Location"] = context.RedirectUri;
@@ -38,10 +39,10 @@ namespace Zukte.Authentication {
 		/// </summary>
 		public override Task SignedIn(CookieSignedInContext context) {
 			// create an account in the system if possible
-			if (accountService != null) {
+			if (accountCreationService != null) {
 				var principal = context.Principal ?? throw new ArgumentNullException();
 				var applicationUser = principal.CreateApplicationUser();
-				var createAccountTask = accountService.PostApplicationUser(applicationUser);
+				var createAccountTask = accountCreationService.PostApplicationUser(applicationUser);
 
 				// https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
 				try {
@@ -50,7 +51,7 @@ namespace Zukte.Authentication {
 					// Call the Handle method to handle the custom exception,
 					// otherwise rethrow the exception.
 					ae.Handle(ex => {
-						if (ex is AccountCreator.PostApplicationUserConflictException) {
+						if (ex is PostApplicationUserConflictException) {
 							Console.WriteLine(ex.Message);
 							return true;
 						}
