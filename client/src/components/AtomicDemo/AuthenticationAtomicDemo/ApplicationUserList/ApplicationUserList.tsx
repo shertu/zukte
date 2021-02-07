@@ -1,8 +1,8 @@
-import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
-import {InfiniteScrollPageList, OnLoadInformation} from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
+import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
+import { InfiniteScrollPageList, OnLoadInformation } from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
 
-import {ApplicationUserListItem} from './ApplicationUserListItem/ApplicationUserListItem';
-import {ListProps} from 'antd';
+import { ApplicationUserListItem } from './ApplicationUserListItem/ApplicationUserListItem';
+import { ListProps } from 'antd';
 import React from 'react';
 
 /**
@@ -14,7 +14,7 @@ import React from 'react';
 export function ApplicationUserList(props: {
   mineApplicationUsers?: ApplicationUser[];
 }): JSX.Element {
-  const {mineApplicationUsers} = props;
+  const { mineApplicationUsers } = props;
 
   const client = new ApplicationUserServiceApi();
   const paginationPageSize: number = 30;
@@ -27,7 +27,7 @@ export function ApplicationUserList(props: {
   // this should be set using state mutations but it works for now
   if (mineApplicationUsers?.length) {
     const filteredForMine: ApplicationUser[] = items
-        .filter((a) => !mineApplicationUsers.find((b) => b.id === a.id));
+      .filter((a) => !mineApplicationUsers.find((b) => b.id === a.id));
     items = mineApplicationUsers.concat(filteredForMine);
   }
 
@@ -55,33 +55,6 @@ export function ApplicationUserList(props: {
 
     setInfoState(newInfoState);
   }
-
-  // /** an event which will attempt to load additional items */
-  // function onLoadMore(info: OnLoadInformation<ApplicationUser>): Promise<void> {
-  //   const request: ApplicationUserServiceGetListRequest = {
-  //     maxResults: paginationPageSize,
-  //   };
-
-  //   if (info.nextPageToken) {
-  //     request.pageToken = info.nextPageToken;
-  //   }
-
-  //   client.applicationUserServiceGetList(request)
-  //     .then((response: ApplicationUserListResponse) => {
-  //       const currItems: ApplicationUser[] = info.items || [];
-  //       const additionalItems: ApplicationUser[] = response.items || [];
-
-  //       const newInfoState: OnLoadInformation<ApplicationUser> = {
-  //         items: currItems.concat(additionalItems),
-  //         nextPageToken: response.nextPageToken,
-  //         hasMadeAtLeastOneFetch: true,
-  //       };
-
-  //       setInfoState(newInfoState);
-  //     });
-
-  //   return;
-  // }
 
   const listProps: ListProps<ApplicationUser> = {
     renderItem: (item: ApplicationUser, index: number) => <ApplicationUserListItem
