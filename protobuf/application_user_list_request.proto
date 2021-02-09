@@ -20,6 +20,5 @@ message ApplicationUserListRequest {
   message ApplicationUserListResponse {
     repeated ApplicationUser items = 1;
     string next_page_token = 2;
-    string prev_page_token = 3;
   }
 }

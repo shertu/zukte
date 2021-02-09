@@ -9,7 +9,11 @@ namespace Zukte.Authentication {
 	// Same as base class with some additional generalizations
 	// https://github.com/aspnet/Security/blob/master/src/Microsoft.AspNetCore.Authentication.Cookies/Events/CookieAuthenticationEvents.cs
 	public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents {
-		public IAccountCreationService? accountCreationService = null;
+		public IAccountCreationService accountCreationService;
+
+		public CustomCookieAuthenticationEvents(IAccountCreationService accountCreationService) {
+			this.accountCreationService = accountCreationService;
+		}
 
 		public override Task RedirectToAccessDenied(RedirectContext<CookieAuthenticationOptions> context) {
 			context.Response.Headers["Location"] = context.RedirectUri;

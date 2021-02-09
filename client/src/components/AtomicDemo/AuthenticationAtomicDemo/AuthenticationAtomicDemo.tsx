@@ -18,13 +18,20 @@ export function AuthenticationAtomicDemo(): JSX.Element {
   const client = new ApplicationUserServiceApi();
 
   const [mineApplicationUsers, setMineApplicationUsers] =
-    React.useState<ApplicationUser[]>([]);
+    React.useState<ApplicationUser[] | undefined>();
+
+  const [authErrOccur, setAuthErrOccur] =
+    React.useState<boolean>(false);
+
+  console.log('AuthenticationAtomicDemo', {
+    mineApplicationUsers: mineApplicationUsers,
+  });
 
   React.useEffect(() => {
-    onLoadMineApplicationUser();
+    onLoadMineApplicationUsers();
   }, []);
 
-  async function onLoadMineApplicationUser(): Promise<void> {
+  async function onLoadMineApplicationUsers(): Promise<void> {
     const request: ApplicationUserServiceGetListRequest = {
       mine: true,
       maxResults: 1, // can the user have more than one account?
@@ -36,14 +43,15 @@ export function AuthenticationAtomicDemo(): JSX.Element {
 
       setMineApplicationUsers(res.items || []);
     } catch (error) {
-      if (error.status === 401) {
+      if (error?.status === 401) {
+        setAuthErrOccur(true);
       } else {
-        message.error('an unexpected error occurred while fetching your account information');
+        throw error;
       }
     }
   }
 
-  const isSignedIn: boolean = Boolean(mineApplicationUsers?.length);
+  const isSignedIn: boolean = !authErrOccur && Boolean(mineApplicationUsers);
 
   return (
     <AppPage pageTitle="Authentication Demo">

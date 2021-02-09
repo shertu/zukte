@@ -4,13 +4,16 @@ using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Zukte.Authentication;
 using Zukte.Authorization.Handlers;
 using Zukte.Database;
 using Zukte.Middleware;
@@ -53,24 +56,6 @@ namespace Zukte {
 			}
 			#endregion
 
-			services.AddScoped<IAccountCreationService, AccountCreationService>();
-			var _accountCreationService = services.BuildServiceProvider().GetService<IAccountCreationService>();
-
-			// #region AccountCreator instance
-			// AccountCreation? accountCreator = null;
-			// services.AddSingleton<AccountCreation>(serviceProvider => {
-			// 	System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", "during AccountCreator instance");
-
-			// 	var databaseService = serviceProvider.GetService<ApplicationDbContext>() ??
-			// 		throw new System.ArgumentNullException(nameof(ApplicationDbContext));
-
-			// 	accountCreator = new AccountCreation(databaseService);
-			// 	return accountCreator;
-			// });
-			// #endregion
-
-			//System.IO.File.WriteAllText(@"/Users/jaredblackman/dev/src/github.com/shertu/zukte/log.txt", accountCreator?.ToString());
-
 			#region Authentication
 			// This configures Google.Apis.Auth.AspNetCore3 for use in this app.
 			services
@@ -81,17 +66,14 @@ namespace Zukte {
 
 					// This forces forbid results to be handled by Google OpenID Handler, which checks if
 					// extra scopes are required and does automatic incremental auth.
-					options.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
+					// options.DefaultForbidScheme = GoogleOpenIdConnectDefaults.AuthenticationScheme;
 
 					// Default scheme that will handle everything else.
 					// Once a user is authenticated, the OAuth2 token info is stored in cookies.
 					// After a user is signed in, auto create an account
 					options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				}).AddCookie(options => {
-					options.Events = new Authentication.CustomCookieAuthenticationEvents {
-						accountCreationService = _accountCreationService,
-					};
-
+					options.EventsType = typeof(CustomCookieAuthenticationEvents);
 					options.LoginPath = "/api/Account/Login";
 					options.LogoutPath = "/api/Account/Logout";
 				}).AddGoogleOpenIdConnect(options => {
@@ -99,6 +81,9 @@ namespace Zukte {
 					options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
 				});
 			#endregion
+
+			services.AddScoped<IAccountCreationService, AccountCreationService>();
+			services.AddScoped<CustomCookieAuthenticationEvents>();
 
 			#region Authorization
 			services.AddAuthorization();
@@ -155,13 +140,12 @@ namespace Zukte {
 
 			app.UseRouting();
 
-			// #region cookie policy
-			// app.UseCookiePolicy(new CookiePolicyOptions {
-			// 	Secure = CookieSecurePolicy.SameAsRequest,
-			// 	HttpOnly = HttpOnlyPolicy.Always,
-			// 	MinimumSameSitePolicy = SameSiteMode.None,
-			// });
-			// #endregion
+			#region cookie policy
+			app.UseCookiePolicy(new CookiePolicyOptions {
+				HttpOnly = HttpOnlyPolicy.Always,
+				MinimumSameSitePolicy = SameSiteMode.None,
+			});
+			#endregion
 
 			if (env.IsDevelopment()) {
 				app.UseCors(CORS_POLICY_NAME_DEVLOPMENT);

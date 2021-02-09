@@ -98,13 +98,7 @@ namespace Zukte.Service {
 			res.Items.AddRange(items);
 
 			#region generate seek pagination tokens
-			ApplicationUser? prevPageToken = null; // only support generate next page token
 			ApplicationUser? nextPageToken = GeneratePageToken(query, items, false);
-
-			if (prevPageToken != null) {
-				res.PrevPageToken = EncryptPageToken(prevPageToken) ?? string.Empty;
-			}
-
 			if (nextPageToken != null) {
 				res.NextPageToken = EncryptPageToken(nextPageToken) ?? string.Empty;
 			}

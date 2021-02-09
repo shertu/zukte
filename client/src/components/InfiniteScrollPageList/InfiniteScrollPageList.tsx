@@ -58,6 +58,7 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
     hasMore: hasMore,
     shouldLoadMore: shouldLoadMore,
     potentialForMore: potentialForMore,
+    paginationCurrent: paginationCurrent,
     errOccur: errOccur,
   });
 
@@ -65,7 +66,7 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
   React.useEffect(() => {
     if (potentialForMore && shouldLoadMore && !errOccur) {
       onLoadNext(onLoadInformation)
-          .catch((error) => setErrOccur(Boolean(error)));
+          .catch(() => setErrOccur(true));
     }
   }, [potentialForMore, shouldLoadMore, errOccur]);
 
@@ -84,6 +85,14 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
     setErrOccur(false);
   }
 
+  function onNext(): void {
+    if (hasMadeAtLeastOneFetch) {
+      onChangePagination(paginationCurrent + 1);
+    } else {
+      onChangePagination(1);
+    }
+  }
+
   return (
     <Space
       className="max-cell"
@@ -92,7 +101,7 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
       <InfiniteScroll
         {...props.infiniteScroll}
         dataLength={itemCount}
-        next={() => onChangePagination(paginationCurrent + 1)}
+        next={onNext}
         hasMore={potentialForMore}
         loader={null}
       >
@@ -107,7 +116,7 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
       {(!itemCount && hasMadeAtLeastOneFetch) &&
         <Alert
           type="warning"
-          message="No resources were found."
+          message="The system found zero resources."
         />
       }
 
@@ -121,12 +130,3 @@ export function InfiniteScrollPageList<T>(props: InfiniteScrollPageListProps<T>)
     </Space>
   );
 }
-
-// ...onLoadMoreError
-
-/* <Alert
-  type="error"
-  action={
-    <Button size="small" danger onClick={onClickRetry}>retry</Button>
-  }
-/> */

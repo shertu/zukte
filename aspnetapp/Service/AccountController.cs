@@ -35,7 +35,7 @@ namespace Zukte.Service {
 		/// <summary>
 		/// Creates an action result that on execution will sign out the user.
 		/// </summary>
-		[HttpGet("Logout")]
+		[HttpDelete("Logout")]
 		public IActionResult HttpContextSignOut([FromQuery] string? ReturnUrl) {
 			ReturnUrl ??= RETURN_URL_DEFAULT;
 

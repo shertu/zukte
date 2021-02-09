@@ -1,8 +1,8 @@
-import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
-import { InfiniteScrollPageList, OnLoadInformation } from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
+import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
+import {InfiniteScrollPageList, OnLoadInformation} from '../../../InfiniteScrollPageList/InfiniteScrollPageList';
 
-import { ApplicationUserListItem } from './ApplicationUserListItem/ApplicationUserListItem';
-import { ListProps } from 'antd';
+import {ApplicationUserListItem} from './ApplicationUserListItem/ApplicationUserListItem';
+import {ListProps} from 'antd';
 import React from 'react';
 
 /**
@@ -14,7 +14,7 @@ import React from 'react';
 export function ApplicationUserList(props: {
   mineApplicationUsers?: ApplicationUser[];
 }): JSX.Element {
-  const { mineApplicationUsers } = props;
+  const {mineApplicationUsers} = props;
 
   const client = new ApplicationUserServiceApi();
   const paginationPageSize: number = 30;
@@ -22,14 +22,9 @@ export function ApplicationUserList(props: {
   const [infoState, setInfoState] =
     React.useState<OnLoadInformation<ApplicationUser>>();
 
-  let items = infoState?.items || [];
-
-  // this should be set using state mutations but it works for now
-  if (mineApplicationUsers?.length) {
-    const filteredForMine: ApplicationUser[] = items
-      .filter((a) => !mineApplicationUsers.find((b) => b.id === a.id));
-    items = mineApplicationUsers.concat(filteredForMine);
-  }
+  console.log('ApplicationUserList', {
+    infoState: infoState,
+  });
 
   /** an event which will attempt to load additional items */
   async function onLoadMore(info: OnLoadInformation<ApplicationUser>) {
@@ -56,6 +51,18 @@ export function ApplicationUserList(props: {
     setInfoState(newInfoState);
   }
 
+  const USED_INFO_STATE: OnLoadInformation<ApplicationUser> = {
+    ...infoState,
+  };
+
+  // this should be set using state mutations but it works for now
+  if (mineApplicationUsers?.length) {
+    const items: ApplicationUser[] = infoState?.items || [];
+    const filteredForMine: ApplicationUser[] = items
+        .filter((a) => !mineApplicationUsers.find((b) => b.id === a.id));
+    USED_INFO_STATE.items = mineApplicationUsers.concat(filteredForMine);
+  }
+
   const listProps: ListProps<ApplicationUser> = {
     renderItem: (item: ApplicationUser, index: number) => <ApplicationUserListItem
       user={item} mineApplicationUsers={mineApplicationUsers} />,
@@ -64,7 +71,7 @@ export function ApplicationUserList(props: {
 
   return (
     <InfiniteScrollPageList
-      onLoadInformation={infoState}
+      onLoadInformation={USED_INFO_STATE}
       onLoadNextAsync={onLoadMore}
       paginationPageSize={paginationPageSize}
       list={listProps}

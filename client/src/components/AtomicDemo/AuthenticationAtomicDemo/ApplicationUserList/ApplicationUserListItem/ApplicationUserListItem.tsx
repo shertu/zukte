@@ -21,7 +21,7 @@ export function ApplicationUserListItem(props: {
   const {id, name, picture} = props.user;
   const client = new ApplicationUserServiceApi();
 
-  const [errorOccurred, setErrorOccurred] =
+  const [errOccur, setErrOccur] =
     React.useState<boolean>(false);
 
   const isMineApplicationUser: boolean = Boolean(mineApplicationUsers?.find((elem) => elem.id && elem.id === id));
@@ -38,7 +38,7 @@ export function ApplicationUserListItem(props: {
 
     client.applicationUserServiceDelete(request)
         .then(() => window.location.reload())
-        .catch((error) => setErrorOccurred(Boolean(error)));
+        .catch(() => setErrOccur(true));
   }
 
   let deleteApplicationUserAction: JSX.Element | undefined;
@@ -65,7 +65,7 @@ export function ApplicationUserListItem(props: {
           <Text style={{fontFamily: 'monospace'}}>{id}</Text>
         }
       />
-      {errorOccurred &&
+      {errOccur &&
         <Rfc7807Alert
           title="The request to delete your account was unsuccessful."
         />
