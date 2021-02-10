@@ -2,9 +2,8 @@
 
 install .NET SDK
 install Docker Desktop
-install Node.js
-
-
+install npm
+install Java Runtime Environment (JRE)
 
 dotnet-ef TOOL,
 

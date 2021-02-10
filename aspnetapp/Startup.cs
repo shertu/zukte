@@ -76,6 +76,9 @@ namespace Zukte {
 					options.EventsType = typeof(CustomCookieAuthenticationEvents);
 					options.LoginPath = "/api/Account/Login";
 					options.LogoutPath = "/api/Account/Logout";
+					// options.Cookie.SecurePolicy = CookieSecurePolicy.None;
+					// options.Cookie.HttpOnly = false;
+					// options.Cookie.SameSite = SameSiteMode.None;
 				}).AddGoogleOpenIdConnect(options => {
 					options.ClientId = _configuration["Authentication:Google:ClientId"];
 					options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
@@ -139,13 +142,6 @@ namespace Zukte {
 			#endregion
 
 			app.UseRouting();
-
-			#region cookie policy
-			app.UseCookiePolicy(new CookiePolicyOptions {
-				HttpOnly = HttpOnlyPolicy.Always,
-				MinimumSameSitePolicy = SameSiteMode.None,
-			});
-			#endregion
 
 			if (env.IsDevelopment()) {
 				app.UseCors(CORS_POLICY_NAME_DEVLOPMENT);
