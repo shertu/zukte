@@ -76,12 +76,12 @@ namespace Zukte {
 					options.EventsType = typeof(CustomCookieAuthenticationEvents);
 					options.LoginPath = "/api/Account/Login";
 					options.LogoutPath = "/api/Account/Logout";
-					// options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-					// options.Cookie.HttpOnly = false;
-					// options.Cookie.SameSite = SameSiteMode.None;
 				}).AddGoogleOpenIdConnect(options => {
 					options.ClientId = _configuration["Authentication:Google:ClientId"];
 					options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
+
+					options.NonceCookie.SameSite = SameSiteMode.Unspecified;
+					options.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
 				});
 			#endregion
 
