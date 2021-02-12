@@ -1,11 +1,11 @@
-import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest} from '../../../../../openapi-generator';
-import {Avatar, Button, List, Typography} from 'antd';
+import { ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest } from '../../../../../openapi-generator';
+import { Avatar, Button, List, Typography } from 'antd';
 
 import React from 'react';
-import {Rfc7807Alert} from '../../../../Rfc7807Alert/Rfc7807Alert';
-import {UserDeleteOutlined} from '@ant-design/icons';
+import { Rfc7807Alert } from '../../../../Rfc7807Alert/Rfc7807Alert';
+import { UserDeleteOutlined } from '@ant-design/icons';
 
-const {Text} = Typography;
+const { Text } = Typography;
 
 /**
  * A list of the application users or accounts stored in the application.
@@ -13,18 +13,20 @@ const {Text} = Typography;
  * @param {object} props
  * @return {JSX.Element}
  */
-export function ApplicationUserListItem(props: {
+export function AccountListItem(props: {
   user: ApplicationUser;
-  mineApplicationUsers?: ApplicationUser[];
+  mineAccounts?: ApplicationUser[];
 }): JSX.Element {
-  const {mineApplicationUsers} = props;
-  const {id, name, picture} = props.user;
+  const { mineAccounts = [] } = props;
+
+  const { id, name, picture } = props.user;
+
   const client = new ApplicationUserServiceApi();
 
   const [errOccur, setErrOccur] =
     React.useState<boolean>(false);
 
-  const isMineApplicationUser: boolean = Boolean(mineApplicationUsers?.find((elem) => elem.id && elem.id === id));
+  const isMineApplicationUser: boolean = Boolean(mineAccounts.find((elem) => elem.id && elem.id === id));
 
   /**
    * Executes a simple request to delete an application user.
@@ -37,8 +39,8 @@ export function ApplicationUserListItem(props: {
     };
 
     client.applicationUserServiceDelete(request)
-        .then(() => window.location.reload())
-        .catch(() => setErrOccur(true));
+      .then(() => window.location.reload())
+      .catch(() => setErrOccur(true));
   }
 
   let deleteApplicationUserAction: JSX.Element | undefined;
@@ -62,7 +64,7 @@ export function ApplicationUserListItem(props: {
         avatar={<Avatar src={picture} />}
         title={name}
         description={
-          <Text style={{fontFamily: 'monospace'}}>{id}</Text>
+          <Text style={{ fontFamily: 'monospace' }}>{id}</Text>
         }
       />
       {errOccur &&

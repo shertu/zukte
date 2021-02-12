@@ -1,10 +1,7 @@
-using System.Collections.Generic;
-using System.Linq;
-using Google.Apis.Auth.AspNetCore3;
+using System.IO;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.CookiePolicy;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
@@ -12,7 +9,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Zukte.Authentication;
 using Zukte.Authorization.Handlers;
 using Zukte.Database;
@@ -25,11 +21,8 @@ namespace Zukte {
 		/// The name of the CORS policy used during development to allow
 		/// webpack-dev-server origins to connect to the .NET server.
 		/// </summary>
-		private const string CORS_POLICY_NAME_DEVLOPMENT = "AllowAllOrigins";
+		private const string CORS_POLICY_NAME_DEVLOPMENT = "webpack-dev-server";
 
-		/// <summary>
-		/// The appliction configuration.
-		/// </summary>
 		private readonly IConfiguration _configuration;
 
 		public Startup(IConfiguration configuration) {
@@ -73,6 +66,7 @@ namespace Zukte {
 					// After a user is signed in, auto create an account
 					options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				}).AddCookie(options => {
+					// options.Cookie.Domain
 					options.EventsType = typeof(CustomCookieAuthenticationEvents);
 					options.LoginPath = "/api/Account/Login";
 					options.LogoutPath = "/api/Account/Logout";
@@ -97,7 +91,11 @@ namespace Zukte {
 			#region CORS
 			services.AddCors(options => {
 				options.AddPolicy(name: CORS_POLICY_NAME_DEVLOPMENT, builder => {
-					builder.AllowAnyOrigin();
+					builder
+						// add origins for webpack-dev-server
+						.WithOrigins("http://localhost:8080")
+						.AllowCredentials()
+						;
 				});
 			});
 			#endregion
@@ -107,6 +105,8 @@ namespace Zukte {
 			#region OpenAPI
 			services.AddSwaggerDocument();
 			#endregion
+
+			//services.AddSingleton<ConfigurationLogger>();
 		}
 
 		public void Configure(
@@ -114,23 +114,17 @@ namespace Zukte {
 			IWebHostEnvironment env,
 			ApplicationDbContext dbContext) {
 			if (env.IsDevelopment()) {
-				app.UseDeveloperExceptionPage();
-				//LogConfigurationRecursive(logger, _configuration.GetChildren());
+				_ = app.UseDeveloperExceptionPage();
 				_ = SeedDatabaseMiddleware.InvokeAsync(dbContext);
 			}
 
 			#region UseRewriter
-			RewriteOptions rewriteOptions = new RewriteOptions()
-				//   .AddRewrite("privacy-policy", "index.html", true)
-				.AddRewrite("authentication-demo", "/", true)
-			  //   .AddRewrite("image-share-demo", SPA_ENTRY_FILENAME, true)
-			  //   .AddRewrite("map-demo", SPA_ENTRY_FILENAME, true)
-			  ;
-
-			app.UseRewriter(rewriteOptions);
+			RewriteOptions rewriteOptions = new RewriteOptions();
+			LoadApplicationRouteInfo(rewriteOptions);
+			_ = app.UseRewriter(rewriteOptions);
 			#endregion
 
-			app.UseDefaultFiles();
+			_ = app.UseDefaultFiles();
 
 			#region UseStaticFiles
 			StaticFileOptions staticFileOptions = new StaticFileOptions {
@@ -138,17 +132,18 @@ namespace Zukte {
 					staticFileResponseContext.Context.Response.Headers.Add("Cache-Control", $"public, max-age={System.TimeSpan.FromDays(7).Seconds}");
 				}
 			};
-			app.UseStaticFiles(staticFileOptions);
+			_ = app.UseStaticFiles(staticFileOptions);
 			#endregion
 
-			app.UseRouting();
+			_ = app.UseRouting();
 
-			if (env.IsDevelopment()) {
-				app.UseCors(CORS_POLICY_NAME_DEVLOPMENT);
-			}
+			// allow Cross-Origin Resource Sharing (CORS) in development mode
+			// if (env.IsDevelopment()) {
+			// 	_ = app.UseCors(CORS_POLICY_NAME_DEVLOPMENT);
+			// }
 
-			app.UseAuthentication();
-			app.UseAuthorization();
+			_ = app.UseAuthentication();
+			_ = app.UseAuthorization();
 
 			app.UseEndpoints(endpoints => {
 				_ = endpoints.MapControllers();
@@ -160,18 +155,12 @@ namespace Zukte {
 			#endregion
 		}
 
-		/// <summary>
-		/// Log the values in the application configuration.
-		/// </summary>
-		private void LogConfigurationRecursive(ILogger logger, IEnumerable<IConfigurationSection> sections) {
-			foreach (var section in sections) {
-				var children = section.GetChildren();
+		public static readonly string[] RewriteRouteCollection = {
+			"privacy-policy", "authentication-demo", "image-share-demo", "map-demo"};
 
-				if (children.Count() == 0) {
-					logger.LogInformation($"{section.Path} {section.Value}");
-				}
-
-				LogConfigurationRecursive(logger, children);
+		private void LoadApplicationRouteInfo(RewriteOptions rewrite) {
+			foreach (var item in RewriteRouteCollection) {
+				rewrite.AddRewrite(item, "/", true);
 			}
 		}
 	}

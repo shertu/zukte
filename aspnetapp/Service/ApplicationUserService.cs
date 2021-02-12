@@ -42,7 +42,7 @@ namespace Zukte.Service {
 				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
 
 			IQueryable<ApplicationUser> query = databaseService.ApplicationUsers;
-			query = ApplyIdFilter(query, request.Id);
+			query = ApplyIdFilter(query, false, request.Id);
 
 			// check user is permitted to delete specified application users
 			foreach (ApplicationUser user in query) {
@@ -79,7 +79,7 @@ namespace Zukte.Service {
 			}
 
 			IQueryable<ApplicationUser> query = databaseService.ApplicationUsers;
-			query = ApplyIdFilter(query, request.Id);
+			query = ApplyIdFilter(query, true, request.Id);
 			query = ApplyMineFitler(query, request.Mine, HttpContext.User);
 
 			// apply seek pagination
@@ -121,7 +121,7 @@ namespace Zukte.Service {
 					.Select(claim => claim.Value)
 					.ToArray();
 
-				query = ApplyIdFilter(query, idCollection);
+				query = ApplyIdFilter(query, false, idCollection);
 			}
 
 			return query;
@@ -131,13 +131,15 @@ namespace Zukte.Service {
 		/// Applies a filter to select accounts with the specified ids.
 		/// </summary>
 		[NonAction]
-		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, params string[] idFilters) {
-			foreach (var idFilter in idFilters) {
-				if (string.IsNullOrEmpty(idFilter))
-					continue;
+		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, bool skipNoFilter, params string[] idFilterArr) {
+			// transform ids into standard format first
+			string combined = string.Join(',', idFilterArr);
+			string[] standard = combined.Split(',')
+				.Where(elem => !string.IsNullOrEmpty(elem))
+				.ToArray();
 
-				string[] idCollection = idFilter.Split(',');
-				query = query.Where(user => idCollection.Contains(user.Id));
+			if (standard.Length > 0 || !skipNoFilter) {
+				query = query.Where(user => standard.Contains(user.Id));
 			}
 
 			return query;

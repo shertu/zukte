@@ -1,5 +1,5 @@
-import {AccountApi, AccountHttpContextSignOutRequest, BASE_PATH} from '../../../../openapi-generator';
-import {Button, message} from 'antd';
+import { AccountApi, AccountHttpContextSignOutRequest, BASE_PATH } from '../../../../openapi-generator';
+import { Button, message } from 'antd';
 
 import React from 'react';
 
@@ -9,8 +9,9 @@ import React from 'react';
  * @param {object} props
  * @return {JSX.Element}
  */
-export function SignOutButton(props: { redirect?: string }): JSX.Element {
-  const {redirect} = props;
+export function AccountLogoutButton(props: { redirect?: string }): JSX.Element {
+  const { redirect } = props;
+
   const client: AccountApi = new AccountApi();
 
   /** The click event for this button. */
@@ -22,8 +23,8 @@ export function SignOutButton(props: { redirect?: string }): JSX.Element {
     };
 
     client.accountHttpContextSignOut(requestParameters)
-        .then(() => window.location.assign(redirectUri))
-        .catch(() => message.error('an unexpected error occurred while attempting to sign out'));
+      .then(() => window.location.assign(redirectUri))
+      .catch(() => message.error('an unexpected error occurred while attempting to sign out'));
   }
 
   return (
