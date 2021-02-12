@@ -6,7 +6,7 @@ export class PaginationResponseInformation<T> {
     /**
      * Counts the number of items.
      */
-    public itemLength(): number {
+    public measureLength(): number {
         return this.items.length;
     }
 
@@ -22,7 +22,7 @@ export class PaginationResponseInformation<T> {
      */
     public shouldFetchMore(paginationCurrent: number, paginationPageSize?: number): boolean {
         const b: number = paginationPageSize || 0;
-        const count: number = this.itemLength();
+        const count: number = this.measureLength();
         return count < paginationCurrent * b;
     }
 }

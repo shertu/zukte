@@ -24,19 +24,20 @@ export function AuthenticateMicroservice(): JSX.Element {
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
 
-  const itemLength = mineAccountInformation.itemLength();
+  // console.log('AuthenticationAtomicDemo', {
+  //   mineAccountInformation: mineAccountInformation,
+  //   errorOccur: errorOccur,
+  // });
+
+  const itemLength: number = mineAccountInformation.measureLength();
   const shouldFetchMore: boolean = true;
   const isPotentialForMore: boolean = mineAccountInformation.isPotentialForMore();
-
-  // console.log('AuthenticationAtomicDemo', {
-  //   mineApplicationUsers: mineAccounts,
-  // });
 
   /** An automatic trigger for the event to fetch additional items. */
   React.useEffect(() => {
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
       onFetchAdditionalInformation(mineAccountInformation)
-        .catch((response) => setMineAccountInformation(response))
+        .then((response) => setMineAccountInformation(response))
         .catch((error) => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);

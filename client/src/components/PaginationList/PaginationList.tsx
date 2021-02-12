@@ -38,7 +38,7 @@ export function PaginationList<T>(props: PaginationListProps<T>): JSX.Element {
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
 
-  const itemLength = information.itemLength();
+  const itemLength: number = information.measureLength();
   const shouldFetchMore: boolean = information.shouldFetchMore(paginationCurrent, paginationPageSize);
   const isPotentialForMore: boolean = information.isPotentialForMore();
 
@@ -62,7 +62,7 @@ export function PaginationList<T>(props: PaginationListProps<T>): JSX.Element {
   React.useEffect(() => {
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
       onFetchAdditionalInformation(information)
-        .catch((response) => setInformationLocal(response))
+        .then((response) => setInformationLocal(response))
         .catch((error) => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);

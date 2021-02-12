@@ -1,6 +1,6 @@
 import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
 
-import { AccountListItem } from './ListItem/ListItem';
+import { ListItem } from './ListItem/ListItem';
 import { ListProps } from 'antd';
 import { PaginationList } from '../../../PaginationList/PaginationList';
 import { PaginationResponseInformation } from '../../../../utilities/PaginationResponseInformation';
@@ -69,7 +69,7 @@ export function AccountList(props: {
 
   const listProps: ListProps<ApplicationUser> = {
     renderItem: (item: ApplicationUser, index: number) => (
-      <AccountListItem user={item} mineAccounts={mineAccounts} />
+      <ListItem user={item} mineAccounts={mineAccounts} />
     ),
     itemLayout: 'vertical',
   };

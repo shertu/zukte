@@ -13,7 +13,7 @@ const { Text } = Typography;
  * @param {object} props
  * @return {JSX.Element}
  */
-export function AccountListItem(props: {
+export function ListItem(props: {
   user: ApplicationUser;
   mineAccounts?: ApplicationUser[];
 }): JSX.Element {
