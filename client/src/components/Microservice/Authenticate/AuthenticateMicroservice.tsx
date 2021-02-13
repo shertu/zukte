@@ -1,14 +1,14 @@
-import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
-import {Space, Typography} from 'antd';
+import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../openapi-generator';
+import { Space, Typography } from 'antd';
 
-import {AccountList} from './AccountList/AccountList';
-import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
-import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
-import {AppPage} from '../../AppPage/AppPage';
-import {PaginationResponseInformation} from '../../../utilities/PaginationResponseInformation';
+import { AccountList } from './AccountList/AccountList';
+import { AccountLoginButton } from './AccountLoginButton/AccountLoginButton';
+import { AccountLogoutButton } from './AccountLogoutButton/AccountLogoutButton';
+import { AppPage } from '../../AppPage/AppPage';
+import { PaginationResponseInformation } from '../../../utilities/PaginationResponseInformation';
 import React from 'react';
 
-const {Paragraph} = Typography;
+const { Paragraph } = Typography;
 
 /**
  * A demonstration where the user can sign in to the application.
@@ -20,31 +20,27 @@ export function AuthenticateMicroservice(): JSX.Element {
 
   const [mineAccountInformation, setMineAccountInformation] =
     React.useState<PaginationResponseInformation<ApplicationUser>>(
-        new PaginationResponseInformation<ApplicationUser>());
+      new PaginationResponseInformation<ApplicationUser>());
 
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
 
-  // console.log('AuthenticationAtomicDemo', {
-  //   mineAccountInformation: mineAccountInformation,
-  //   errorOccur: errorOccur,
-  // });
+  console.log('AuthenticationAtomicDemo', {
+    mineAccountInformation: mineAccountInformation,
+    errorOccur: errorOccur,
+  });
 
-  const itemLength: number =
-    mineAccountInformation.length;
-  const shouldFetchMore: boolean =
-    true;
   const isPotentialForMore: boolean =
     mineAccountInformation.isPotentialForMore();
 
   /** An automatic trigger to fetch additional items. */
   React.useEffect(() => {
-    if (isPotentialForMore && shouldFetchMore && !errorOccur) {
+    if (isPotentialForMore && !errorOccur) {
       onFetchAdditionalInformation(mineAccountInformation)
-          .then((response) => setMineAccountInformation(response))
-          .catch((error) => setErrorOccur(true));
+        .then((response) => setMineAccountInformation(response))
+        .catch((error) => setErrorOccur(true));
     }
-  }, [isPotentialForMore, shouldFetchMore, errorOccur]);
+  }, [isPotentialForMore, errorOccur]);
 
   /**
    * An event to fetch an additional page of items.
@@ -52,7 +48,7 @@ export function AuthenticateMicroservice(): JSX.Element {
    * @return {Promise<PaginationResponseInformation<ApplicationUser>>}
    */
   async function onFetchAdditionalInformation(
-      current: PaginationResponseInformation<ApplicationUser>,
+    current: PaginationResponseInformation<ApplicationUser>,
   ): Promise<PaginationResponseInformation<ApplicationUser>> {
     const request: ApplicationUserServiceGetListRequest = {
       mine: true,
@@ -78,8 +74,10 @@ export function AuthenticateMicroservice(): JSX.Element {
   }
 
   const atLeastOneAccount: boolean =
-    !itemLength &&
+    mineAccountInformation.length > 0 &&
     mineAccountInformation.hasMadeAtLeastOneFetch;
+
+  console.log(atLeastOneAccount);
 
   return (
     <AppPage pageTitle="Authentication Demo">
@@ -93,7 +91,7 @@ export function AuthenticateMicroservice(): JSX.Element {
         </Paragraph>
       </Typography>
 
-      <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
+      <Space className="max-cell-xs" style={{ padding: '2em 24px' }}>
         {atLeastOneAccount && <AccountLogoutButton />}
         {!atLeastOneAccount && <AccountLoginButton />}
       </Space>
