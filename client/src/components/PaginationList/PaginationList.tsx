@@ -1,18 +1,24 @@
-import { Alert, List, ListProps, Space } from 'antd';
-import InfiniteScroll, { Props as InfiniteScrollProps } from 'react-infinite-scroll-component';
+import {Alert, List, ListProps, Space} from 'antd';
+import InfiniteScroll, {Props as InfiniteScrollProps} from 'react-infinite-scroll-component';
 
-import { PaginationResponseInformation } from '../../utilities/PaginationResponseInformation';
+import {PaginationResponseInformation} from '../../utilities/PaginationResponseInformation';
 import React from 'react';
-import { Rfc7807Alert } from '../Rfc7807Alert/Rfc7807Alert';
+import {Rfc7807Alert} from '../Rfc7807Alert/Rfc7807Alert';
 
+/** The props for the pagination list component. */
 export interface PaginationListProps<T> {
   // TODO update definition to include page size
-  onFetchAdditionalInformation: (current: PaginationResponseInformation<T>) => Promise<PaginationResponseInformation<T>>;
+  onFetchAdditionalInformation: (current: PaginationResponseInformation<T>) =>
+    Promise<PaginationResponseInformation<T>>;
+
   information?: PaginationResponseInformation<T>;
   onChangeInformation?: (information: PaginationResponseInformation<T>) => void;
   paginationPageSize?: number;
-  infinite?: Omit<InfiniteScrollProps, 'dataLength' | 'next' | 'hasMore' | 'loader'>;
-  list?: Omit<ListProps<T>, 'loading' | 'dataSource'>;
+
+  infinite?: Omit<InfiniteScrollProps,
+    'dataLength' | 'next' | 'hasMore' | 'loader'>;
+  list?: Omit<ListProps<T>,
+    'loading' | 'dataSource'>;
 };
 
 /**
@@ -23,7 +29,8 @@ export interface PaginationListProps<T> {
  */
 export function PaginationList<T>(props: PaginationListProps<T>): JSX.Element {
   const [informationLocal, setInformationLocal] =
-    React.useState<PaginationResponseInformation<T>>(new PaginationResponseInformation<T>());
+    React.useState<PaginationResponseInformation<T>>(
+        new PaginationResponseInformation<T>());
 
   const {
     onFetchAdditionalInformation,
@@ -38,32 +45,25 @@ export function PaginationList<T>(props: PaginationListProps<T>): JSX.Element {
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
 
-  const itemLength: number = information.measureLength();
-  const shouldFetchMore: boolean = information.shouldFetchMore(paginationCurrent, paginationPageSize);
-  const isPotentialForMore: boolean = information.isPotentialForMore();
+  const itemLength: number =
+    information.length;
+  const shouldFetchMore: boolean =
+    information.shouldFetchMore(paginationCurrent, paginationPageSize);
+  const isPotentialForMore: boolean =
+    information.isPotentialForMore();
 
-  // console.log('InfiniteScrollPageList', {
-  //   itemCount: itemCount,
-  //   hasMore: hasMore,
-  //   shouldLoadMore: shouldLoadMore,
-  //   potentialForMore: potentialForMore,
-  //   paginationCurrent: paginationCurrent,
-  //   errOccur: errOccur,
-  // });
-
-  /** An automatic trigger for the event to fetch additional items. */
   React.useEffect(() => {
     if (onChangeInformation) {
       onChangeInformation(informationLocal);
     }
   }, [informationLocal]);
 
-  /** An automatic trigger for the event to fetch additional items. */
+  /** An automatic trigger to fetch additional items. */
   React.useEffect(() => {
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
       onFetchAdditionalInformation(information)
-        .then((response) => setInformationLocal(response))
-        .catch((error) => setErrorOccur(true));
+          .then((response) => setInformationLocal(response))
+          .catch((error) => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);
 

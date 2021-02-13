@@ -56,7 +56,8 @@ export function AboutMeContent(): JSX.Element {
           >
             <Paragraph>
               Hello and welcome to my personal website.
-              As you may have guessed, my profession and occupation is software development.
+              As you may have guessed, my profession and
+              occupation is software development.
             </Paragraph>
             <Paragraph>
               For those who wish to know more please&nbsp;

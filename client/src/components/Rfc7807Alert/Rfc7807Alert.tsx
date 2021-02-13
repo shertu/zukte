@@ -12,7 +12,8 @@ export interface Rfc7807Props {
 };
 
 /**
- * A view for an implementation of the https://tools.ietf.org/html/rfc7807 standard.
+ * A error message component which implements
+ * the https://tools.ietf.org/html/rfc7807 standard.
  *
  * @param {object} props
  * @return {JSX.Element}
@@ -37,20 +38,47 @@ export function Rfc7807Alert(props: Rfc7807Props): JSX.Element {
       action={
         <Space>
           {!showDetails &&
-            <Button size="small" onClick={() => setShowDetails(true)}>details</Button>
+            <Button
+              size="small"
+              onClick={() => setShowDetails(true)}
+            >
+              details
+            </Button>
           }
           {onClickRetry &&
-            <Button size="small" danger onClick={onClickRetry}>retry</Button>
+            <Button
+              size="small"
+              danger
+              onClick={onClickRetry}
+            >
+              retry
+            </Button>
           }
         </Space>
       }
       description={
         showDetails &&
         <Descriptions title="Error Information">
-          <Descriptions.Item label="Problem Classification">{type}</Descriptions.Item>
-          <Descriptions.Item label="Detail">{detail}</Descriptions.Item>
-          <Descriptions.Item label="HTTP Status Code">{status}</Descriptions.Item>
-          <Descriptions.Item label="Trace Instance">{instance}</Descriptions.Item>
+          <Descriptions.Item
+            label="Problem Classification"
+          >
+            {type}
+          </Descriptions.Item>
+          <Descriptions.Item
+            label="Detail"
+          >
+            {detail}
+          </Descriptions.Item>
+          <Descriptions.Item
+            label="HTTP Status Code"
+          >
+            {status}
+          </Descriptions.Item>
+          <Descriptions.Item
+            label="Trace Instance"
+          >
+            {instance}
+          </Descriptions.Item>
         </Descriptions>
       }
     />

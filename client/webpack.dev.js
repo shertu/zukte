@@ -19,7 +19,7 @@ module.exports = merge(common, {
     open: true,
     historyApiFallback: true,
     proxy: {
-      '/api': 'http://localhost:5001',
+      '/api': 'http://localhost:5000',
       '/signin-oidc': 'http://localhost:5000',
       // onProxyReq: function (proxyReq, req, res) {
       //   if (proxyReq.getHeader('origin')) {

@@ -1,14 +1,14 @@
-import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../openapi-generator';
-import { Space, Typography } from 'antd';
+import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
+import {Space, Typography} from 'antd';
 
-import { AccountList } from './AccountList/AccountList';
-import { AccountLoginButton } from './AccountLoginButton/AccountLoginButton';
-import { AccountLogoutButton } from './AccountLogoutButton/AccountLogoutButton';
-import { AppPage } from '../../AppPage/AppPage';
-import { PaginationResponseInformation } from '../../../utilities/PaginationResponseInformation';
+import {AccountList} from './AccountList/AccountList';
+import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
+import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
+import {AppPage} from '../../AppPage/AppPage';
+import {PaginationResponseInformation} from '../../../utilities/PaginationResponseInformation';
 import React from 'react';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
 /**
  * A demonstration where the user can sign in to the application.
@@ -19,7 +19,8 @@ export function AuthenticateMicroservice(): JSX.Element {
   const client = new ApplicationUserServiceApi();
 
   const [mineAccountInformation, setMineAccountInformation] =
-    React.useState<PaginationResponseInformation<ApplicationUser>>(new PaginationResponseInformation<ApplicationUser>());
+    React.useState<PaginationResponseInformation<ApplicationUser>>(
+        new PaginationResponseInformation<ApplicationUser>());
 
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
@@ -29,21 +30,30 @@ export function AuthenticateMicroservice(): JSX.Element {
   //   errorOccur: errorOccur,
   // });
 
-  const itemLength: number = mineAccountInformation.measureLength();
-  const shouldFetchMore: boolean = true;
-  const isPotentialForMore: boolean = mineAccountInformation.isPotentialForMore();
+  const itemLength: number =
+    mineAccountInformation.length;
+  const shouldFetchMore: boolean =
+    true;
+  const isPotentialForMore: boolean =
+    mineAccountInformation.isPotentialForMore();
 
-  /** An automatic trigger for the event to fetch additional items. */
+  /** An automatic trigger to fetch additional items. */
   React.useEffect(() => {
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
       onFetchAdditionalInformation(mineAccountInformation)
-        .then((response) => setMineAccountInformation(response))
-        .catch((error) => setErrorOccur(true));
+          .then((response) => setMineAccountInformation(response))
+          .catch((error) => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);
 
-  /** an event which will attempt to load additional items */
-  async function onFetchAdditionalInformation(current: PaginationResponseInformation<ApplicationUser>): Promise<PaginationResponseInformation<ApplicationUser>> {
+  /**
+   * An event to fetch an additional page of items.
+   * @param {PaginationResponseInformation<ApplicationUser>} current
+   * @return {Promise<PaginationResponseInformation<ApplicationUser>>}
+   */
+  async function onFetchAdditionalInformation(
+      current: PaginationResponseInformation<ApplicationUser>,
+  ): Promise<PaginationResponseInformation<ApplicationUser>> {
     const request: ApplicationUserServiceGetListRequest = {
       mine: true,
     };
@@ -52,11 +62,14 @@ export function AuthenticateMicroservice(): JSX.Element {
       request.pageToken = current.nextPageToken;
     }
 
-    const response: ApplicationUserListResponse = await client.applicationUserServiceGetList(request);
+    const response: ApplicationUserListResponse =
+      await client.applicationUserServiceGetList(request);
 
     const additionalItems: ApplicationUser[] = response.items || [];
 
-    const nextInformation: PaginationResponseInformation<ApplicationUser> = new PaginationResponseInformation<ApplicationUser>();
+    const nextInformation: PaginationResponseInformation<ApplicationUser> =
+      new PaginationResponseInformation<ApplicationUser>();
+
     nextInformation.items = current.items.concat(additionalItems);
     nextInformation.nextPageToken = response.nextPageToken;
     nextInformation.hasMadeAtLeastOneFetch = true;
@@ -64,7 +77,9 @@ export function AuthenticateMicroservice(): JSX.Element {
     return nextInformation;
   }
 
-  const atLeastOneAccount: boolean = (!itemLength && mineAccountInformation.hasMadeAtLeastOneFetch);
+  const atLeastOneAccount: boolean =
+    !itemLength &&
+    mineAccountInformation.hasMadeAtLeastOneFetch;
 
   return (
     <AppPage pageTitle="Authentication Demo">
@@ -78,7 +93,7 @@ export function AuthenticateMicroservice(): JSX.Element {
         </Paragraph>
       </Typography>
 
-      <Space className="max-cell-xs" style={{ padding: '2em 24px' }}>
+      <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
         {atLeastOneAccount && <AccountLogoutButton />}
         {!atLeastOneAccount && <AccountLoginButton />}
       </Space>

@@ -5,7 +5,9 @@ import {Typography} from 'antd';
 const {Paragraph, Text, Title} = Typography;
 
 /**
- * This page outlines the rights of the user in regards to their online privacy while using this web application.
+ * This page outlines the rights of the user in
+ * regards to their online privacy while using
+ * this web application.
  *
  * @return {JSX.Element}
  */
