@@ -18,16 +18,18 @@ module.exports = merge(common, {
     hot: true,
     open: true,
     historyApiFallback: true,
+
+    // HTTPS connection is required to use open id connect
+    https: true,
     proxy: {
-      '/api': 'http://localhost:5000',
-      '/signin-oidc': 'http://localhost:5000',
-      // onProxyReq: function (proxyReq, req, res) {
-      //   if (proxyReq.getHeader('origin')) {
-      //     proxyReq.setHeader('origin', 'http://localhost:3000')
-      //   }
-      //   proxyReq.setHeader('x-added', 'foobar');
-      // },
-      // cookieDomainRewrite: ""
+      '/api': {
+        target: 'https://localhost:5001',
+        secure: false,
+      },
+      '/signin-oidc': {
+        target: 'https://localhost:5001',
+        secure: false,
+      },
     },
   },
 });
