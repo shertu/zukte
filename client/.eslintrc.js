@@ -24,6 +24,7 @@ module.exports = {
     }],
     "sort-imports": ["error"],
     "@typescript-eslint/member-delimiter-style": ["error"],
+    "no-console": ["error"],
   },
   settings: {
     react: {

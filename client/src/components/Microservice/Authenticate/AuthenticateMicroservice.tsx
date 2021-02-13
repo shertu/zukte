@@ -25,10 +25,10 @@ export function AuthenticateMicroservice(): JSX.Element {
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
 
-  console.log('AuthenticationAtomicDemo', {
-    mineAccountInformation: mineAccountInformation,
-    errorOccur: errorOccur,
-  });
+  // console.log('AuthenticationAtomicDemo', {
+  //   mineAccountInformation: mineAccountInformation,
+  //   errorOccur: errorOccur,
+  // });
 
   const isPotentialForMore: boolean =
     mineAccountInformation.isPotentialForMore();
@@ -76,8 +76,6 @@ export function AuthenticateMicroservice(): JSX.Element {
   const atLeastOneAccount: boolean =
     mineAccountInformation.length > 0 &&
     mineAccountInformation.hasMadeAtLeastOneFetch;
-
-  console.log(atLeastOneAccount);
 
   return (
     <AppPage pageTitle="Authentication Demo">

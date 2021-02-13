@@ -74,8 +74,8 @@ namespace Zukte {
 					options.ClientId = _configuration["Authentication:Google:ClientId"];
 					options.ClientSecret = _configuration["Authentication:Google:ClientSecret"];
 
-					options.NonceCookie.SameSite = SameSiteMode.Unspecified;
-					options.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
+					// options.NonceCookie.SameSite = SameSiteMode.Unspecified;
+					// options.CorrelationCookie.SameSite = SameSiteMode.Unspecified;
 				});
 			#endregion
 
@@ -94,8 +94,7 @@ namespace Zukte {
 					builder
 						// add origins for webpack-dev-server
 						.WithOrigins("http://localhost:8080")
-						.AllowCredentials()
-						;
+						.AllowCredentials();
 				});
 			});
 			#endregion
@@ -129,7 +128,8 @@ namespace Zukte {
 			#region UseStaticFiles
 			StaticFileOptions staticFileOptions = new StaticFileOptions {
 				OnPrepareResponse = staticFileResponseContext => {
-					staticFileResponseContext.Context.Response.Headers.Add("Cache-Control", $"public, max-age={System.TimeSpan.FromDays(7).Seconds}");
+					staticFileResponseContext.Context.Response.Headers
+					.Add("Cache-Control", $"public, max-age={System.TimeSpan.FromDays(7).Seconds}");
 				}
 			};
 			_ = app.UseStaticFiles(staticFileOptions);
