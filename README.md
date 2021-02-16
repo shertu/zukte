@@ -34,7 +34,11 @@ PowerShell C:
 - `Set-Location ./client/`
 - `./openapi.ps1`
 
-Open https://localhost:8080/ is the web browser of your choice.
+Open webpack-dev-server in the web browser of your choice, e.g.
+
+```
+open https://localhost:8080/
+```
 
 ## additional tools
 
