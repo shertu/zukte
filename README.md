@@ -8,28 +8,34 @@ You will need to download and install the following software such that you can c
 - [npm](https://nodejs.org/en/download/)
 - [Docker Desktop](https://www.docker.com/products/docker-desktop)
 - [Java Runtime Environment (JRE)](https://www.java.com/en/download/)
+- [mkcert](https://github.com/FiloSottile/mkcert)
+- [PowerShell](https://github.com/PowerShell/PowerShell/releases/)
 
 ## how to start development
 
+You will need to execute the following commands in sequence:
+
+PowerShell A:
+
+- `docker-compose up -d`
+- `./protobuf.ps1`
+- `Set-Location ./aspnetapp/`
+- `dotnet run`
+
+PowerShell B:
+
+- `Set-Location ./client/`
+- `npm install`
+- `./mkcert.ps1`
+- `npm run start`
+
+PowerShell C:
+
+- `Set-Location ./client/`
+- `./openapi.ps1`
+
+Open https://localhost:8080/ is the web browser of your choice.
+
+## additional tools
+
 dotnet tool install dotnet-ef
-
-The following command appears to fail on Windows 10.
-
-dotnet dev-certs https --trust
-
-https://docs.microsoft.com/en-us/dotnet/core/additional-tools/self-signed-certificates-guide
-
-After you have installed the prerequisite software and cloned the repositiory, you can build the docker images, install dependencies, seed the database, and generate an API client library, via the command:
-
-```
-make newstart
-```
-
-Afterwards, for any future starts, you can execute this command for a more efficient start:
-
-```
-make start
-```
-
-Queensland road safety certificate: $85
-Change liscense plates, pay for registration (12 months), and mandatory third party insurance: 775.90 AUD

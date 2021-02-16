@@ -96,6 +96,8 @@ namespace Zukte {
 			if (env.IsDevelopment()) {
 				_ = app.UseDeveloperExceptionPage();
 				_ = SeedDatabaseMiddleware.InvokeAsync(dbContext);
+			} else {
+				_ = app.UseHsts(); // encourages production clients to use HTTPS
 			}
 
 			#region UseRewriter

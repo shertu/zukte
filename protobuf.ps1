@@ -1,11 +1,10 @@
 Set-Location $PSScriptRoot
 
-$OutputDirectory = "./aspnetapp/protobuf"
+Set-Variable -Name "out" -Value "./aspnetapp/protobuf/"
+Remove-Item -Recurse $out -ErrorAction SilentlyContinue
+New-Item -Path $out -ItemType "directory"
 
-Remove-Item $OutputDirectory -Recurse -ErrorAction Ignore
-New-Item -Path $OutputDirectory -ItemType "directory"
-
-& protoc --csharp_out=${OutputDirectory} `
+protoc --csharp_out=${out} `
     protobuf/application_user_delete_request.proto `
     protobuf/application_user_list_request.proto `
     protobuf/application_user.proto `

@@ -1,5 +1,6 @@
 const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
+const fs = require('fs');
 
 module.exports = merge(common, {
   // https://webpack.js.org/configuration/mode/
@@ -15,18 +16,29 @@ module.exports = merge(common, {
 
   // https://webpack.js.org/configuration/dev-server/
   devServer: {
+    // https://webpack.js.org/concepts/hot-module-replacement/
     hot: true,
-    open: true,
+
+    // supplement for hot-module-replacement with SPA router
     historyApiFallback: true,
 
-    // HTTPS connection is required to use open id connect
+    // HTTPS is required to use open id connect
     https: true,
+
+    // SSL certificates are required for ./openapi.ps1
+    key: fs.readFileSync('ssl/webpack-dev-server-key.pem'),
+    cert: fs.readFileSync('ssl/webpack-dev-server.pem'),
+
     proxy: {
       '/api': {
         target: 'https://localhost:5001',
         secure: false,
       },
       '/signin-oidc': {
+        target: 'https://localhost:5001',
+        secure: false,
+      },
+      '/swagger': {
         target: 'https://localhost:5001',
         secure: false,
       },
