@@ -1,8 +1,11 @@
-Set-Location $PSScriptRoot
+# TODO modify script to take a URL as an argument and 
+# parse the scheme and host values instead of using hardcoded values
 
-Copy-Item ".\aspnetapp\swagger.json" -Destination ".\client"
+$filename = "openapi.json"
 
-$filepath = '.\client\swagger.json'
+Copy-Item "$PSScriptRoot/aspnetapp/$filename" -Destination "$PSScriptRoot/client"
+
+$filepath = "$PSScriptRoot/client/$filename"
 
 $json = Get-Content $filepath | ConvertFrom-Json
 
@@ -15,11 +18,11 @@ Write-Output $json
 
 $json | ConvertTo-Json -Depth 32 | Set-Content $filepath
 
-Remove-Item -Recurse -Force ".\client\src\openapi-generator" -ErrorAction SilentlyContinue
-
-Set-Location ".\client"
-
+# clean output directory and execute open-api-generator cli
+Set-Location "$PSScriptRoot/client"
+Remove-Item -Recurse -Force ./src/openapi-generator -ErrorAction SilentlyContinue
 npm run openapi
 
-Set-Location "..\"
+# clean up
+Set-Location $PSScriptRoot
 Remove-Item $filepath

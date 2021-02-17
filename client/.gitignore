@@ -1,11 +1,11 @@
 # npm
 /node_modules
 
-# OpenAPI specification
-/swagger.json
-
 # openapi-generator
 /src/openapi-generator
 
 # webpack-dev-server
 /dist
+
+# OpenAPI specification
+/openapi.json

@@ -12,25 +12,25 @@ You will need to download and install the following software such that you can c
 
 ## how to start development
 
-You will need to execute the following commands in sequence:
+After you have installed the prerequisite software and cloned the repositiory, you can build the docker images, install dependencies, and generate an API client library, via the PowerShell script:
 
-PowerShell A:
+```
+./newstart.ps1
+```
 
--   `docker-compose up -d`
--   `./protobuf.ps1`
--   `Set-Location ./aspnetapp/`
--   `dotnet run`
+Afterwards, please start the aspnetapp via:
 
-PowerShell B:
+```
+dotnet run
+```
 
--   `Set-Location ./client/`
--   `npm install`
--   `Set-Location ../`
--   `./openapi.ps1`
--   `Set-Location ./client/`
--   `npm run start`
+and client or webpack-dev-server via:
 
-Open webpack-dev-server in the web browser of your choice, e.g.
+```
+npm run start
+```
+
+Lastly, open the client or webpack-dev-server in the web browser of your choice, e.g.
 
 ```
 open https://localhost:8080/

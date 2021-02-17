@@ -5,7 +5,7 @@
 /protobuf
 
 # OpenAPI specification generation
-/swagger.json
+/openapi.json
 
 # https://raw.githubusercontent.com/dotnet/core/master/.gitignore
 

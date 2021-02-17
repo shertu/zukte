@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <Target Name="NSwag" AfterTargets="Build">
-    <Exec Command="$(NSwagExe_Net50) aspnetcore2openapi /assembly:$(TargetDir)zukte.dll /output:swagger.json" />
+    <Exec Command="$(NSwagExe_Net50) aspnetcore2openapi /assembly:$(TargetDir)zukte.dll /output:openapi.json" />
     <!-- <Exec Command="$(NSwagExe) openapi2tsclient /input:swagger.json /output:Scripts/MyController.ts" /> -->
   </Target>
 </Project>
