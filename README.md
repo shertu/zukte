@@ -23,17 +23,12 @@ PowerShell A:
 
 PowerShell B:
 
-dotnet dev-certs https -ep ./certificate.crt -np --trust --format PEM
-
 -   `Set-Location ./client/`
 -   `npm install`
--   `./mkcert.ps1`
--   `npm run start`
-
-PowerShell C:
-
--   `Set-Location ./client/`
+-   `Set-Location ../`
 -   `./openapi.ps1`
+-   `Set-Location ./client/`
+-   `npm run start`
 
 Open webpack-dev-server in the web browser of your choice, e.g.
 
@@ -48,3 +43,9 @@ explorer https://localhost:8080/
 ## additional tools
 
 dotnet tool install dotnet-ef
+
+## SSL certificates
+
+Use this command to generate a trusted self-signed SSL certificate for local development:
+
+dotnet dev-certs https -ep ./certificate.crt -np --trust --format PEM
