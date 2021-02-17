@@ -25,10 +25,6 @@ module.exports = merge(common, {
     // HTTPS is required to use open id connect
     https: true,
 
-    // SSL certificates are required for ./openapi.ps1
-    key: fs.readFileSync('ssl/webpack-dev-server-key.pem'),
-    cert: fs.readFileSync('ssl/webpack-dev-server.pem'),
-
     proxy: {
       '/api': {
         target: 'https://localhost:5001',

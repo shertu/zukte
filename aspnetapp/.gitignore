@@ -1,8 +1,11 @@
-# ASP .NET public static files
-/wwwroot/
+# webpack production build output
+/wwwroot
 
 # protobuf code generation
 /protobuf
+
+# OpenAPI specification generation
+/swagger.json
 
 # https://raw.githubusercontent.com/dotnet/core/master/.gitignore
 

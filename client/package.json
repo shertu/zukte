@@ -3,7 +3,7 @@
   "scripts": {
     "build": "webpack -c webpack.prod.js",
     "eslint": "eslint \"src/**/*.{js,ts,jsx,tsx}\" --fix",
-    "openapi": "openapi-generator-cli generate -i \"openapi.json\" -g typescript-fetch -o \"src/openapi-generator\"",
+    "openapi": "openapi-generator-cli generate -i \"swagger.json\" -g typescript-fetch -o \"src/openapi-generator\"",
     "start": "webpack serve -c webpack.dev.js",
     "stylelint": "stylelint \"src/**/*.{css,less}\" --fix",
     "test": "jest"

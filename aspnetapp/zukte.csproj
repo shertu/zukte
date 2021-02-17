@@ -17,7 +17,15 @@
     </PackageReference>
     <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.0-m8.0.23" />
     <PackageReference Include="NSwag.AspNetCore" Version="13.10.1" />
+    <PackageReference Include="NSwag.MSBuild" Version="13.10.3">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="SkiaSharp" Version="2.80.2" />
   </ItemGroup>
 
+  <Target Name="NSwag" AfterTargets="Build">
+    <Exec Command="$(NSwagExe_Net50) aspnetcore2openapi /assembly:$(TargetDir)zukte.dll /output:swagger.json" />
+    <!-- <Exec Command="$(NSwagExe) openapi2tsclient /input:swagger.json /output:Scripts/MyController.ts" /> -->
+  </Target>
 </Project>

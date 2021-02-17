@@ -1,6 +1,6 @@
 Set-Location $PSScriptRoot
 
-Set-Variable -Name "out" -Value "./aspnetapp/protobuf/"
+$out = "./aspnetapp/protobuf"
 Remove-Item -Recurse $out -ErrorAction SilentlyContinue
 New-Item -Path $out -ItemType "directory"
 
