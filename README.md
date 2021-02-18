@@ -7,7 +7,7 @@ You will need to download and install the following software such that you can c
 -   [.NET SDK](https://dotnet.microsoft.com/download)
 -   [npm](https://nodejs.org/en/download/)
 -   [Docker Desktop](https://www.docker.com/products/docker-desktop)
--   [Java Runtime Environment (JRE)](https://www.java.com/en/download/)
+-   [Java](https://www.oracle.com/au/java/technologies/javase-downloads.html)
 -   [PowerShell](https://github.com/PowerShell/PowerShell/releases/)
 
 ## how to start development
@@ -45,6 +45,7 @@ explorer https://localhost:8080/
 To help with Entity Framework migrations:
 
 ```
+dotnet new tool-manifest
 dotnet tool install dotnet-ef
 ```
 
