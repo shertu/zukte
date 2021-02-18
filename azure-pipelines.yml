@@ -1,7 +1,5 @@
-# ASP.NET
-# Build and test ASP.NET projects.
-# Add steps that publish symbols, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/apps/aspnet/build-aspnet-4
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
 
 trigger:
 - main
@@ -10,25 +8,59 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
-  buildPlatform: 'Any CPU'
+  serviceUrl: 'https://zukte.azurewebsites.net'
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
-
-- task: NuGetCommand@2
+- task: UseDotNet@2
   inputs:
-    restoreSolution: '$(solution)'
+    version: '5.0.x'
+    performMultiLevelLookup: true
 
-- task: VSBuild@1
+- task: PowerShell@2
   inputs:
-    solution: '$(solution)'
-    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:PackageLocation="$(build.artifactStagingDirectory)"'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    filePath: './protobuf.ps1'
 
-- task: VSTest@2
+- task: DotNetCoreCLI@2
   inputs:
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
+    command: 'restore'
+    projects: './aspnetapp/zukte.csproj'
+    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: './aspnetapp/zukte.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: Cache@2
+  inputs:
+    key: 'npm | “$(Agent.OS)” | $(Build.SourcesDirectory)/zukte/client/package-lock.json'
+    path: '$(Build.SourcesDirectory)/zukte/client/node_modules'
+    cacheHitVar: 'CacheRestored'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: './client'
+  condition: ne(variables['CacheRestored'], 'true')
+
+- task: PowerShell@2
+  inputs:
+    filePath: './openapi.ps1'
+    arguments: '$(pullRequest)'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    projects: './aspnetapp/zukte.csproj'
+    publishWebProjects: true
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: True
+    # workingDirectory: './aspnetapp'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'zukte'
+    publishLocation: 'Container'
