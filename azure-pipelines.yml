@@ -36,8 +36,8 @@ steps:
 
 - task: Cache@2
   inputs:
-    key: 'npm | “$(Agent.OS)” | $(Build.SourcesDirectory)/zukte/client/package-lock.json'
-    path: '$(Build.SourcesDirectory)/zukte/client/node_modules'
+    key: 'npm | $(System.DefaultWorkingDirectory)/client/package-lock.json'
+    path: '$(System.DefaultWorkingDirectory)/client/node_modules'
     cacheHitVar: 'CacheRestored'
 
 - task: Npm@1
@@ -54,11 +54,10 @@ steps:
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
-    projects: './aspnetapp/zukte.csproj'
     publishWebProjects: true
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
     zipAfterPublish: True
-    # workingDirectory: './aspnetapp'
+    workingDirectory: '$(Build.SourcesDirectory)/aspnetapp'
 
 - task: PublishBuildArtifacts@1
   inputs:
