@@ -1,5 +1,4 @@
 Set-Location $PSScriptRoot
-docker-compose up -d --build
 ./protobuf.ps1
 
 Set-Location $PSScriptRoot/aspnetapp
@@ -10,3 +9,6 @@ npm install
 
 Set-Location $PSScriptRoot
 ./openapi.ps1
+
+Set-Location $PSScriptRoot
+docker-compose up -d --build
