@@ -51,6 +51,12 @@ steps:
     filePath: './openapi.ps1'
     arguments: '$(aspnetappUrl)'
 
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run build'
+    workingDir: './client'
+
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
