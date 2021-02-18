@@ -8,7 +8,7 @@ Set-Location $PSScriptRoot/client
 npm install
 
 Set-Location $PSScriptRoot
-./openapi.ps1
+./openapi.ps1 "https://localhost:8080"
 
 Set-Location $PSScriptRoot
 docker-compose up -d --build
