@@ -42,10 +42,14 @@ explorer https://localhost:8080/
 
 ## additional tools
 
+To help with Entity Framework migrations:
+
+```
 dotnet tool install dotnet-ef
+```
 
-## SSL certificates
+To generate a trusted self-signed SSL certificate for local development:
 
-Use this command to generate a trusted self-signed SSL certificate for local development:
-
+```
 dotnet dev-certs https -ep ./certificate.crt -np --trust --format PEM
+```
