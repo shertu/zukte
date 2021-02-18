@@ -17,9 +17,10 @@ steps:
     version: '5.0.x'
     performMultiLevelLookup: true
 
-- task: PowerShell@2
-  inputs:
-    filePath: './protobuf.ps1'
+# requires CI pipeline to have protoc installed
+# - task: PowerShell@2
+#   inputs:
+#     filePath: './protobuf.ps1'
 
 - task: DotNetCoreCLI@2
   inputs:
