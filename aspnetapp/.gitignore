@@ -2,7 +2,7 @@
 /wwwroot
 
 # protobuf code generation
-/protobuf
+# /protobuf /// exlcusion requires CI pipeline to have protoc installed
 
 # OpenAPI specification generation
 /openapi.json
