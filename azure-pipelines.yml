@@ -8,7 +8,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  serviceUrl: 'https://zukte.azurewebsites.net'
+  aspnetappUrl: 'https://zukte.azurewebsites.net'
   buildConfiguration: 'Release'
 
 steps:
@@ -49,14 +49,14 @@ steps:
 - task: PowerShell@2
   inputs:
     filePath: './openapi.ps1'
-    arguments: '$(pullRequest)'
+    arguments: '$(aspnetappUrl)'
 
 - task: DotNetCoreCLI@2
   inputs:
     command: 'publish'
     publishWebProjects: true
     arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-    zipAfterPublish: True
+    zipAfterPublish: true
     workingDirectory: '$(Build.SourcesDirectory)/aspnetapp'
 
 - task: PublishBuildArtifacts@1
