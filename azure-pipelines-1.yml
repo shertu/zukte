@@ -1,0 +1,72 @@
+# Add steps that publish symbols, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  aspnetappUrl: 'https://zukte.azurewebsites.net'
+  buildConfiguration: 'Release'
+
+steps:
+- task: UseDotNet@2
+  inputs:
+    version: '5.0.x'
+    performMultiLevelLookup: true
+
+# requires CI pipeline to have protoc installed
+# - task: PowerShell@2
+#   inputs:
+#     filePath: './protobuf.ps1'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: './aspnetapp/zukte.csproj'
+    feedsToUse: 'select'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: './aspnetapp/zukte.csproj'
+    arguments: '--configuration $(buildConfiguration)'
+
+- task: Cache@2
+  inputs:
+    key: 'npm | $(System.DefaultWorkingDirectory)/client/package-lock.json'
+    path: '$(System.DefaultWorkingDirectory)/client/node_modules'
+    cacheHitVar: 'CacheRestored'
+
+- task: Npm@1
+  inputs:
+    command: 'install'
+    workingDir: './client'
+  condition: ne(variables['CacheRestored'], 'true')
+
+- task: PowerShell@2
+  inputs:
+    filePath: './openapi.ps1'
+    arguments: '$(aspnetappUrl)'
+
+- task: Npm@1
+  inputs:
+    command: 'custom'
+    customCommand: 'run build'
+    workingDir: './client'
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'publish'
+    publishWebProjects: true
+    arguments: '--configuration $(BuildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+    zipAfterPublish: true
+    workingDirectory: '$(Build.SourcesDirectory)/aspnetapp'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'zukte'
+    publishLocation: 'Container'
