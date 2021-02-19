@@ -91,8 +91,11 @@ namespace Zukte {
 			IApplicationBuilder app,
 			IWebHostEnvironment env,
 			ApplicationDbContext dbContext) {
+			// should only use in development
+			// but I am struggling to debug errors in production
+			_ = app.UseDeveloperExceptionPage();
+
 			if (env.IsDevelopment()) {
-				_ = app.UseDeveloperExceptionPage();
 				_ = SeedDatabaseMiddleware.InvokeAsync(dbContext);
 			} else {
 				_ = app.UseHsts(); // encourages production clients to use HTTPS
