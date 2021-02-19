@@ -8,19 +8,19 @@ using Zukte.Message.ApplicationUser;
 namespace Zukte.Utilities.Account {
 	/// <inheritdoc/>
 	public class AccountCreationService : IAccountCreationService {
-		private readonly ApplicationDbContext databaseService;
+		private readonly ApplicationDbContext _dbContext;
 
-		public AccountCreationService(ApplicationDbContext databaseService) {
-			this.databaseService = databaseService;
+		public AccountCreationService(ApplicationDbContext dbContext) {
+			_dbContext = dbContext;
 		}
 
 		public async Task<ApplicationUser> PostApplicationUser(ApplicationUser applicationUser) {
-			if (databaseService.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
+			if (_dbContext.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
-			databaseService.ApplicationUsers.Add(applicationUser);
+			_dbContext.ApplicationUsers.Add(applicationUser);
 			try {
-				await databaseService.SaveChangesAsync();
+				await _dbContext.SaveChangesAsync();
 			} catch (DbUpdateException) {
 				if (ApplicationUserExists(applicationUser.Id)) {
 					throw new PostApplicationUserConflictException(
@@ -38,10 +38,10 @@ namespace Zukte.Utilities.Account {
 		/// </summary>
 		/// <param name="id">The id of the application user to check for.</param>
 		private bool ApplicationUserExists(string id) {
-			if (databaseService.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
+			if (_dbContext.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
-			return databaseService.ApplicationUsers.Any(e => e.Id == id);
+			return _dbContext.ApplicationUsers.Any(e => e.Id == id);
 		}
 	}
 }

@@ -10,7 +10,7 @@ using Microsoft.Extensions.Hosting;
 using Zukte.Authentication;
 using Zukte.Authorization.Handlers;
 using Zukte.Database;
-using Zukte.Middleware;
+using Zukte.Middleware.DatabaseSeeder;
 using Zukte.Utilities.Account;
 
 namespace Zukte {
@@ -19,6 +19,8 @@ namespace Zukte {
 
 		public Startup(IConfiguration configuration) {
 			_configuration = configuration;
+			// by default, a missing configuration value is a severe or critical error
+			// an automatic post-release test for configuration values would be desirable
 		}
 
 		public void ConfigureServices(IServiceCollection services) {
@@ -34,11 +36,8 @@ namespace Zukte {
 
 			#region database
 			string? databaseConnectionString = _configuration.GetConnectionString("DatabaseConnection");
-
-			if (!string.IsNullOrEmpty(databaseConnectionString)) {
-				services.AddDbContext<ApplicationDbContext>(options =>
-				  options.UseMySQL(databaseConnectionString));
-			}
+			services.AddDbContext<ApplicationDbContext>(options =>
+			  options.UseMySQL(databaseConnectionString));
 			#endregion
 
 			#region Authentication
@@ -89,14 +88,12 @@ namespace Zukte {
 
 		public void Configure(
 			IApplicationBuilder app,
-			IWebHostEnvironment env,
-			ApplicationDbContext dbContext) {
-			// should only use in development
-			// but I am struggling to debug errors in production
+			IWebHostEnvironment env) {
+			// should only use in development but useful to debug errors in production
 			_ = app.UseDeveloperExceptionPage();
 
 			if (env.IsDevelopment()) {
-				_ = SeedDatabaseMiddleware.InvokeAsync(dbContext);
+				_ = app.UseDatabaseSeeder();
 			} else {
 				_ = app.UseHsts(); // encourages production clients to use HTTPS
 			}

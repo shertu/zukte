@@ -19,14 +19,14 @@ namespace Zukte.Service {
 	[Produces("application/json")]
 	public class ApplicationUserService : ControllerBase, ITokenPaginationService<ApplicationUser> {
 		// The database sevice
-		private readonly ApplicationDbContext databaseService;
+		private readonly ApplicationDbContext _dbContext;
 
 		// The authorization service
-		private readonly IAuthorizationService authorizationService;
+		private readonly IAuthorizationService _authorization;
 
-		public ApplicationUserService(ApplicationDbContext databaseService, IAuthorizationService authorizationService) {
-			this.databaseService = databaseService;
-			this.authorizationService = authorizationService;
+		public ApplicationUserService(ApplicationDbContext dbContext, IAuthorizationService authorization) {
+			_dbContext = dbContext;
+			_authorization = authorization;
 		}
 
 		public int MaxResultsMax => 50;
@@ -38,26 +38,26 @@ namespace Zukte.Service {
 		/// </summary>
 		[HttpDelete, Authorize]
 		public async Task<IActionResult> Delete([FromQuery] ApplicationUserDeleteRequest request) {
-			if (databaseService.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
+			if (_dbContext.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
-			IQueryable<ApplicationUser> query = databaseService.ApplicationUsers;
+			IQueryable<ApplicationUser> query = _dbContext.ApplicationUsers;
 			query = ApplyIdFilter(query, false, request.Id);
 
 			// check user is permitted to delete specified application users
 			foreach (ApplicationUser user in query) {
-				AuthorizationResult auth = await authorizationService.AuthorizeAsync(HttpContext.User, user, new Authorization.Requirements.DirectoryWriteRequirement());
+				AuthorizationResult auth = await _authorization.AuthorizeAsync(HttpContext.User, user, new Authorization.Requirements.DirectoryWriteRequirement());
 				if (!auth.Succeeded) {
 					return Forbid();
 				}
 			}
 
-			databaseService.ApplicationUsers.RemoveRange(query);
-			await databaseService.SaveChangesAsync();
+			_dbContext.ApplicationUsers.RemoveRange(query);
+			await _dbContext.SaveChangesAsync();
 
 			// sign out if user deleted their own account
 			string? id = User.FindFirstValue(ClaimTypes.NameIdentifier);
-			ApplicationUser? mine = await databaseService.ApplicationUsers.FindAsync(id);
+			ApplicationUser? mine = await _dbContext.ApplicationUsers.FindAsync(id);
 			if (mine == null) {
 				await HttpContext.SignOutAsync();
 			}
@@ -70,15 +70,15 @@ namespace Zukte.Service {
 		/// </summary>
 		[HttpGet]
 		public ActionResult<ApplicationUserListRequest.Types.ApplicationUserListResponse> GetList([FromQuery] ApplicationUserListRequest request) {
-			if (databaseService.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
+			if (_dbContext.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
 			// the MINE version of this endpoint requires an authorization check
 			if (request.Mine && !User.IsAuthenticated()) {
 				return Challenge(); // issue a default challenge
 			}
 
-			IQueryable<ApplicationUser> query = databaseService.ApplicationUsers;
+			IQueryable<ApplicationUser> query = _dbContext.ApplicationUsers;
 			query = ApplyIdFilter(query, true, request.Id);
 			query = ApplyMineFitler(query, request.Mine, HttpContext.User);
 
@@ -113,8 +113,8 @@ namespace Zukte.Service {
 		/// </summary>
 		[NonAction]
 		private IQueryable<ApplicationUser> ApplyMineFitler(IQueryable<ApplicationUser> query, bool mineFilter, ClaimsPrincipal principle) {
-			if (databaseService.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(databaseService.ApplicationUsers));
+			if (_dbContext.ApplicationUsers == null)
+				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
 			if (mineFilter) {
 				string[] idCollection = principle.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier)

@@ -4,15 +4,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Zukte.Middleware {
+namespace Zukte.Middleware.DatabaseSeeder {
 	/// <summary>
 	/// Middleware to seed a <see cref="DbContext"/> database for development and testing.
 	/// </summary>
-	public class SeedDatabaseMiddleware {
-		public static async Task InvokeAsync<T>(T dbContext) where T : DbContext {
+	public class GlobalDatabaseSeeder<T> where T : DbContext {
+		public static async Task InvokeAsync(T dbContext) {
 			bool created = dbContext.Database.EnsureCreated();
 
-			foreach (var item in GetDatabaseSeeders<T>()) {
+			foreach (var item in GetDatabaseSeeders()) {
 				IDatabaseSeeder<T>? instance = Activator.CreateInstance(item) as IDatabaseSeeder<T>;
 
 				if (instance == null) {
@@ -25,7 +25,7 @@ namespace Zukte.Middleware {
 			dbContext.SaveChanges();
 		}
 
-		private static IEnumerable<Type> GetDatabaseSeeders<T>() where T : DbContext {
+		private static IEnumerable<Type> GetDatabaseSeeders() {
 			var type = typeof(IDatabaseSeeder<T>);
 			var types = AppDomain.CurrentDomain.GetAssemblies()
 				.SelectMany(s => s.GetTypes())

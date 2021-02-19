@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 
-namespace Zukte.Middleware {
+namespace Zukte.Middleware.DatabaseSeeder {
 	/// <summary>
 	/// Represents a <see cref="DbContext"/> database seeder.
 	/// </summary>

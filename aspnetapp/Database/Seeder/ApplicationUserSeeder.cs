@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Zukte.Database.Factory;
-using Zukte.Middleware;
+using Zukte.Middleware.DatabaseSeeder;
 
 namespace Zukte.Database.Seeder {
 	public class ApplicationUserSeeder : IDatabaseSeeder<ApplicationDbContext> {
