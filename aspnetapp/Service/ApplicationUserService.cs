@@ -1,12 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Zukte.Database;
 using Zukte.Message.ApplicationUser;
 using Zukte.Utilities;
@@ -29,28 +32,28 @@ namespace Zukte.Service {
 			_authorization = authorization;
 		}
 
-		public int MaxResultsMax => 50;
-
-		public int MaxResultsDefault => 30;
+		public int PageSizeHintMaximum => 50;
+		public int PageSizeHintDefault => 30;
 
 		[HttpDelete, Authorize]
 		public async Task<IActionResult> Delete([FromQuery] ApplicationUserDeleteRequest request) {
 			if (_dbContext.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
-			// filter
+			#region filter
 			IQueryable<ApplicationUser> query = _dbContext.ApplicationUsers;
 			query = ApplyIdFilter(query, false, request.Id);
+			#endregion
 
-			// authorization
+			#region authorization
 			foreach (ApplicationUser user in query) {
 				AuthorizationResult auth = await _authorization.AuthorizeAsync(HttpContext.User, user, new Authorization.Requirements.DirectoryWriteRequirement());
 				if (!auth.Succeeded) {
 					return Forbid();
 				}
 			}
+			#endregion
 
-			// execute
 			_dbContext.ApplicationUsers.RemoveRange(query);
 			await _dbContext.SaveChangesAsync();
 
@@ -66,7 +69,7 @@ namespace Zukte.Service {
 		}
 
 		[HttpGet]
-		public ActionResult<ApplicationUserListRequest.Types.ApplicationUserListResponse> GetList([FromQuery] ApplicationUserListRequest request) {
+		public async Task<ActionResult<ApplicationUserListRequest.Types.ApplicationUserListResponse>> GetList([FromQuery] ApplicationUserListRequest request) {
 			if (_dbContext.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
@@ -76,24 +79,18 @@ namespace Zukte.Service {
 			}
 			#endregion
 
-			// filter
+			#region filter
 			IQueryable<ApplicationUser> query = _dbContext.ApplicationUsers;
 			query = ApplyIdFilter(query, true, request.Id);
 			query = ApplyMineFitler(query, request.Mine, HttpContext.User);
+			#endregion
 
-			// apply seek pagination
-			ApplicationUser? decryptedPageToken = DecryptPageToken(request.PageToken);
-			query = ApplyPageToken(query, decryptedPageToken);
+			int? pageSizeHint = ITokenPaginationServiceExtensions.ToPageSizeHint(request.MaxResults);
+			var page = await GetNextPageAsync(query, request.PageToken, pageSizeHint);
 
-			// execute
-			ApplicationUser[] items = ApplyMaxResults(query, (int)request.MaxResults).ToArray();
 			var res = new ApplicationUserListRequest.Types.ApplicationUserListResponse();
-			res.Items.AddRange(items);
-
-			// next page token
-			ApplicationUser? nextPageToken = GenerateNextPageToken(query, items);
-			res.NextPageToken = EncryptPageToken(nextPageToken) ?? string.Empty;
-
+			res.Items.AddRange(page.values);
+			res.NextPageToken = page.continuationToken;
 			return res;
 		}
 
@@ -135,78 +132,49 @@ namespace Zukte.Service {
 		}
 
 		[NonAction]
-		public ApplicationUser? DecryptPageToken(string? ciphertext) {
-			if (string.IsNullOrEmpty(ciphertext))
-				return null;
+		public async ValueTask<Page<ApplicationUser>> GetNextPageAsync(IQueryable<ApplicationUser> postFilterQuery, string continuationToken, int? pageSizeHint) {
+			return await GetNextPageAsync(postFilterQuery, continuationToken, pageSizeHint, CancellationToken.None);
+		}
 
-			// TODO replace with more standard encryption approach
-			return JsonSerializer.Deserialize<ApplicationUser>(ciphertext) ??
+		[NonAction]
+		public async ValueTask<Page<ApplicationUser>> GetNextPageAsync(IQueryable<ApplicationUser> postFilterQuery, string continuationToken, int? pageSizeHint, CancellationToken cancellationToken) {
+			if (!string.IsNullOrEmpty(continuationToken)) {
+				ApplicationUser? seeker = FromContinuationToken(continuationToken);
+				postFilterQuery = postFilterQuery.Where(user => (user.Id).CompareTo(seeker.Id) > 0);
+			}
+
+			postFilterQuery = postFilterQuery.OrderBy(user => user.Id);
+			postFilterQuery = this.ApplyPageHintSize(postFilterQuery, pageSizeHint);
+
+			var items = (await postFilterQuery.ToListAsync()).AsReadOnly();
+			string? nextContinuationToken = await GenerateNextPageToken(postFilterQuery, items);
+			return new Page<ApplicationUser>(items, nextContinuationToken);
+		}
+
+		[NonAction]
+		public ApplicationUser FromContinuationToken(string continuationToken) {
+			return JsonSerializer.Deserialize<ApplicationUser>(continuationToken) ??
 				throw new SerializationException();
 		}
 
 		[NonAction]
-		public string? EncryptPageToken(ApplicationUser? value) {
-			if (value == null)
-				return null;
+		public async Task<string?> GenerateNextPageToken(IQueryable<ApplicationUser> q, IReadOnlyList<ApplicationUser> qValues) {
+			string? continuationToken = null;
 
-			// TODO replace with more standard encryption approach
-			return JsonSerializer.Serialize(value);
-		}
+			if (qValues.Count > 0) {
+				ApplicationUser qValueSelection;
+				ApplicationUser qSelection;
 
-		[NonAction]
-		public IQueryable<ApplicationUser> ApplyPageToken(IQueryable<ApplicationUser> query, ApplicationUser? pageToken) {
-			if (pageToken != null) {
-				string compareToValue = pageToken.Id;
-				query = query.Where(user => (user.Id).CompareTo(compareToValue) > 0);
-			}
+				qValueSelection = qValues[qValues.Count - 1];
+				qSelection = await q.LastOrDefaultAsync();
 
-			return ApplyOrderTransform(query);
-		}
-
-		[NonAction]
-		public ApplicationUser? GenerateNextPageToken(IQueryable<ApplicationUser> query, ApplicationUser[] items) {
-			ApplicationUser? pageToken = null;
-
-			if (items.Length > 0) {
-				ApplicationUser itemsSelection;
-				ApplicationUser querySelection;
-
-				itemsSelection = items.Last();
-				querySelection = query.Last();
-
-				var itemsSelectionValue = itemsSelection.Id;
-				var querySelectionValue = querySelection.Id;
-				int comparison = itemsSelectionValue.CompareTo(querySelectionValue);
-
+				int comparison = (qValueSelection.Id).CompareTo(qSelection.Id);
 				if (comparison < 0) {
-					pageToken = itemsSelection;
+					continuationToken = JsonSerializer.Serialize(qValueSelection);
 				}
 			}
 
-			return pageToken;
-		}
-
-		[NonAction]
-		public IQueryable<ApplicationUser> ApplyMaxResults(IQueryable<ApplicationUser> query) {
-			return ApplyMaxResults(query, MaxResultsDefault);
-		}
-
-		[NonAction]
-		public IQueryable<ApplicationUser> ApplyMaxResults(IQueryable<ApplicationUser> query, int top) {
-			if (top == 0) {
-				top = MaxResultsDefault;
-			}
-
-			if (top > MaxResultsMax) {
-				top = MaxResultsMax;
-			}
-
-			return query.Take(top);
-		}
-
-		[NonAction]
-		public IQueryable<ApplicationUser> ApplyOrderTransform(IQueryable<ApplicationUser> query) {
-			return query.OrderBy(user => user.Id);
+			return continuationToken;
 		}
 	}
 }

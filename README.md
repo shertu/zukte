@@ -10,6 +10,9 @@ You will need to download and install the following software such that you can c
 -   [Java](https://www.oracle.com/au/java/technologies/javase-downloads.html)
 -   [PowerShell](https://github.com/PowerShell/PowerShell/releases/)
 
+
+    "AzureStorageConnection": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://localhost:10000/devstoreaccount1;"
+
 ## how to start development
 
 After you have installed the prerequisite software and cloned the repositiory, you can build the docker images, install dependencies, and generate an API client library, via the PowerShell script:

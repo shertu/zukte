@@ -1,35 +1,17 @@
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Zukte.Utilities.Pagination.TokenPagination {
 	/// <summary>
 	/// Note that pagination seek fields are required to be unique, ordinal, and immutable.
 	/// </summary>
-	/// <typeparam name="T">The type of the page tokens.</typeparam>
-	public interface ITokenPaginationService<T> : IPaginationService<T> {
-		/// <summary>
-		/// Decrypts a page token.
-		/// </summary>
-		/// <param name="ciphertext">The encrypted page token.</param>
-		T? DecryptPageToken(string? ciphertext);
+	/// <typeparam name="T">The type of the items in the page response.</typeparam>
+	public interface ITokenPaginationService<T> {
+		int PageSizeHintMaximum { get; }
+		int PageSizeHintDefault { get; }
 
-		/// <summary>
-		/// Encrypts a page token.
-		/// </summary>
-		/// <param name="value">The decrypted page token.</param>
-		string? EncryptPageToken(T? value);
-
-		/// <summary>
-		/// Applies a SEEK constraint on a SQL query.
-		/// </summary>
-		/// <param name="pageToken">A decrypted page token.</param>
-		IQueryable<T> ApplyPageToken(IQueryable<T> query, T? pageToken);
-
-		/// <summary>
-		/// Generates a page token to be used for seek operations.
-		/// </summary>
-		/// <param name="query">The query used to fetch the items.</param>
-		/// <param name="items">The items fetched by the query.</param>
-		/// <returns>A decrypted page token.</returns>
-		T? GenerateNextPageToken(IQueryable<T> query, T[] items);
+		ValueTask<Page<T>> GetNextPageAsync(IQueryable<T> postFilterQuery, string continuationToken, int? pageSizeHint);
+		ValueTask<Page<T>> GetNextPageAsync(IQueryable<T> postFilterQuery, string continuationToken, int? pageSizeHint, CancellationToken cancellationToken);
 	}
 }

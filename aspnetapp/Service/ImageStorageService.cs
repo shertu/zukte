@@ -23,24 +23,20 @@ namespace Zukte.Service {
 
 		[HttpGet]
 		public ActionResult<ImageListRequest.Types.ImageListResponse> GetList([FromQuery] ImageListRequest request) {
-			int? pageSizeHint = (int?)request.MaxResults;
+			uint max = request.MaxResults;
 
+			int? pageSizeHint = ITokenPaginationServiceExtensions.ToPageSizeHint(request.MaxResults);
 			var page = _imageContainerClient.GetBlobs()
-			  .AsPages(request.PageToken, pageSizeHint)
-			  .First();
+					.AsPages(request.PageToken, pageSizeHint)
+					.First();
 
 			string[] items = page.Values
-			  .Select(e => _imageContainerClient.Uri.AbsoluteUri + '/' + e.Name)
-			  .ToArray();
+				.Select(e => _imageContainerClient.Uri.AbsoluteUri + '/' + e.Name)
+				.ToArray();
 
 			var res = new ImageListRequest.Types.ImageListResponse();
 			res.Urls.AddRange(items);
-
-			#region next page token
 			res.NextPageToken = page.ContinuationToken;
-			#endregion
-
-			// return result
 			return res;
 		}
 

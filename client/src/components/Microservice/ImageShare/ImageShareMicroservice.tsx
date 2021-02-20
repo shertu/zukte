@@ -1,9 +1,10 @@
+import { Space, Typography } from 'antd';
+
 import { AppPage } from '../../AppPage/AppPage';
 import { ImageShareList } from './ImageShareList/ImageShareList';
 import { ImageShareUpload } from './ImageShareUpload/ImageShareUpload';
 import Mailto from 'react-mailto.js';
 import React from 'react';
-import { Typography } from 'antd';
 
 const { Paragraph } = Typography;
 
@@ -24,33 +25,28 @@ export function ImageShareMicroservice(): JSX.Element {
     setItemCollection([url, ...itemCollection]);
   }
 
-  return <></>;
+  return (
+    <AppPage pageTitle="Image Share Demo">
+      <Space direction="vertical">
+        <Typography className="max-cell-xs">
+          <Paragraph>
+            To use this demo service please upload an image file, e.g. .png,
+            .jpg, which is smaller than 8 MiB. You cannot delete an image once
+            it is uploaded, however, you can{' '}
+            <Mailto to="djared.xeknau@outlook.com">send me an email</Mailto> to
+            request the deletion of an image.
+          </Paragraph>
+        </Typography>
 
-  // return (
-  //   <AppPage pageTitle="Image Share Demo">
-  //     <AutoColumnRow
-  //       align="middle"
-  //       gutter={[AutoColumnRowGutterDefault, AutoColumnRowGutterDefault]}
-  //     >
-  //       <Typography className="max-cell-xs">
-  //         <Paragraph>
-  //           To use this demo service please upload an image file, e.g. .png,
-  //           .jpg, which is smaller than 8 MiB. You cannot delete an image once
-  //           it is uploaded, however, you can{' '}
-  //           <Mailto to="djared.xeknau@outlook.com">send me an email</Mailto> to
-  //           request the deletion of an image.
-  //         </Paragraph>
-  //       </Typography>
+        <ImageShareUpload onChangeImageUrl={onFinishUpload} />
+      </Space>
 
-  //       <ImageShareUpload onFinishUpload={onFinishUpload} />
-  //     </AutoColumnRow>
-
-  //     <AppPage pageTitle="Uploaded Images">
-  //       <ImageShareList
-  //         itemCollection={itemCollection}
-  //         setItemCollection={setItemCollection}
-  //       />
-  //     </AppPage>
-  //   </AppPage>
-  // );
+      <AppPage pageTitle="Uploaded Images">
+        <ImageShareList
+          itemCollection={itemCollection}
+          setItemCollection={setItemCollection}
+        />
+      </AppPage>
+    </AppPage>
+  );
 }

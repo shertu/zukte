@@ -1,15 +1,13 @@
-import {Alert, Space, Typography, Upload, message} from 'antd';
-import {LoadingOutlined, PlusOutlined} from '@ant-design/icons';
+import { Alert, Space, Typography, Upload, message } from 'antd';
+import { ImageInsertResponse, ImageStorageServiceApi, ImageStorageServiceInsertRequest } from '../../../../openapi-generator';
+import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 
-import {BlobStorageApi} from '../../../../openapi-generator';
-import {UploadRequestOption as RcCustomRequestOptions} from 'rc-upload/lib/interface';
+import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
 import React from 'react';
-import {UploadChangeParam} from 'antd/lib/upload';
+import { UploadChangeParam } from 'antd/lib/upload';
 
-const {Dragger} = Upload;
-const {Paragraph} = Typography;
-
-const BLOB_STORAGE_API: BlobStorageApi = new BlobStorageApi();
+const { Dragger } = Upload;
+const { Paragraph } = Typography;
 
 /**
  * Used to upload an image to the application's image share container.
@@ -19,22 +17,23 @@ const BLOB_STORAGE_API: BlobStorageApi = new BlobStorageApi();
  */
 export function ImageShareUpload(props: {
   className?: string;
-  onFinishUpload?: (url: string) => void;
+  onChangeImageUrl?: (url: string) => void;
 }): JSX.Element {
-  const {onFinishUpload, className} = props;
+  const { onChangeImageUrl, className } = props;
+  const client = new ImageStorageServiceApi();
 
-  const [imageUrl, setImageUrl] = React.useState<string>(null);
+  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
-  /** Has an error occured during a fetch op? */
-  const [error, setError] = React.useState<boolean>(false);
+  const [errorOccur, setErrorOccur] =
+    React.useState<boolean>(false);
 
   /**
    * The event called when the uploader starts to upload the file.
    * @param {UploadChangeParam} info
    */
-  function onChange(info: UploadChangeParam): void {
+  function onChangeDragger(info: UploadChangeParam): void {
     if (info.file.status === 'uploading') {
       setIsLoading(true);
       return;
@@ -47,17 +46,22 @@ export function ImageShareUpload(props: {
    * @param {RcCustomRequestOptions} options
    */
   async function customRequest(options: RcCustomRequestOptions): Promise<void> {
-    await BLOB_STORAGE_API.apiBlobStoragePost({
-      file: options.file,
-    })
-        .then((res: string) => {
-          setImageUrl(res);
+    const buffer = await options.file.arrayBuffer();
+    buffer.
 
-          if (onFinishUpload) {
-            onFinishUpload(imageUrl);
-          }
-        })
-        .catch(() => setError(true));
+    const request: ImageStorageServiceInsertRequest = {
+      imageData = 
+    };
+
+    if (current.nextPageToken) {
+      request.pageToken = current.nextPageToken;
+    }
+
+    const response: ImageInsertResponse =
+      await client.imageStorageServiceInsert(request);
+
+
+    setImageUrl(res);
 
     setIsLoading(false);
   }
@@ -85,14 +89,14 @@ export function ImageShareUpload(props: {
         accept="image/*"
         multiple={false}
         beforeUpload={beforeUpload}
-        onChange={onChange}
+        onChange={onChangeDragger}
         showUploadList={false}
         customRequest={customRequest}
       >
         {imageUrl ? (
           <img className="max-cell" src={imageUrl} alt="uploaded-image" />
         ) : (
-            <div style={{padding: 28}}>
+            <div style={{ padding: 28 }}>
               <Paragraph className="ant-upload-drag-icon">
                 {isLoading ? <LoadingOutlined /> : <PlusOutlined />}
               </Paragraph>
