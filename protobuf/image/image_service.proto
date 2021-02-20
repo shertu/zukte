@@ -1,0 +1,13 @@
+syntax = "proto3";
+package Zukte.Message.Image;
+
+import "protobuf/image/image_insert_request.proto";
+import "protobuf/image/image_list_request.proto";
+
+service ImageService {
+  rpc GetList(ImageListRequest)
+      returns (ImageListRequest.ImageListResponse) {}
+
+  rpc Insert(ImageInsertRequest)
+      returns (ImageInsertRequest.ImageInsertResponse) {}
+}

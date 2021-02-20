@@ -1,14 +1,15 @@
-import {Result, Typography} from 'antd';
-import {Route, Switch} from 'react-router-dom';
+import { Result, Typography } from 'antd';
+import { Route, Switch } from 'react-router-dom';
 
 import AppRouteCollection from '../../../constants/AppRouteCollection';
-import {AuthenticateMicroservice} from '../../Microservice/Authenticate/AuthenticateMicroservice';
-import {LandingPage} from '../../LandingPage/LandingPage';
+import { AuthenticateMicroservice } from '../../Microservice/Authenticate/AuthenticateMicroservice';
+import { ImageShareMicroservice } from '../../Microservice/ImageShare/ImageShareMicroservice';
+import { LandingPage } from '../../LandingPage/LandingPage';
 import Mailto from 'react-mailto.js';
-import {PrivacyPolicyPage} from '../../PrivacyPolicyPage/PrivacyPolicyPage';
+import { PrivacyPolicyPage } from '../../PrivacyPolicyPage/PrivacyPolicyPage';
 import React from 'react';
 
-const {Paragraph} = Typography;
+const { Paragraph } = Typography;
 
 /**
  * A switch component used to route URLs to core pages in the application.
@@ -31,6 +32,10 @@ export function AppContentSwitch(): JSX.Element {
 
       <Route exact path={AppRouteCollection.AuthenticationDemo}>
         <AuthenticateMicroservice />
+      </Route>
+
+      <Route exact path={AppRouteCollection.ImageShareDemo}>
+        <ImageShareMicroservice />
       </Route>
 
       <Route>
@@ -57,9 +62,5 @@ export function AppContentSwitch(): JSX.Element {
 /*
 <Route exact path={AppRouteCollection.MapDemo}>
 <MapAtomicDemo />
-</Route>
-
-<Route exact path={ApplicationRouteCollection.ImageShareDemo}>
-<ImageShareAtomicDemo />
 </Route>
 */

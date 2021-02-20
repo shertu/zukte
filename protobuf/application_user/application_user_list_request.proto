@@ -1,20 +1,13 @@
 syntax = "proto3";
 package Zukte.Message.ApplicationUser;
 
-import "protobuf/application_user.proto";
+import "protobuf/application_user/application_user.proto";
 
 /* represents a query for some user accounts */
 message ApplicationUserListRequest {
-  // a seek pagination token
   string page_token = 1;
-  
-  // a pagination size limiter
   uint32 max_results = 2;
-
-  // a filter used to select user accounts with the specified ids
   string id = 3;
-
-  // a filter used to select user accounts associated with an authenticated user
   bool mine = 4;
 
   message ApplicationUserListResponse {

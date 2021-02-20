@@ -1,0 +1,13 @@
+syntax = "proto3";
+package Zukte.Message.Image;
+
+/* represents a query for some images from blob storage */
+message ImageListRequest {
+  string page_token = 1;
+  uint32 max_results = 2;
+
+  message ImageListResponse {
+    repeated string urls = 1;
+    string next_page_token = 2;
+  }
+}
