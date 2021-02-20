@@ -11,13 +11,5 @@ namespace Zukte.Utilities.Pagination.TokenPagination {
 
 			return query.Take(count);
 		}
-
-		public static int? ToPageSizeHint(uint? max) {
-			if (max == null || max == 0) {
-				return null;
-			}
-
-			return (int)max;
-		}
 	}
 }

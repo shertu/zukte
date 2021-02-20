@@ -25,7 +25,7 @@ namespace Zukte.Service {
 		public ActionResult<ImageListRequest.Types.ImageListResponse> GetList([FromQuery] ImageListRequest request) {
 			uint max = request.MaxResults;
 
-			int? pageSizeHint = ITokenPaginationServiceExtensions.ToPageSizeHint(request.MaxResults);
+			int? pageSizeHint = ToPageSizeHint(request.MaxResults);
 			var page = _imageContainerClient.GetBlobs()
 					.AsPages(request.PageToken, pageSizeHint)
 					.First();
@@ -38,6 +38,10 @@ namespace Zukte.Service {
 			res.Urls.AddRange(items);
 			res.NextPageToken = page.ContinuationToken ?? string.Empty;
 			return res;
+		}
+
+		private static int? ToPageSizeHint(uint? max) {
+			return (max == null || max == 0) ? null : (int)max;
 		}
 
 		// public async Task<ActionResult<string>> UploadImage([Required] IFormFile file) {
