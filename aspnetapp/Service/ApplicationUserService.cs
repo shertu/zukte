@@ -165,7 +165,7 @@ namespace Zukte.Service {
 				ApplicationUser qSelection;
 
 				qValueSelection = qValues[qValues.Count - 1];
-				qSelection = await q.LastOrDefaultAsync();
+				qSelection = await q.LastAsync();
 
 				int comparison = (qValueSelection.Id).CompareTo(qSelection.Id);
 				if (comparison < 0) {
