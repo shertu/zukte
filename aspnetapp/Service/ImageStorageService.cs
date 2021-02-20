@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc;
 using Zukte.Message.Image;
+using Zukte.Utilities;
 using Zukte.Utilities.File;
-using Zukte.Utilities.Pagination.TokenPagination;
 
 namespace Zukte.Service {
 	/// <inheritdoc/>
@@ -25,7 +25,7 @@ namespace Zukte.Service {
 		public ActionResult<ImageListRequest.Types.ImageListResponse> GetList([FromQuery] ImageListRequest request) {
 			uint max = request.MaxResults;
 
-			int? pageSizeHint = ToPageSizeHint(request.MaxResults);
+			int? pageSizeHint = PageSizeHint.FromMaxResults(request.MaxResults);
 			var page = _imageContainerClient.GetBlobs()
 					.AsPages(request.PageToken, pageSizeHint)
 					.First();
@@ -38,10 +38,6 @@ namespace Zukte.Service {
 			res.Urls.AddRange(items);
 			res.NextPageToken = page.ContinuationToken ?? string.Empty;
 			return res;
-		}
-
-		private static int? ToPageSizeHint(uint? max) {
-			return (max == null || max == 0) ? null : (int)max;
 		}
 
 		// public async Task<ActionResult<string>> UploadImage([Required] IFormFile file) {

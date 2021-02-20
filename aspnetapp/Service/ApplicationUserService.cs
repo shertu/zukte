@@ -85,17 +85,13 @@ namespace Zukte.Service {
 			query = ApplyMineFitler(query, request.Mine, HttpContext.User);
 			#endregion
 
-			int? pageSizeHint = ToPageSizeHint(request.MaxResults);
+			int? pageSizeHint = PageSizeHint.FromMaxResults(request.MaxResults);
 			var page = await GetNextPageAsync(query, request.PageToken, pageSizeHint);
 
 			var res = new ApplicationUserListRequest.Types.ApplicationUserListResponse();
 			res.Items.AddRange(page.values);
 			res.NextPageToken = page.continuationToken ?? string.Empty;
 			return res;
-		}
-
-		private static int? ToPageSizeHint(uint? max) {
-			return (max == null || max == 0) ? null : (int)max;
 		}
 
 		/// <summary>
