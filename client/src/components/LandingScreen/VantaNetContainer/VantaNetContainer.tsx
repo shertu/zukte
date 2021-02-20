@@ -28,8 +28,8 @@ export function VantaNetContainer(
         NET({
           el: vantaRef.current,
           THREE: ThreeJs, // use a custom THREE when initializing
-          color: 0xd8412f,
-          backgroundColor: 0xfcfdfe,
+          color: 0xACACDE,
+          backgroundColor: 0xE5FCFF,
         }),
       );
     }
