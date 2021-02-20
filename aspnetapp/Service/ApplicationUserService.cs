@@ -33,18 +33,16 @@ namespace Zukte.Service {
 
 		public int MaxResultsDefault => 30;
 
-		/// <summary>
-		/// Deletes an account from the system.
-		/// </summary>
 		[HttpDelete, Authorize]
 		public async Task<IActionResult> Delete([FromQuery] ApplicationUserDeleteRequest request) {
 			if (_dbContext.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
+			// filter
 			IQueryable<ApplicationUser> query = _dbContext.ApplicationUsers;
 			query = ApplyIdFilter(query, false, request.Id);
 
-			// check user is permitted to delete specified application users
+			// authorization
 			foreach (ApplicationUser user in query) {
 				AuthorizationResult auth = await _authorization.AuthorizeAsync(HttpContext.User, user, new Authorization.Requirements.DirectoryWriteRequirement());
 				if (!auth.Succeeded) {
@@ -52,59 +50,50 @@ namespace Zukte.Service {
 				}
 			}
 
+			// execute
 			_dbContext.ApplicationUsers.RemoveRange(query);
 			await _dbContext.SaveChangesAsync();
 
-			// sign out if user deleted their own account
+			#region sign out if user deleted their own account
 			string? id = User.FindFirstValue(ClaimTypes.NameIdentifier);
 			ApplicationUser? mine = await _dbContext.ApplicationUsers.FindAsync(id);
 			if (mine == null) {
 				await HttpContext.SignOutAsync();
 			}
+			#endregion
 
 			return NoContent();
 		}
 
-		/// <summary>
-		/// Gets a list of accounts in the system.
-		/// </summary>
 		[HttpGet]
 		public ActionResult<ApplicationUserListRequest.Types.ApplicationUserListResponse> GetList([FromQuery] ApplicationUserListRequest request) {
 			if (_dbContext.ApplicationUsers == null)
 				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
 
-			// the MINE version of this endpoint requires an authorization check
-			if (request.Mine && !User.IsAuthenticated()) {
+			#region authentication
+			if (request.Mine && !User.HasAuthenticatedIdentity()) {
 				return Challenge(); // issue a default challenge
 			}
+			#endregion
 
+			// filter
 			IQueryable<ApplicationUser> query = _dbContext.ApplicationUsers;
 			query = ApplyIdFilter(query, true, request.Id);
 			query = ApplyMineFitler(query, request.Mine, HttpContext.User);
 
 			// apply seek pagination
-			ApplicationUser? pageTokenDecrypted;
-			if (string.IsNullOrEmpty(request.PageToken)) {
-				pageTokenDecrypted = null;
-			} else {
-				pageTokenDecrypted = DecryptPageToken(request.PageToken);
-			}
+			ApplicationUser? decryptedPageToken = DecryptPageToken(request.PageToken);
+			query = ApplyPageToken(query, decryptedPageToken);
 
-			query = ApplyPageToken(query, pageTokenDecrypted);
-
-			// fetch maximum number of results
+			// execute
 			ApplicationUser[] items = ApplyMaxResults(query, (int)request.MaxResults).ToArray();
 			var res = new ApplicationUserListRequest.Types.ApplicationUserListResponse();
 			res.Items.AddRange(items);
 
-			#region generate seek pagination tokens
-			ApplicationUser? nextPageToken = GeneratePageToken(query, items, false);
-			if (nextPageToken != null) {
-				res.NextPageToken = EncryptPageToken(nextPageToken) ?? string.Empty;
-			}
-			#endregion
+			// next page token
+			ApplicationUser? nextPageToken = GenerateNextPageToken(query, items);
+			res.NextPageToken = EncryptPageToken(nextPageToken) ?? string.Empty;
 
-			// return result
 			return res;
 		}
 
@@ -175,26 +164,21 @@ namespace Zukte.Service {
 		}
 
 		[NonAction]
-		public ApplicationUser? GeneratePageToken(IQueryable<ApplicationUser> query, ApplicationUser[] items, bool prevToken) {
+		public ApplicationUser? GenerateNextPageToken(IQueryable<ApplicationUser> query, ApplicationUser[] items) {
 			ApplicationUser? pageToken = null;
 
 			if (items.Length > 0) {
 				ApplicationUser itemsSelection;
 				ApplicationUser querySelection;
 
-				if (prevToken) {
-					itemsSelection = items.First();
-					querySelection = query.First();
-				} else {
-					itemsSelection = items.Last();
-					querySelection = query.Last();
-				}
+				itemsSelection = items.Last();
+				querySelection = query.Last();
 
 				var itemsSelectionValue = itemsSelection.Id;
 				var querySelectionValue = querySelection.Id;
 				int comparison = itemsSelectionValue.CompareTo(querySelectionValue);
 
-				if ((prevToken && comparison > 0) || (!prevToken && comparison < 0)) {
+				if (comparison < 0) {
 					pageToken = itemsSelection;
 				}
 			}
@@ -223,11 +207,6 @@ namespace Zukte.Service {
 		[NonAction]
 		public IQueryable<ApplicationUser> ApplyOrderTransform(IQueryable<ApplicationUser> query) {
 			return query.OrderBy(user => user.Id);
-		}
-
-		[NonAction]
-		public IQueryable<ApplicationUser> ApplySkipTransform(IQueryable<ApplicationUser> query, int skip) {
-			throw new NotImplementedException();
 		}
 	}
 }

@@ -18,8 +18,6 @@ namespace Zukte.Utilities.Pagination.TokenPagination {
 		/// <param name="value">The decrypted page token.</param>
 		string? EncryptPageToken(T? value);
 
-		// currently support ascend order only
-
 		/// <summary>
 		/// Applies a SEEK constraint on a SQL query.
 		/// </summary>
@@ -31,8 +29,7 @@ namespace Zukte.Utilities.Pagination.TokenPagination {
 		/// </summary>
 		/// <param name="query">The query used to fetch the items.</param>
 		/// <param name="items">The items fetched by the query.</param>
-		/// <param name="prevToken">Generate a previous page token?</param>
 		/// <returns>A decrypted page token.</returns>
-		T? GeneratePageToken(IQueryable<T> query, T[] items, bool prevToken);
+		T? GenerateNextPageToken(IQueryable<T> query, T[] items);
 	}
 }

@@ -2,10 +2,16 @@ version: "3.9"
 services:
   database:
     image: mysql
-    # This line of code ensures that password authentication is the default authentication method used to connect to the database:
+    # use password authentication
     command: --default-authentication-plugin=mysql_native_password
     environment:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: aspnetapp
     ports:
       - "3306:3306/tcp"
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    # initialize only the blob storage
+    command: azurite-blob --blobHost 0.0.0.0
+    ports:
+      - "10000:10000/tcp"

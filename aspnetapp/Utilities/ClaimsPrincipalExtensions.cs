@@ -29,7 +29,7 @@ namespace Zukte.Utilities {
 		/// <summary>
 		/// A shorthand method to check if the user is signed in.
 		/// </summary>
-		public static bool IsAuthenticated(this ClaimsPrincipal principal) {
+		public static bool HasAuthenticatedIdentity(this ClaimsPrincipal principal) {
 			return principal.Identity?.IsAuthenticated ?? false;
 		}
 	}

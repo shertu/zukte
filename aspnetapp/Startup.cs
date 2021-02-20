@@ -1,3 +1,4 @@
+using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -24,20 +25,26 @@ namespace Zukte {
 		}
 
 		public void ConfigureServices(IServiceCollection services) {
-			// #region Azure Blob Storage
-			// // Account -> Container -> Blob
-			// string? azureStorageConnectionString = _configuration.GetConnectionString("AzureStorageConnection");
-
-			// if (!string.IsNullOrEmpty(azureStorageConnectionString)) {
-			// 	BlobServiceClient blobServiceClient = new BlobServiceClient(azureStorageConnectionString);
-			// 	services.AddSingleton(blobServiceClient);
-			// }
-			// #endregion
-
 			#region database
 			string? databaseConnectionString = _configuration.GetConnectionString("DatabaseConnection");
-			services.AddDbContext<ApplicationDbContext>(options =>
-			  options.UseMySQL(databaseConnectionString));
+
+			if (!string.IsNullOrEmpty(databaseConnectionString)) {
+				services.AddDbContext<ApplicationDbContext>(options =>
+				  options.UseMySQL(databaseConnectionString));
+			} else {
+				// this is a critical error
+			}
+			#endregion
+
+			#region Azure Blob Storage
+			string? azureStorageConnectionString = _configuration.GetConnectionString("AzureStorageConnection");
+
+			if (!string.IsNullOrEmpty(azureStorageConnectionString)) {
+				BlobServiceClient client = new BlobServiceClient(azureStorageConnectionString);
+				services.AddSingleton<BlobServiceClient>(client);
+			} else {
+				// this is a severe error
+			}
 			#endregion
 
 			#region Authentication

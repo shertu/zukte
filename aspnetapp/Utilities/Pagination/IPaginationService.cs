@@ -24,11 +24,5 @@ namespace Zukte.Utilities.Pagination {
 		/// Applies an ORDER BY transformation on a SQL query.
 		/// </summary>
 		IQueryable<T> ApplyOrderTransform(IQueryable<T> query);
-
-		/// <summary>
-		/// Applies an OFFSET constraint on a SQL query.
-		/// </summary>
-		/// <param name="skip">The requested OFFSET constraint value.</param>
-		IQueryable<T> ApplySkipTransform(IQueryable<T> query, int skip);
 	}
 }
