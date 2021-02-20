@@ -90,7 +90,7 @@ namespace Zukte.Service {
 
 			var res = new ApplicationUserListRequest.Types.ApplicationUserListResponse();
 			res.Items.AddRange(page.values);
-			res.NextPageToken = page.continuationToken;
+			res.NextPageToken = page.continuationToken ?? string.Empty;
 			return res;
 		}
 
@@ -137,18 +137,17 @@ namespace Zukte.Service {
 		}
 
 		[NonAction]
-		public async ValueTask<Page<ApplicationUser>> GetNextPageAsync(IQueryable<ApplicationUser> postFilterQuery, string continuationToken, int? pageSizeHint, CancellationToken cancellationToken) {
+		public async ValueTask<Page<ApplicationUser>> GetNextPageAsync(IQueryable<ApplicationUser> query, string continuationToken, int? pageSizeHint, CancellationToken cancellationToken) {
 			if (!string.IsNullOrEmpty(continuationToken)) {
 				ApplicationUser? seeker = FromContinuationToken(continuationToken);
-				postFilterQuery = postFilterQuery.Where(user => (user.Id).CompareTo(seeker.Id) > 0);
+				query = query.Where(user => (user.Id).CompareTo(seeker.Id) > 0);
 			}
 
-			postFilterQuery = postFilterQuery.OrderBy(user => user.Id);
-			postFilterQuery = this.ApplyPageHintSize(postFilterQuery, pageSizeHint);
+			var qOrder = query.OrderBy(user => user.Id);
 
-			var items = (await postFilterQuery.ToListAsync()).AsReadOnly();
-			string? nextContinuationToken = await GenerateNextPageToken(postFilterQuery, items);
-			return new Page<ApplicationUser>(items, nextContinuationToken);
+			var items = await this.ApplyPageHintSize(qOrder, pageSizeHint).ToListAsync();
+			string? nextContinuationToken = await GenerateNextPageToken(qOrder, items);
+			return new Page<ApplicationUser>(items.AsReadOnly(), nextContinuationToken);
 		}
 
 		[NonAction]
@@ -158,7 +157,7 @@ namespace Zukte.Service {
 		}
 
 		[NonAction]
-		public async Task<string?> GenerateNextPageToken(IQueryable<ApplicationUser> q, IReadOnlyList<ApplicationUser> qValues) {
+		public async Task<string?> GenerateNextPageToken(IQueryable<ApplicationUser> q, IList<ApplicationUser> qValues) {
 			string? continuationToken = null;
 
 			if (qValues.Count > 0) {

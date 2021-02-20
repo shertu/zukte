@@ -36,7 +36,7 @@ namespace Zukte.Service {
 
 			var res = new ImageListRequest.Types.ImageListResponse();
 			res.Urls.AddRange(items);
-			res.NextPageToken = page.ContinuationToken;
+			res.NextPageToken = page.ContinuationToken ?? string.Empty;
 			return res;
 		}
 
