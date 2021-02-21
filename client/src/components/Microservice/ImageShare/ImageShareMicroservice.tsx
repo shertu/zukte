@@ -4,6 +4,7 @@ import { AppPage } from '../../AppPage/AppPage';
 import { ImageShareList } from './ImageShareList/ImageShareList';
 import { ImageShareUpload } from './ImageShareUpload/ImageShareUpload';
 import Mailto from 'react-mailto.js';
+import { PaginationResponseInformation } from '../../../utilities/PaginationResponseInformation';
 import React from 'react';
 
 const { Paragraph } = Typography;
@@ -14,15 +15,27 @@ const { Paragraph } = Typography;
  * @return {JSX.Element}
  */
 export function ImageShareMicroservice(): JSX.Element {
-  const [itemCollection, setItemCollection] = React.useState<Array<string>>([]);
+  const [information, setInformation] =
+    React.useState<PaginationResponseInformation<string>>(
+      new PaginationResponseInformation<string>());
 
   /**
    * A hook to prepend the uploaded image to the image item collection.
    *
    * @param {string} url
    */
-  function onFinishUpload(url: string): void {
-    setItemCollection([url, ...itemCollection]);
+  function onChangeUploadImageUrl(url: string): void {
+    const nextInformation: PaginationResponseInformation<string> =
+      new PaginationResponseInformation<string>();
+
+    nextInformation.items = [url, ...information.items];
+
+    nextInformation.nextPageToken =
+      information.nextPageToken;
+    nextInformation.hasMadeAtLeastOneFetch =
+      information.hasMadeAtLeastOneFetch;
+
+    setInformation(nextInformation);
   }
 
   return (
@@ -38,13 +51,13 @@ export function ImageShareMicroservice(): JSX.Element {
           </Paragraph>
         </Typography>
 
-        <ImageShareUpload onChangeImageUrl={onFinishUpload} />
+        <ImageShareUpload onChangeImageUrl={onChangeUploadImageUrl} />
       </Space>
 
       <AppPage pageTitle="Uploaded Images">
         <ImageShareList
-          itemCollection={itemCollection}
-          setItemCollection={setItemCollection}
+          information={information}
+          onChangeInformation={setInformation}
         />
       </AppPage>
     </AppPage>

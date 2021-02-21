@@ -1,9 +1,10 @@
-import { Alert, Space, Typography, Upload, message } from 'antd';
-import { ImageInsertResponse, ImageStorageServiceApi, ImageStorageServiceInsertRequest } from '../../../../openapi-generator';
+import { ImageStorageServiceApi, ImageStorageServiceInsertRequest } from '../../../../openapi-generator';
 import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { Space, Typography, Upload, message } from 'antd';
 
 import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
 import React from 'react';
+import { Rfc7807Alert } from '../../../Rfc7807Alert/Rfc7807Alert';
 import { UploadChangeParam } from 'antd/lib/upload';
 
 const { Dragger } = Upload;
@@ -45,24 +46,14 @@ export function ImageShareUpload(props: {
    *
    * @param {RcCustomRequestOptions} options
    */
-  async function customRequest(options: RcCustomRequestOptions): Promise<void> {
-    const buffer = await options.file.arrayBuffer();
-    buffer.
-
+  async function uploadCustomRequest(options: RcCustomRequestOptions): Promise<void> {
     const request: ImageStorageServiceInsertRequest = {
-      imageData = 
+      file: options.file,
     };
 
-    if (current.nextPageToken) {
-      request.pageToken = current.nextPageToken;
-    }
+    const response = await client.imageStorageServiceInsert(request);
 
-    const response: ImageInsertResponse =
-      await client.imageStorageServiceInsert(request);
-
-
-    setImageUrl(res);
-
+    setImageUrl(response.url ?? null);
     setIsLoading(false);
   }
 
@@ -91,7 +82,7 @@ export function ImageShareUpload(props: {
         beforeUpload={beforeUpload}
         onChange={onChangeDragger}
         showUploadList={false}
-        customRequest={customRequest}
+        customRequest={uploadCustomRequest}
       >
         {imageUrl ? (
           <img className="max-cell" src={imageUrl} alt="uploaded-image" />
@@ -107,12 +98,11 @@ export function ImageShareUpload(props: {
           )}
       </Dragger>
 
-      {error && (
-        <Alert
-          message="An unexpected error occurred while uploading the image."
-          type="error"
+      {errorOccur &&
+        <Rfc7807Alert
+          title="The request to upload the image was unsuccessful."
         />
-      )}
+      }
     </Space>
   );
 }

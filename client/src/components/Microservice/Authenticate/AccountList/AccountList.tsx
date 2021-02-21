@@ -1,9 +1,9 @@
-import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
+import { ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
 
-import {ListItem} from './ListItem/ListItem';
-import {ListProps} from 'antd';
-import {PaginationList} from '../../../PaginationList/PaginationList';
-import {PaginationResponseInformation} from '../../../../utilities/PaginationResponseInformation';
+import { ListItem } from './ListItem/ListItem';
+import { ListProps } from 'antd';
+import { PaginationList } from '../../../PaginationList/PaginationList';
+import { PaginationResponseInformation } from '../../../../utilities/PaginationResponseInformation';
 import React from 'react';
 
 /**
@@ -15,17 +15,13 @@ import React from 'react';
 export function AccountList(props: {
   mineAccounts?: ApplicationUser[];
 }): JSX.Element {
-  const {mineAccounts = []} = props;
+  const { mineAccounts = [] } = props;
 
   const client = new ApplicationUserServiceApi();
 
-  const [accountInformation, setAccountInformation] =
+  const [information, setInformation] =
     React.useState<PaginationResponseInformation<ApplicationUser>>(
-        new PaginationResponseInformation<ApplicationUser>());
-
-  // console.log('AuthenticationAtomicDemo', {
-  //   mineApplicationUsers: mineAccounts,
-  // });
+      new PaginationResponseInformation<ApplicationUser>());
 
   /**
    * An event to fetch an additional page of items.
@@ -33,7 +29,7 @@ export function AccountList(props: {
    * @return {Promise<PaginationResponseInformation<ApplicationUser>>}
    */
   async function onFetchAdditionalInformation(
-      current: PaginationResponseInformation<ApplicationUser>,
+    current: PaginationResponseInformation<ApplicationUser>,
   ): Promise<PaginationResponseInformation<ApplicationUser>> {
     const request: ApplicationUserServiceGetListRequest = {
 
@@ -43,8 +39,7 @@ export function AccountList(props: {
       request.pageToken = current.nextPageToken;
     }
 
-    const response: ApplicationUserListResponse =
-      await client.applicationUserServiceGetList(request);
+    const response = await client.applicationUserServiceGetList(request);
 
     const additionalItems: ApplicationUser[] = response.items || [];
 
@@ -58,12 +53,13 @@ export function AccountList(props: {
     return nextInformation;
   }
 
-  // this should be set using state mutations but it works for now
-  let accountInformationSorted: PaginationResponseInformation<ApplicationUser> =
+  // this should be set using state
+  let infoSorted: PaginationResponseInformation<ApplicationUser> =
     new PaginationResponseInformation<ApplicationUser>();
+
   if (mineAccounts.length) {
-    accountInformationSorted.items =
-      accountInformation.items.sort((a, b) => {
+    infoSorted.items =
+      information.items.sort((a, b) => {
         const aIsMineAccount =
           Boolean(mineAccounts.find((elem) => elem.id === a.id));
         const bIsMineAccount =
@@ -75,12 +71,12 @@ export function AccountList(props: {
         return aScore + bScore;
       });
 
-    accountInformationSorted.nextPageToken =
-      accountInformation.nextPageToken;
-    accountInformationSorted.hasMadeAtLeastOneFetch =
-      accountInformation.hasMadeAtLeastOneFetch;
+    infoSorted.nextPageToken =
+      information.nextPageToken;
+    infoSorted.hasMadeAtLeastOneFetch =
+      information.hasMadeAtLeastOneFetch;
   } else {
-    accountInformationSorted = accountInformation;
+    infoSorted = information;
   }
 
   const listProps: ListProps<ApplicationUser> = {
@@ -92,8 +88,8 @@ export function AccountList(props: {
   return (
     <PaginationList
       onFetchAdditionalInformation={onFetchAdditionalInformation}
-      onChangeInformation={setAccountInformation}
-      information={accountInformationSorted}
+      onChangeInformation={setInformation}
+      information={infoSorted}
       paginationPageSize={25}
       list={listProps}
     />

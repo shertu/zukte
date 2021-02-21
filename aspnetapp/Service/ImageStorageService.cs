@@ -1,8 +1,10 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Zukte.Message.Image;
 using Zukte.Utilities;
@@ -40,13 +42,13 @@ namespace Zukte.Service {
 			return res;
 		}
 
-		// public async Task<ActionResult<string>> UploadImage([Required] IFormFile file) {
 		[HttpPost]
-		public async Task<ActionResult<ImageInsertRequest.Types.ImageInsertResponse>> Insert([FromQuery] ImageInsertRequest request) {
+		public async Task<ActionResult<ImageInsertRequest.Types.ImageInsertResponse>> Insert([Required] IFormFile file) {
 			Uri? imageLocation = null;
 
-			var buffer = request.ImageData.ToByteArray();
-			using (var ms = new MemoryStream(buffer)) {
+			using (var ms = new MemoryStream((int)file.Length)) {
+				await file.CopyToAsync(ms);
+
 				string filepath = Guid.NewGuid().ToString();
 
 				if (Upload.IsActualImageFile(ms)) {
