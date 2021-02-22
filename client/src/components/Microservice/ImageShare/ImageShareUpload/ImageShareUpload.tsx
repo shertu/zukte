@@ -1,14 +1,11 @@
-import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
-import { Space, Typography, Upload, message } from 'antd';
+import { Button, Space, Upload, message } from 'antd';
 
 import { ImageStorageServiceApi } from '../../../../openapi-generator';
-import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
+import { RcFile } from 'antd/lib/upload';
 import React from 'react';
 import { Rfc7807Alert } from '../../../Rfc7807Alert/Rfc7807Alert';
-import { UploadChangeParam } from 'antd/lib/upload';
-
-const { Dragger } = Upload;
-const { Paragraph } = Typography;
+import { UploadFile } from 'antd/lib/upload/interface';
+import { UploadOutlined } from '@ant-design/icons';
 
 /**
  * Used to upload an image to the application's image share container.
@@ -18,94 +15,101 @@ const { Paragraph } = Typography;
  */
 export function ImageShareUpload(props: {
   className?: string;
-  onChangeImageUrl?: (url: string | null | undefined) => void;
+  onSuccessfulUpload?: (url: string | null | undefined) => void;
 }): JSX.Element {
-  const { onChangeImageUrl, className } = props;
+  const { onSuccessfulUpload, className } = props;
   const client = new ImageStorageServiceApi();
 
-  const [imageUrl, setImageUrl] = React.useState<string | null | undefined>();
+  const [uploading, setUploading] =
+    React.useState<boolean>(false);
 
-  const [isLoading, setIsLoading] = React.useState<boolean>(false);
+  const [fileList, setFileList] =
+    React.useState<Array<UploadFile>>([]);
 
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
 
-  React.useEffect(() => {
-    if (onChangeImageUrl) {
-      onChangeImageUrl(imageUrl);
-    }
-  }, [imageUrl]);
-
   /**
-   * The event called when the uploader starts to upload the file.
-   * @param {UploadChangeParam} info
+   * The event called before the uploader starts to upload the file.
+   *
+   * @param {React.MouseEvent<HTMLElement, MouseEvent>} event
    */
-  function onChangeDragger(info: UploadChangeParam): void {
-    if (info.file.status === 'uploading') {
-      setIsLoading(true);
-      return;
-    }
-  }
+  function handleUpload(event: React.MouseEvent<HTMLElement, MouseEvent>): void {
+    setUploading(true);
+
+    console.log("ImageShareUpload", {
+      fileList: fileList,
+    });
+
+    fileList.forEach((file: UploadFile) => {
+      console.log("ImageShareUpload", {
+        originFileObj: file,
+      });
+
+      client.imageStorageServiceInsert({
+        image: file as Blob,
+      }).then((response) => {
+        if (onSuccessfulUpload) {
+          onSuccessfulUpload(response.insertedImageUrl);
+        }
+
+        setUploading(false);
+      }).catch((err) => {
+        setErrorOccur(true);
+        setUploading(false);
+      });
+    });
+  };
 
   /**
- * An override for the upload request.
- *
- * @param {RcCustomRequestOptions} options
- */
-  function uploadCustomRequest(options: RcCustomRequestOptions): void {
-    client.imageStorageServiceInsert({
-      image: options.file,
-    }).then((response) => {
-      setImageUrl(response.insertedImageUrl);
-      setIsLoading(false);
-    }).catch((err) => {
-      setErrorOccur(true);
-      setIsLoading(false);
-    });
+   * The event called before the uploader starts to upload the file.
+   *
+   * @param {RcFile} file
+   * @param {RcFile[]} FileList
+   * @return {boolean | Promise<void | Blob | File>}
+   */
+  function beforeUpload(file: RcFile, FileList: RcFile[]): boolean | Promise<void | Blob | File> {
+    if (file.size < 5000000) {
+      setFileList([...fileList, file])
+    } else {
+      message.error('file size require to be less than or equal to 5 MB');
+    }
+
+    return false;
   }
 
   /**
    * The event called before the uploader starts to upload the file.
    *
-   * @param {File} file
-   * @param {File[]} FileList
-   * @return {boolean}
+   * @param {UploadFile} file
+   * @return {void | boolean | Promise<void | boolean>}
    */
-  function beforeUpload(file: File, FileList: File[]): boolean {
-    const isSmallFile = file.size < 8388608;
-    if (!isSmallFile) {
-      message.error('Image must smaller than 8 MiB!');
-    }
-
-    return isSmallFile;
+  function onRemove(file: UploadFile): void | boolean | Promise<void | boolean> {
+    const index = fileList.indexOf(file);
+    const newFileList = fileList.slice();
+    newFileList.splice(index, 1);
+    setFileList(newFileList);
   }
 
   return (
     <Space className={className} direction="vertical">
-      <Dragger
-        name="file"
-        accept="image/*"
-        multiple={false}
+      <Upload
         beforeUpload={beforeUpload}
-        onChange={onChangeDragger}
-        showUploadList={false}
-        customRequest={uploadCustomRequest}
+        onRemove={onRemove}
+        fileList={fileList}
+        multiple={false}
       >
-        <div style={{ minWidth: 428, minHeight: 64 }}>
-          {imageUrl ?
-            <img src={imageUrl} style={{ maxWidth: "100%", maxHeight: 437 }} />
-            :
-            <Typography>
-              <Paragraph className="ant-upload-drag-icon">
-                {isLoading ? <LoadingOutlined /> : <UploadOutlined />}
-              </Paragraph>
-              <Paragraph className="ant-upload-text">
-                click this area to upload a file
-              </Paragraph>
-            </Typography>
-          }
-        </div>
-      </Dragger>
+        <Button icon={<UploadOutlined />}>Select File</Button>
+      </Upload>
+      <Button
+        type="primary"
+        onClick={handleUpload}
+        disabled={fileList.length === 0}
+        loading={uploading}
+        style={{ marginTop: 16 }}
+      >
+        {uploading ? 'Uploading' : 'Start Upload'}
+      </Button>
 
       {errorOccur &&
         <Rfc7807Alert

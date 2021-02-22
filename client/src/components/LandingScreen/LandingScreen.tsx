@@ -1,12 +1,12 @@
 import './style.less';
 
-import {Button, Card, Space, Typography} from 'antd';
+import { Button, Card, Space, Typography } from 'antd';
 
 import React from 'react';
-import {Link as ScrollLink} from 'react-scroll';
-import {VantaNetContainer} from './VantaNetContainer/VantaNetContainer';
+import { Link as ScrollLink } from 'react-scroll';
+import { VantaNetContainer } from './VantaNetContainer/VantaNetContainer';
 
-const {Title} = Typography;
+const { Title } = Typography;
 
 /**
  * The first screen of content which the user will see.
@@ -23,7 +23,7 @@ export function LandingScreen(): JSX.Element {
               <Title level={1} className="primary-color">
                 Jared Michael Blackman
               </Title>
-              <Title level={2}>Software Developer</Title>
+              <Title level={2}>software developer</Title>
             </Typography>
           </Card>
 
