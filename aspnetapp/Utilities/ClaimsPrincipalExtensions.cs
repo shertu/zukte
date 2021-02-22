@@ -1,5 +1,6 @@
+using System;
 using System.Security.Claims;
-using Zukte.Message.ApplicationUser;
+using Zukte.Entity;
 
 namespace Zukte.Utilities {
 	public static class ClaimsPrincipalExtensions {
@@ -19,7 +20,10 @@ namespace Zukte.Utilities {
 				Picture = principal.FindFirstValue(GooglePictureClaimType),
 			};
 
-			if (firstNameIdentifier != null) {
+			if (firstNameIdentifier == null) {
+				throw new ArgumentNullException(nameof(firstNameIdentifier),
+				"No reasonable id value was found in the claims indentities.");
+			} else {
 				applicationUser.Id = firstNameIdentifier;
 			}
 

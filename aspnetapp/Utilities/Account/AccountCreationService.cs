@@ -3,7 +3,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Zukte.Database;
-using Zukte.Message.ApplicationUser;
+using Zukte.Entity;
 
 namespace Zukte.Utilities.Account {
 	/// <inheritdoc/>

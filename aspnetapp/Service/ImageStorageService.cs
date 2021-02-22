@@ -1,12 +1,11 @@
 using System;
-using System.ComponentModel.DataAnnotations;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Zukte.Message.Image;
+using Zukte.Message.ImageStorage;
 using Zukte.Utilities;
 using Zukte.Utilities.File;
 
@@ -24,51 +23,55 @@ namespace Zukte.Service {
 		}
 
 		[HttpGet]
-		public ActionResult<ImageListRequest.Types.ImageListResponse> GetList([FromQuery] ImageListRequest request) {
-			uint max = request.MaxResults;
-
-			int? pageSizeHint = PageSizeHint.FromMaxResults(request.MaxResults);
+		public ActionResult<ImageStorageListRequest.ImageStorageListResponse> GetList([FromQuery] ImageStorageListRequest request) {
 			var page = _imageContainerClient.GetBlobs()
-					.AsPages(request.PageToken, pageSizeHint)
+					.AsPages(request.PageToken, (int?)request.MaxResults)
 					.First();
 
 			string[] items = page.Values
 				.Select(e => _imageContainerClient.Uri.AbsoluteUri + '/' + e.Name)
 				.ToArray();
 
-			var res = new ImageListRequest.Types.ImageListResponse();
-			res.Urls.AddRange(items);
+			var res = new ImageStorageListRequest.ImageStorageListResponse();
+
+			for (int i = 0; i < items.Length; i++) {
+				res.Items.Add(items[i]);
+			}
+
 			res.NextPageToken = page.ContinuationToken ?? string.Empty;
 			return res;
 		}
 
 		[HttpPost]
-		public async Task<ActionResult<ImageInsertRequest.Types.ImageInsertResponse>> Insert([Required] IFormFile file) {
+		public async Task<ActionResult<ImageStorageInsertRequest.ImageStorageInsertResponse>> Insert([FromForm] ImageStorageInsertRequest request) {
 			Uri? imageLocation = null;
 
-			using (var ms = new MemoryStream((int)file.Length)) {
-				await file.CopyToAsync(ms);
+			if (request.Image != null) {
+				IFormFile file = request.Image;
 
-				string filepath = Guid.NewGuid().ToString();
+				using (var ms = new MemoryStream((int)file.Length)) {
+					await file.CopyToAsync(ms);
 
-				if (Upload.IsActualImageFile(ms)) {
-					imageLocation = await Upload.UploadFileToBlobContainer(ModelState, _imageContainerClient, filepath, ms);
-				} else {
-					ModelState.AddModelError(filepath,
-					  $"The file {filepath} is an invalid image file.");
+					string filepath = Guid.NewGuid().ToString();
+
+					if (Upload.IsActualImageFile(ms)) {
+						imageLocation = await Upload.UploadFileToBlobContainer(ModelState, _imageContainerClient, filepath, ms);
+					} else {
+						ModelState.AddModelError(filepath,
+						  $"The file {filepath} is an invalid image file.");
+					}
+				}
+
+				if (!ModelState.IsValid) {
+					return BadRequest(ModelState);
 				}
 			}
 
-			if (!ModelState.IsValid) {
-				return BadRequest(ModelState);
+			var res = new ImageStorageInsertRequest.ImageStorageInsertResponse();
+			if (imageLocation != null) {
+				res.InsertedImageUrl = imageLocation.AbsoluteUri;
 			}
 
-			if (imageLocation == null) {
-				throw new ArgumentNullException(nameof(imageLocation));
-			}
-
-			var res = new ImageInsertRequest.Types.ImageInsertResponse();
-			res.Url = imageLocation.AbsoluteUri;
 			return res;
 		}
 	}

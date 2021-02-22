@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Zukte.Database;
+using Zukte.Entity;
 using Zukte.Message.ApplicationUser;
 using Zukte.Utilities;
 using Zukte.Utilities.Pagination.TokenPagination;
@@ -37,11 +38,8 @@ namespace Zukte.Service {
 
 		[HttpDelete, Authorize]
 		public async Task<IActionResult> Delete([FromQuery] ApplicationUserDeleteRequest request) {
-			if (_dbContext.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
-
 			#region filter
-			IQueryable<ApplicationUser> query = _dbContext.ApplicationUsers;
+			var query = _dbContext.ApplicationUsers!.AsQueryable();
 			query = ApplyIdFilter(query, false, request.Id);
 			#endregion
 
@@ -69,10 +67,7 @@ namespace Zukte.Service {
 		}
 
 		[HttpGet]
-		public async Task<ActionResult<ApplicationUserListRequest.Types.ApplicationUserListResponse>> GetList([FromQuery] ApplicationUserListRequest request) {
-			if (_dbContext.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
-
+		public async Task<ActionResult<ApplicationUserListRequest.ApplicationUserListResponse>> GetList([FromQuery] ApplicationUserListRequest request) {
 			#region authentication
 			if (request.Mine && !User.HasAuthenticatedIdentity()) {
 				return Challenge(); // issue a default challenge
@@ -80,16 +75,21 @@ namespace Zukte.Service {
 			#endregion
 
 			#region filter
-			IQueryable<ApplicationUser> query = _dbContext.ApplicationUsers;
+			var query = _dbContext.ApplicationUsers!.AsQueryable();
 			query = ApplyIdFilter(query, true, request.Id);
 			query = ApplyMineFitler(query, request.Mine, HttpContext.User);
 			#endregion
 
-			int? pageSizeHint = PageSizeHint.FromMaxResults(request.MaxResults);
-			var page = await GetNextPageAsync(query, request.PageToken, pageSizeHint);
+			string pageToken = request.PageToken ?? string.Empty;
+			var page = await GetNextPageAsync(query, pageToken, (int?)request.MaxResults);
 
-			var res = new ApplicationUserListRequest.Types.ApplicationUserListResponse();
-			res.Items.AddRange(page.values);
+			var res = new ApplicationUserListRequest.ApplicationUserListResponse();
+
+			var items = page.values;
+			for (int i = 0; i < items.Count; i++) {
+				res.Items.Add(items[i]);
+			}
+
 			res.NextPageToken = page.continuationToken ?? string.Empty;
 			return res;
 		}
@@ -99,9 +99,6 @@ namespace Zukte.Service {
 		/// </summary>
 		[NonAction]
 		private IQueryable<ApplicationUser> ApplyMineFitler(IQueryable<ApplicationUser> query, bool mineFilter, ClaimsPrincipal principle) {
-			if (_dbContext.ApplicationUsers == null)
-				throw new ArgumentNullException(nameof(_dbContext.ApplicationUsers));
-
 			if (mineFilter) {
 				string[] idCollection = principle.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier)
 					.Select(claim => claim.Value)
@@ -117,27 +114,38 @@ namespace Zukte.Service {
 		/// Applies a filter to select accounts with the specified ids.
 		/// </summary>
 		[NonAction]
-		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, bool skipNoFilter, params string[] idFilterArr) {
-			// transform ids into standard format first
-			string combined = string.Join(',', idFilterArr);
-			string[] standard = combined.Split(',')
-				.Where(elem => !string.IsNullOrEmpty(elem))
-				.ToArray();
+		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, bool skipOnEmptyArr, string? idFilterArr) {
+			if (!string.IsNullOrEmpty(idFilterArr)) {
+				query = ApplyIdFilter(query, skipOnEmptyArr, idFilterArr);
+			}
 
-			if (standard.Length > 0 || !skipNoFilter) {
-				query = query.Where(user => standard.Contains(user.Id));
+			return query;
+		}
+
+		/// <summary>
+		/// Applies a filter to select accounts with the specified ids.
+		/// </summary>
+		[NonAction]
+		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, bool skipOnEmptyArr, params string[] idFilterArr) {
+			// transform ids into standard format first
+			string[] standardised = string.Join(',', idFilterArr).Split(',');
+
+			if (standardised.Length > 0 || !skipOnEmptyArr) {
+				query = query.Where(user => standardised.Contains(user.Id));
 			}
 
 			return query;
 		}
 
 		[NonAction]
-		public async ValueTask<Page<ApplicationUser>> GetNextPageAsync(IQueryable<ApplicationUser> postFilterQuery, string continuationToken, int? pageSizeHint) {
+		public async ValueTask<Page<ApplicationUser>> GetNextPageAsync(
+			IQueryable<ApplicationUser> postFilterQuery, string continuationToken, int? pageSizeHint) {
 			return await GetNextPageAsync(postFilterQuery, continuationToken, pageSizeHint, CancellationToken.None);
 		}
 
 		[NonAction]
-		public async ValueTask<Page<ApplicationUser>> GetNextPageAsync(IQueryable<ApplicationUser> query, string continuationToken, int? pageSizeHint, CancellationToken cancellationToken) {
+		public async ValueTask<Page<ApplicationUser>> GetNextPageAsync(
+			IQueryable<ApplicationUser> query, string continuationToken, int? pageSizeHint, CancellationToken cancellationToken) {
 			if (!string.IsNullOrEmpty(continuationToken)) {
 				ApplicationUser? seeker = FromContinuationToken(continuationToken);
 				query = query.Where(user => (user.Id).CompareTo(seeker.Id) > 0);

@@ -1,5 +1,5 @@
 using Microsoft.EntityFrameworkCore;
-using Zukte.Message.ApplicationUser;
+using Zukte.Entity;
 
 namespace Zukte.Database {
 	public class ApplicationDbContext : DbContext {

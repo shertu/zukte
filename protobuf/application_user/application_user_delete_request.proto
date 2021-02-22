@@ -1,7 +1,0 @@
-syntax = "proto3";
-package Zukte.Message.ApplicationUser;
-
-/* represents a query to delete some user accounts */
-message ApplicationUserDeleteRequest {
-  string id = 1;
-}

@@ -1,4 +1,4 @@
-using Zukte.Message.ApplicationUser;
+using Zukte.Entity;
 
 namespace Zukte.Database.Factory {
 	public class ApplicationUserFactory : ModelFactoryBase<ApplicationUser> {
