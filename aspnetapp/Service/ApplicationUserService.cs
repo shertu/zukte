@@ -84,12 +84,7 @@ namespace Zukte.Service {
 			var page = await GetNextPageAsync(query, pageToken, (int?)request.MaxResults);
 
 			var res = new ApplicationUserListRequest.ApplicationUserListResponse();
-
-			var items = page.values;
-			for (int i = 0; i < items.Count; i++) {
-				res.Items.Add(items[i]);
-			}
-
+			res.Items = page.values.ToArray();
 			res.NextPageToken = page.continuationToken ?? string.Empty;
 			return res;
 		}

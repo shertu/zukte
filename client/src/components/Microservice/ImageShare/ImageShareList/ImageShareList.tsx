@@ -1,8 +1,8 @@
-import { ImageStorageServiceApi, ImageStorageServiceGetListRequest } from '../../../../openapi-generator';
-import { List, ListProps } from 'antd';
+import {ImageStorageServiceApi, ImageStorageServiceGetListRequest} from '../../../../openapi-generator';
+import {List, ListProps} from 'antd';
 
-import { PaginationList } from '../../../PaginationList/PaginationList';
-import { PaginationResponseInformation } from '../../../../utilities/PaginationResponseInformation';
+import {PaginationList} from '../../../PaginationList/PaginationList';
+import {PaginationListInformation} from '../../../PaginationList/PaginationListInformation';
 import React from 'react';
 
 /**
@@ -12,21 +12,23 @@ import React from 'react';
  * @return {JSX.Element}
  */
 export function ImageShareList(props: {
-  information: PaginationResponseInformation<string>;
-  onChangeInformation: (information: PaginationResponseInformation<string>) => void;
+  information: PaginationListInformation<string>;
+  onChangeInformation: (
+    information: PaginationListInformation<string>
+  ) => void;
 }): JSX.Element {
-  const { information, onChangeInformation } = props;
+  const {information, onChangeInformation} = props;
 
   const client = new ImageStorageServiceApi();
 
   /**
    * An event to fetch an additional page of items.
-   * @param {PaginationResponseInformation<ApplicationUser>} current
-   * @return {Promise<PaginationResponseInformation<ApplicationUser>>}
+   * @param {PaginationListInformation<ApplicationUser>} current
+   * @return {Promise<PaginationListInformation<ApplicationUser>>}
    */
   async function onFetchAdditionalInformation(
-    current: PaginationResponseInformation<string>,
-  ): Promise<PaginationResponseInformation<string>> {
+      current: PaginationListInformation<string>,
+  ): Promise<PaginationListInformation<string>> {
     const request: ImageStorageServiceGetListRequest = {
 
     };
@@ -37,10 +39,10 @@ export function ImageShareList(props: {
 
     const response = await client.imageStorageServiceGetList(request);
 
-    const additionalItems: string[] = response.urls || [];
+    const additionalItems: string[] = response.items || [];
 
-    const nextInformation: PaginationResponseInformation<string> =
-      new PaginationResponseInformation<string>();
+    const nextInformation: PaginationListInformation<string> =
+      new PaginationListInformation<string>();
 
     nextInformation.items = current.items.concat(additionalItems);
     nextInformation.nextPageToken = response.nextPageToken;
@@ -49,12 +51,22 @@ export function ImageShareList(props: {
     return nextInformation;
   }
 
-  const listProps: ListProps<string> = {
-    renderItem: (item: string, index: number) =>
+  /**
+   * A display name wrapper for the account list item component.
+   * @param {string} item
+   * @param {string} index
+   * @return {JSX.Element}
+   */
+  function renderListItem(item: string, index: number): JSX.Element {
+    return (
       <List.Item key={index}>
         <img className="max-cell-xs" src={item} />
-      </List.Item>,
-    itemLayout: 'vertical',
+      </List.Item>
+    );
+  }
+
+  const listProps: ListProps<string> = {
+    renderItem: renderListItem,
   };
 
   return (

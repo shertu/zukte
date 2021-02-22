@@ -1,7 +1,7 @@
-import { ImageStorageServiceApi, ImageStorageServiceInsertRequest } from '../../../../openapi-generator';
-import { LoadingOutlined, PlusOutlined } from '@ant-design/icons';
+import { LoadingOutlined, UploadOutlined } from '@ant-design/icons';
 import { Space, Typography, Upload, message } from 'antd';
 
+import { ImageStorageServiceApi } from '../../../../openapi-generator';
 import { UploadRequestOption as RcCustomRequestOptions } from 'rc-upload/lib/interface';
 import React from 'react';
 import { Rfc7807Alert } from '../../../Rfc7807Alert/Rfc7807Alert';
@@ -18,17 +18,23 @@ const { Paragraph } = Typography;
  */
 export function ImageShareUpload(props: {
   className?: string;
-  onChangeImageUrl?: (url: string) => void;
+  onChangeImageUrl?: (url: string | null | undefined) => void;
 }): JSX.Element {
   const { onChangeImageUrl, className } = props;
   const client = new ImageStorageServiceApi();
 
-  const [imageUrl, setImageUrl] = React.useState<string | null>(null);
+  const [imageUrl, setImageUrl] = React.useState<string | null | undefined>();
 
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
 
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (onChangeImageUrl) {
+      onChangeImageUrl(imageUrl);
+    }
+  }, [imageUrl]);
 
   /**
    * The event called when the uploader starts to upload the file.
@@ -42,19 +48,20 @@ export function ImageShareUpload(props: {
   }
 
   /**
-   * An override for the upload request.
-   *
-   * @param {RcCustomRequestOptions} options
-   */
-  async function uploadCustomRequest(options: RcCustomRequestOptions): Promise<void> {
-    const request: ImageStorageServiceInsertRequest = {
-      file: options.file,
-    };
-
-    const response = await client.imageStorageServiceInsert(request);
-
-    setImageUrl(response.url ?? null);
-    setIsLoading(false);
+ * An override for the upload request.
+ *
+ * @param {RcCustomRequestOptions} options
+ */
+  function uploadCustomRequest(options: RcCustomRequestOptions): void {
+    client.imageStorageServiceInsert({
+      image: options.file,
+    }).then((response) => {
+      setImageUrl(response.insertedImageUrl);
+      setIsLoading(false);
+    }).catch((err) => {
+      setErrorOccur(true);
+      setIsLoading(false);
+    });
   }
 
   /**
@@ -84,18 +91,20 @@ export function ImageShareUpload(props: {
         showUploadList={false}
         customRequest={uploadCustomRequest}
       >
-        {imageUrl ? (
-          <img className="max-cell" src={imageUrl} alt="uploaded-image" />
-        ) : (
-            <div style={{ padding: 28 }}>
+        <div style={{ minWidth: 428, minHeight: 64 }}>
+          {imageUrl ?
+            <img src={imageUrl} style={{ maxWidth: "100%", maxHeight: 437 }} />
+            :
+            <Typography>
               <Paragraph className="ant-upload-drag-icon">
-                {isLoading ? <LoadingOutlined /> : <PlusOutlined />}
+                {isLoading ? <LoadingOutlined /> : <UploadOutlined />}
               </Paragraph>
               <Paragraph className="ant-upload-text">
-                click or drag file to this area to upload
+                click this area to upload a file
               </Paragraph>
-            </div>
-          )}
+            </Typography>
+          }
+        </div>
       </Dragger>
 
       {errorOccur &&

@@ -4,7 +4,7 @@ import { AppPage } from '../../AppPage/AppPage';
 import { ImageShareList } from './ImageShareList/ImageShareList';
 import { ImageShareUpload } from './ImageShareUpload/ImageShareUpload';
 import Mailto from 'react-mailto.js';
-import { PaginationResponseInformation } from '../../../utilities/PaginationResponseInformation';
+import { PaginationListInformation } from '../../PaginationList/PaginationListInformation';
 import React from 'react';
 
 const { Paragraph } = Typography;
@@ -16,26 +16,28 @@ const { Paragraph } = Typography;
  */
 export function ImageShareMicroservice(): JSX.Element {
   const [information, setInformation] =
-    React.useState<PaginationResponseInformation<string>>(
-      new PaginationResponseInformation<string>());
+    React.useState<PaginationListInformation<string>>(
+      new PaginationListInformation<string>());
 
   /**
    * A hook to prepend the uploaded image to the image item collection.
    *
    * @param {string} url
    */
-  function onChangeUploadImageUrl(url: string): void {
-    const nextInformation: PaginationResponseInformation<string> =
-      new PaginationResponseInformation<string>();
+  function onChangeUploadImageUrl(url: string | null | undefined): void {
+    if (url) {
+      const nextInformation: PaginationListInformation<string> =
+        new PaginationListInformation<string>();
 
-    nextInformation.items = [url, ...information.items];
+      nextInformation.items = [url, ...information.items];
 
-    nextInformation.nextPageToken =
-      information.nextPageToken;
-    nextInformation.hasMadeAtLeastOneFetch =
-      information.hasMadeAtLeastOneFetch;
+      nextInformation.nextPageToken =
+        information.nextPageToken;
+      nextInformation.hasMadeAtLeastOneFetch =
+        information.hasMadeAtLeastOneFetch;
 
-    setInformation(nextInformation);
+      setInformation(nextInformation);
+    }
   }
 
   return (

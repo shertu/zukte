@@ -1,14 +1,14 @@
-import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../openapi-generator';
-import { Space, Typography } from 'antd';
+import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
+import {Space, Typography} from 'antd';
 
-import { AccountList } from './AccountList/AccountList';
-import { AccountLoginButton } from './AccountLoginButton/AccountLoginButton';
-import { AccountLogoutButton } from './AccountLogoutButton/AccountLogoutButton';
-import { AppPage } from '../../AppPage/AppPage';
-import { PaginationResponseInformation } from '../../../utilities/PaginationResponseInformation';
+import {AccountList} from './AccountList/AccountList';
+import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
+import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
+import {AppPage} from '../../AppPage/AppPage';
+import {PaginationListInformation} from '../../PaginationList/PaginationListInformation';
 import React from 'react';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
 /**
  * A demonstration where the user can sign in to the application.
@@ -19,8 +19,8 @@ export function AuthenticateMicroservice(): JSX.Element {
   const client = new ApplicationUserServiceApi();
 
   const [mineAccountInformation, setMineAccountInformation] =
-    React.useState<PaginationResponseInformation<ApplicationUser>>(
-      new PaginationResponseInformation<ApplicationUser>());
+    React.useState<PaginationListInformation<ApplicationUser>>(
+        new PaginationListInformation<ApplicationUser>());
 
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
@@ -37,19 +37,19 @@ export function AuthenticateMicroservice(): JSX.Element {
   React.useEffect(() => {
     if (isPotentialForMore && !errorOccur) {
       onFetchAdditionalInformation(mineAccountInformation)
-        .then((response) => setMineAccountInformation(response))
-        .catch((error) => setErrorOccur(true));
+          .then((response) => setMineAccountInformation(response))
+          .catch((err) => setErrorOccur(true));
     }
   }, [isPotentialForMore, errorOccur]);
 
   /**
    * An event to fetch an additional page of items.
-   * @param {PaginationResponseInformation<ApplicationUser>} current
-   * @return {Promise<PaginationResponseInformation<ApplicationUser>>}
+   * @param {PaginationListInformation<ApplicationUser>} current
+   * @return {Promise<PaginationListInformation<ApplicationUser>>}
    */
   async function onFetchAdditionalInformation(
-    current: PaginationResponseInformation<ApplicationUser>,
-  ): Promise<PaginationResponseInformation<ApplicationUser>> {
+      current: PaginationListInformation<ApplicationUser>,
+  ): Promise<PaginationListInformation<ApplicationUser>> {
     const request: ApplicationUserServiceGetListRequest = {
       mine: true,
     };
@@ -63,8 +63,8 @@ export function AuthenticateMicroservice(): JSX.Element {
 
     const additionalItems: ApplicationUser[] = response.items || [];
 
-    const nextInformation: PaginationResponseInformation<ApplicationUser> =
-      new PaginationResponseInformation<ApplicationUser>();
+    const nextInformation: PaginationListInformation<ApplicationUser> =
+      new PaginationListInformation<ApplicationUser>();
 
     nextInformation.items = current.items.concat(additionalItems);
     nextInformation.nextPageToken = response.nextPageToken;
@@ -89,7 +89,7 @@ export function AuthenticateMicroservice(): JSX.Element {
         </Paragraph>
       </Typography>
 
-      <Space className="max-cell-xs" style={{ padding: '2em 24px' }}>
+      <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
         {atLeastOneAccount && <AccountLogoutButton />}
         {!atLeastOneAccount && <AccountLoginButton />}
       </Space>

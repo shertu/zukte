@@ -3,10 +3,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Zukte.Message.ImageStorage;
-using Zukte.Utilities;
 using Zukte.Utilities.File;
 
 namespace Zukte.Service {
@@ -20,6 +20,7 @@ namespace Zukte.Service {
 		public ImageStorageService(BlobServiceClient blobServiceClient) {
 			_imageContainerClient = blobServiceClient.GetBlobContainerClient("image-service");
 			_ = _imageContainerClient.CreateIfNotExists();
+			_ = _imageContainerClient.SetAccessPolicy(PublicAccessType.BlobContainer);
 		}
 
 		[HttpGet]
@@ -33,11 +34,7 @@ namespace Zukte.Service {
 				.ToArray();
 
 			var res = new ImageStorageListRequest.ImageStorageListResponse();
-
-			for (int i = 0; i < items.Length; i++) {
-				res.Items.Add(items[i]);
-			}
-
+			res.Items = items;
 			res.NextPageToken = page.ContinuationToken ?? string.Empty;
 			return res;
 		}
@@ -68,10 +65,7 @@ namespace Zukte.Service {
 			}
 
 			var res = new ImageStorageInsertRequest.ImageStorageInsertResponse();
-			if (imageLocation != null) {
-				res.InsertedImageUrl = imageLocation.AbsoluteUri;
-			}
-
+			res.InsertedImageUrl = imageLocation?.AbsoluteUri;
 			return res;
 		}
 	}

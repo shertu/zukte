@@ -1,11 +1,11 @@
-import { ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest } from '../../../../../openapi-generator';
-import { Avatar, Button, List, Typography } from 'antd';
+import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest} from '../../../../../openapi-generator';
+import {Avatar, Button, List, Typography} from 'antd';
 
 import React from 'react';
-import { Rfc7807Alert } from '../../../../Rfc7807Alert/Rfc7807Alert';
-import { UserDeleteOutlined } from '@ant-design/icons';
+import {Rfc7807Alert} from '../../../../Rfc7807Alert/Rfc7807Alert';
+import {UserDeleteOutlined} from '@ant-design/icons';
 
-const { Text } = Typography;
+const {Text} = Typography;
 
 /**
  * A list of the application users or accounts stored in the application.
@@ -13,13 +13,13 @@ const { Text } = Typography;
  * @param {object} props
  * @return {JSX.Element}
  */
-export function ListItem(props: {
+export function AccountListItem(props: {
   user: ApplicationUser;
   mineAccounts?: ApplicationUser[];
 }): JSX.Element {
-  const { mineAccounts = [] } = props;
+  const {mineAccounts = []} = props;
 
-  const { id, name, picture } = props.user;
+  const {id, name, picture} = props.user;
 
   const client = new ApplicationUserServiceApi();
 
@@ -27,7 +27,7 @@ export function ListItem(props: {
     React.useState<boolean>(false);
 
   const isMineApplicationUser: boolean = Boolean(mineAccounts
-    .find((elem) => elem.id && elem.id === id));
+      .find((elem) => elem.id && elem.id === id));
 
   /**
    * Executes a simple request to delete an application user.
@@ -40,8 +40,8 @@ export function ListItem(props: {
     };
 
     client.applicationUserServiceDelete(request)
-      .then(() => window.location.reload())
-      .catch(() => setErrorOccur(true));
+        .then(() => window.location.reload())
+        .catch(() => setErrorOccur(true));
   }
 
   let deleteApplicationUserAction: JSX.Element | undefined;
@@ -65,7 +65,7 @@ export function ListItem(props: {
         avatar={<Avatar src={picture} />}
         title={name}
         description={
-          <Text style={{ fontFamily: 'monospace' }}>{id}</Text>
+          <Text style={{fontFamily: 'monospace'}}>{id}</Text>
         }
       />
 

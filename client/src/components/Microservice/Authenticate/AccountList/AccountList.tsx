@@ -1,9 +1,9 @@
-import { ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
+import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
 
-import { ListItem } from './ListItem/ListItem';
-import { ListProps } from 'antd';
-import { PaginationList } from '../../../PaginationList/PaginationList';
-import { PaginationResponseInformation } from '../../../../utilities/PaginationResponseInformation';
+import {AccountListItem} from './ListItem/AccountListItem';
+import {ListProps} from 'antd';
+import {PaginationList} from '../../../PaginationList/PaginationList';
+import {PaginationListInformation} from '../../../PaginationList/PaginationListInformation';
 import React from 'react';
 
 /**
@@ -15,22 +15,22 @@ import React from 'react';
 export function AccountList(props: {
   mineAccounts?: ApplicationUser[];
 }): JSX.Element {
-  const { mineAccounts = [] } = props;
+  const {mineAccounts = []} = props;
 
   const client = new ApplicationUserServiceApi();
 
   const [information, setInformation] =
-    React.useState<PaginationResponseInformation<ApplicationUser>>(
-      new PaginationResponseInformation<ApplicationUser>());
+    React.useState<PaginationListInformation<ApplicationUser>>(
+        new PaginationListInformation<ApplicationUser>());
 
   /**
    * An event to fetch an additional page of items.
-   * @param {PaginationResponseInformation<ApplicationUser>} current
-   * @return {Promise<PaginationResponseInformation<ApplicationUser>>}
+   * @param {PaginationListInformation<ApplicationUser>} current
+   * @return {Promise<PaginationListInformation<ApplicationUser>>}
    */
   async function onFetchAdditionalInformation(
-    current: PaginationResponseInformation<ApplicationUser>,
-  ): Promise<PaginationResponseInformation<ApplicationUser>> {
+      current: PaginationListInformation<ApplicationUser>,
+  ): Promise<PaginationListInformation<ApplicationUser>> {
     const request: ApplicationUserServiceGetListRequest = {
 
     };
@@ -43,8 +43,8 @@ export function AccountList(props: {
 
     const additionalItems: ApplicationUser[] = response.items || [];
 
-    const nextInformation: PaginationResponseInformation<ApplicationUser> =
-      new PaginationResponseInformation<ApplicationUser>();
+    const nextInformation: PaginationListInformation<ApplicationUser> =
+      new PaginationListInformation<ApplicationUser>();
 
     nextInformation.items = current.items.concat(additionalItems);
     nextInformation.nextPageToken = response.nextPageToken;
@@ -54,8 +54,8 @@ export function AccountList(props: {
   }
 
   // this should be set using state
-  let infoSorted: PaginationResponseInformation<ApplicationUser> =
-    new PaginationResponseInformation<ApplicationUser>();
+  let infoSorted: PaginationListInformation<ApplicationUser> =
+    new PaginationListInformation<ApplicationUser>();
 
   if (mineAccounts.length) {
     infoSorted.items =
@@ -79,9 +79,20 @@ export function AccountList(props: {
     infoSorted = information;
   }
 
+  /**
+   * A display name wrapper for the account list item component.
+   * @param {ApplicationUser} item
+   * @param {string} index
+   * @return {JSX.Element}
+   */
+  function renderListItem(item: ApplicationUser, index: number): JSX.Element {
+    return (
+      <AccountListItem user={item} mineAccounts={mineAccounts} />
+    );
+  }
+
   const listProps: ListProps<ApplicationUser> = {
-    renderItem: (item: ApplicationUser, index: number) =>
-      <ListItem user={item} mineAccounts={mineAccounts} />,
+    renderItem: renderListItem,
     itemLayout: 'vertical',
   };
 

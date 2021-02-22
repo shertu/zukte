@@ -1,16 +1,16 @@
 /** represents a stored response from a pagination request */
-export class PaginationResponseInformation<T> {
+export class PaginationListInformation<T> {
   public items: T[] = [];
   public nextPageToken: string | undefined;
   public hasMadeAtLeastOneFetch: boolean = false;
 
-  /** gets the length of the items array */
+  /** shorthand for length of the items array */
   public get length(): number {
     return this.items.length;
   }
 
   /**
-   * indicates whether there are more items which can be fetched
+   * Is there the potential to fetch more items?
    * @return {boolean}
    */
   public isPotentialForMore(): boolean {
@@ -18,7 +18,7 @@ export class PaginationResponseInformation<T> {
   }
 
   /**
-   * indicates whether the client should fetch more items
+   * Should the client try to fetch more items?
    * @param {number} paginationCurrent
    * @param {number | undefined} paginationPageSize
    * @return {boolean}

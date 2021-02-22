@@ -1,18 +1,20 @@
 import {Alert, List, ListProps, Space} from 'antd';
 import InfiniteScroll, {Props as InfiniteScrollProps} from 'react-infinite-scroll-component';
 
-import {PaginationResponseInformation} from '../../utilities/PaginationResponseInformation';
+import {PaginationListInformation} from './PaginationListInformation';
 import React from 'react';
 import {Rfc7807Alert} from '../Rfc7807Alert/Rfc7807Alert';
 
 /** The props for the pagination list component. */
 export interface PaginationListProps<T> {
   // TODO update definition to include page size
-  onFetchAdditionalInformation: (current: PaginationResponseInformation<T>) =>
-    Promise<PaginationResponseInformation<T>>;
+  onFetchAdditionalInformation: (
+    current: PaginationListInformation<T>) =>
+    Promise<PaginationListInformation<T>>;
 
-  information?: PaginationResponseInformation<T>;
-  onChangeInformation?: (information: PaginationResponseInformation<T>) => void;
+  information?: PaginationListInformation<T>;
+  onChangeInformation?: (
+    information: PaginationListInformation<T>) => void;
   paginationPageSize?: number;
 
   infinite?: Omit<InfiniteScrollProps,
@@ -22,15 +24,18 @@ export interface PaginationListProps<T> {
 };
 
 /**
- * An infinite scroll list of items which loads using pagination.
+ * An infinite scroll list of items which loads
+ * additional content using pagination.
  *
  * @param {PaginationListProps<T>} props
  * @return {JSX.Element}
  */
-export function PaginationList<T>(props: PaginationListProps<T>): JSX.Element {
+export function PaginationList<T>(
+    props: PaginationListProps<T>,
+): JSX.Element {
   const [informationLocal, setInformationLocal] =
-    React.useState<PaginationResponseInformation<T>>(
-        new PaginationResponseInformation<T>());
+    React.useState<PaginationListInformation<T>>(
+        new PaginationListInformation<T>());
 
   const {
     onFetchAdditionalInformation,
@@ -58,12 +63,12 @@ export function PaginationList<T>(props: PaginationListProps<T>): JSX.Element {
     }
   }, [informationLocal]);
 
-  /** An automatic trigger to fetch additional items. */
+  /** trigger to fetch additional items */
   React.useEffect(() => {
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
       onFetchAdditionalInformation(information)
           .then((response) => setInformationLocal(response))
-          .catch((error) => setErrorOccur(true));
+          .catch((err) => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);
 
