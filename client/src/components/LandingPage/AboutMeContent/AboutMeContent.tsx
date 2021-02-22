@@ -6,7 +6,7 @@ import Mailto from 'react-mailto.js';
 import React from 'react';
 import { calculateAgeFromBirthdate } from '../../../utilities/AgeCalculator';
 
-const { Paragraph } = Typography;
+const { Paragraph, Link } = Typography;
 
 const shertuDateOfBirth = new Date('1996-06-10');
 const aboutMeStylePersonalInfoSize: number = 60;
@@ -55,16 +55,16 @@ export function AboutMeContent(): JSX.Element {
             style={{ fontSize: 'large', maxWidth: aboutMeStyleMaxWidth }}
           >
             <Paragraph>
-              Hello and welcome to my personal website. I developed this entire website
-              using several languages or tecnologies.
+              Hello and welcome to my personal website.
             </Paragraph>
             <Paragraph>
-              For those who wish to know more about me, please&nbsp;
-              <Mailto to="djared.xeknau@outlook.com">send me an email</Mailto>
-              &nbsp;or&nbsp;
-              <a href="https://www.linkedin.com/in/jared-blackman-71445098/">
-                check me out on LinkedIn.
-              </a>
+              For those who wish to know more about me, 
+              please <Mailto to="djared.xeknau@outlook.com">send me an email</Mailto> or 
+              read my <Link href="https://www.linkedin.com/in/jared-blackman-71445098/">LinkedIn</Link> profile.
+            </Paragraph>
+            <Paragraph>
+              My preferred software development languages 
+              are <Link href="https://dotnet.microsoft.com/">.NET</Link> and <Link href="https://www.typescriptlang.org/">TypeScript.</Link>
             </Paragraph>
           </Typography>
         </Col>
