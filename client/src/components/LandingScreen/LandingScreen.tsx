@@ -23,7 +23,7 @@ export function LandingScreen(): JSX.Element {
               <Title level={1} className="primary-color">
                 Jared Michael Blackman
               </Title>
-              <Title level={2}>software developer</Title>
+              <Title level={2}>professional software developer</Title>
             </Typography>
           </Card>
 
