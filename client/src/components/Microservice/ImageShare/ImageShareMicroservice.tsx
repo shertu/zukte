@@ -1,13 +1,12 @@
-import { Form, Space, Typography, Upload } from 'antd';
-
 import { AppPage } from '../../AppPage/AppPage';
 import { ImageShareList } from './ImageShareList/ImageShareList';
-import { ImageShareUpload } from './ImageShareUpload/ImageShareUpload';
-import Mailto from 'react-mailto.js';
 import { PaginationListInformation } from '../../PaginationList/PaginationListInformation';
 import React from 'react';
+import { Typography } from 'antd';
 
-const { Paragraph } = Typography;
+const { Paragraph, Text } = Typography;
+
+const MAX_FILE_SIZE: number = 5000000; // bytes = 5 MB
 
 /**
  * A demonstration where the user can upload and share images with others.
@@ -15,6 +14,8 @@ const { Paragraph } = Typography;
  * @return {JSX.Element}
  */
 export function ImageShareMicroservice(): JSX.Element {
+  const MAX_FILE_SIZE_MB: string = (MAX_FILE_SIZE / 1000000).toFixed(2);
+
   const [information, setInformation] =
     React.useState<PaginationListInformation<string>>(
       new PaginationListInformation<string>());
@@ -44,39 +45,11 @@ export function ImageShareMicroservice(): JSX.Element {
     <AppPage pageTitle="Image Share Demo">
       <Typography>
         <Paragraph>
-          To use this demo service please upload an image file, e.g. .png,
-          .jpg, which is smaller than 8 MiB. You cannot delete an image once
-            it is uploaded, however, you can{' '}
-          <Mailto to="djared.xeknau@outlook.com">send me an email</Mailto> to
-            request the deletion of an image.
-          </Paragraph>
+          To use this demo service please click or drag images into the upload area; 
+          each image is required to be smaller than {MAX_FILE_SIZE_MB} MB.
+          You <Text strong>cannot</Text> delete an image once it is uploaded.
+        </Paragraph>
       </Typography>
-
-
-      <Form
-        name="validate_other"
-        {...formItemLayout}
-        onFinish={onFinish}
-        initialValues={{
-          ['input-number']: 3,
-          ['checkbox-group']: ['A', 'B'],
-          rate: 3.5,
-        }}
-      >
-        <Form.Item label="Dragger">
-          <Form.Item name="dragger" valuePropName="fileList" getValueFromEvent={normFile} noStyle>
-            <Upload.Dragger name="files" action="/upload.do">
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined />
-              </p>
-              <p className="ant-upload-text">Click or drag file to this area to upload</p>
-              <p className="ant-upload-hint">Support for a single or bulk upload.</p>
-            </Upload.Dragger>
-          </Form.Item>
-        </Form.Item>
-      </Form>
-
-      <ImageShareUpload onSuccessfulUpload={onChangeUploadImageUrl} className="max-cell" />
 
       <AppPage pageTitle="Uploaded Images">
         <ImageShareList

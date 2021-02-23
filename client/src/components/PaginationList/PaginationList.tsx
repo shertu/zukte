@@ -21,6 +21,8 @@ export interface PaginationListProps<T> {
     'dataLength' | 'next' | 'hasMore' | 'loader'>;
   list?: Omit<ListProps<T>,
     'loading' | 'dataSource'>;
+
+  plural?: string;
 };
 
 /**
@@ -42,6 +44,7 @@ export function PaginationList<T>(
     information = informationLocal,
     onChangeInformation,
     paginationPageSize,
+    plural = "resources",
   } = props;
 
   const [paginationCurrent, setPaginationCurrent] =
@@ -120,13 +123,13 @@ export function PaginationList<T>(
       {(!itemLength && information.hasMadeAtLeastOneFetch) &&
         <Alert
           type="warning"
-          message="The system found zero resources."
+          message={`The request to fetch additional ${plural} was successful but returned zero items.`}
         />
       }
 
       {errorOccur &&
         <Rfc7807Alert
-          title="The request to fetch additional resources was unsuccessful."
+          title={`The request to fetch additional ${plural} was unsuccessful.`}
           type="/error/infinite-scroll-page-list"
           onClickRetry={onClickRetry}
         />

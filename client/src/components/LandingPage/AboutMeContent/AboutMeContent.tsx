@@ -58,13 +58,11 @@ export function AboutMeContent(): JSX.Element {
               Hello and welcome to my personal website.
             </Paragraph>
             <Paragraph>
-              For those who wish to know more about me, 
-              please <Mailto to="djared.xeknau@outlook.com">send me an email</Mailto> or 
-              read my <Link href="https://www.linkedin.com/in/jared-blackman-71445098/">LinkedIn</Link> profile.
-            </Paragraph>
-            <Paragraph>
-              My preferred software development languages 
-              are <Link href="https://dotnet.microsoft.com/">.NET</Link> and <Link href="https://www.typescriptlang.org/">TypeScript.</Link>
+              For those who wish to know more about me, please <Mailto to="djared.xeknau@outlook.com">
+                send an email
+              </Mailto> or <Link href="https://www.linkedin.com/in/jared-blackman-71445098/">
+                read my LinkedIn
+              </Link> profile.
             </Paragraph>
           </Typography>
         </Col>

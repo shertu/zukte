@@ -76,6 +76,7 @@ export function ImageShareList(props: {
       information={information}
       paginationPageSize={25}
       list={listProps}
+      plural="images"
     />
   );
 }

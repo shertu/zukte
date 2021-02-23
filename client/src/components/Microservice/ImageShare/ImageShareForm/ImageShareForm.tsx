@@ -4,7 +4,7 @@ import { InboxOutlined, UploadOutlined } from '@ant-design/icons';
 import React from 'react';
 import { Rfc7807Alert } from '../../../Rfc7807Alert/Rfc7807Alert';
 
-export interface ImageStorageServiceFormValues {
+export interface ImageShareFormValues {
   files: File[];
 }
 
@@ -14,8 +14,8 @@ export interface ImageStorageServiceFormValues {
  * @param {object} props
  * @return {JSX.Element}
  */
-export function ImageStorageServiceForm(props: {
-  onFinish: (values: ImageStorageServiceFormValues) => void;
+export function ImageShareForm(props: {
+  onFinish: (values: ImageShareFormValues) => void;
 }): JSX.Element {
   const { onFinish } = props;
 

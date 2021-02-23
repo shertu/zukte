@@ -103,6 +103,7 @@ export function AccountList(props: {
       information={infoSorted}
       paginationPageSize={25}
       list={listProps}
+      plural="accounts"
     />
   );
 }
