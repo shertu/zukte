@@ -123,7 +123,7 @@ export function PaginationList<T>(
       {(!itemLength && information.hasMadeAtLeastOneFetch) &&
         <Alert
           type="warning"
-          message={`The request to fetch additional ${plural} was successful but returned zero items.`}
+          message={`The request to fetch additional ${plural} was successful but no ${plural} were found.`}
         />
       }
 
