@@ -1,9 +1,8 @@
-import { ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
-import { IPageableListState, PageableListState } from '../../../PageableList/PageableListState';
+import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
+import {IPageableListState, PageableListState} from '../../../PageableList/PageableListState';
 
-import { AccountListItem } from './ListItem/AccountListItem';
-import { ListProps } from 'antd';
-import { PageableList } from '../../../PageableList/PageableList';
+import {AccountListItem} from './ListItem/AccountListItem';
+import {PageableList} from '../../../PageableList/PageableList';
 import React from 'react';
 
 /**
@@ -15,20 +14,22 @@ import React from 'react';
 export function AccountList(props: {
   mineAccounts?: ApplicationUser[];
 }): JSX.Element {
-  const { mineAccounts } = props;
+  const {mineAccounts} = props;
 
   const [value, onChange] =
     React.useState<PageableListState<ApplicationUser>>(
-      new PageableListState<ApplicationUser>());
-
-  console.log('AccountList', {
-    value: value,
-  });
+        new PageableListState<ApplicationUser>());
 
   const client = new ApplicationUserServiceApi();
 
+  /**
+   * Tigger to load the next page of data.
+   *
+   * @param {PageableListState<ApplicationUser>} current
+   * @return {Promise<PageableListState<ApplicationUser>>}
+   */
   async function onFetchNextPageAsync(
-    current: PageableListState<ApplicationUser>,
+      current: PageableListState<ApplicationUser>,
   ) {
     const request: ApplicationUserServiceGetListRequest = {
     };
@@ -47,7 +48,7 @@ export function AccountList(props: {
       items: currentItems.concat(additionalItems),
       nextPageToken: response.nextPageToken,
       hasMadeAtLeastOneFetch: true,
-    }
+    };
 
     return new PageableListState<ApplicationUser>(nextValue);
   }
@@ -70,7 +71,7 @@ export function AccountList(props: {
   if (mineAccounts?.length) {
     nextValueSorted = {
       ...value.state,
-    }
+    };
 
     nextValueSorted.items = value.state.items.sort((a, b) => {
       const aIsMineAccount =

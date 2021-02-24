@@ -1,8 +1,8 @@
-import { IPageableListState, PageableListState } from '../../../PageableList/PageableListState';
-import { ImageStorageServiceApi, ImageStorageServiceGetListRequest } from '../../../../openapi-generator';
-import { List, ListProps } from 'antd';
+import {IPageableListState, PageableListState} from '../../../PageableList/PageableListState';
+import {ImageStorageServiceApi, ImageStorageServiceGetListRequest} from '../../../../openapi-generator';
 
-import { PageableList } from '../../../PageableList/PageableList';
+import {List} from 'antd';
+import {PageableList} from '../../../PageableList/PageableList';
 import React from 'react';
 
 /**
@@ -15,13 +15,22 @@ export function ImageShareList(props: {
   value?: PageableListState<string>;
   onChange?: (value: PageableListState<string>) => void;
 }): JSX.Element {
-  const { value, onChange } = props;
+  const {value, onChange} = props;
   const client = new ImageStorageServiceApi();
 
+  const paginationPageSize: number = 3;
+
+  /**
+   * Tigger to load the next page of data.
+   *
+   * @param {PageableListState<string>} current
+   * @return {Promise<PageableListState<string>>}
+   */
   async function onFetchNextPageAsync(
-    current: PageableListState<string>,
+      current: PageableListState<string>,
   ) {
     const request: ImageStorageServiceGetListRequest = {
+      maxResults: paginationPageSize,
     };
 
     const nextPageToken = current.state.nextPageToken;
@@ -38,7 +47,7 @@ export function ImageShareList(props: {
       items: currentItems.concat(additionalItems),
       nextPageToken: response.nextPageToken,
       hasMadeAtLeastOneFetch: true,
-    }
+    };
 
     return new PageableListState<string>(nextValue);
   }
@@ -62,7 +71,7 @@ export function ImageShareList(props: {
       onFetchNextPageAsync={onFetchNextPageAsync}
       onChange={onChange}
       value={value}
-      paginationPageSize={25}
+      paginationPageSize={paginationPageSize}
       list={{
         renderItem: renderListItem,
       }}

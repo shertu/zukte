@@ -1,10 +1,11 @@
+/** represents a state for a pageable list */
 export interface IPageableListState<T> {
   items: T[];
   nextPageToken: string | null | undefined;
   hasMadeAtLeastOneFetch: boolean;
 }
 
-/** represents a stored response from a pagination request */
+/** a wrapper class for the pageable state interface */
 export class PageableListState<T> {
   public state: IPageableListState<T> = {
     items: [],
@@ -13,7 +14,7 @@ export class PageableListState<T> {
   }
 
   /**
-   *
+   * @param {IPageableListState<T>} state
    */
   constructor(state?: IPageableListState<T>) {
     if (state) {
@@ -35,7 +36,8 @@ export class PageableListState<T> {
    * @return {boolean}
    */
   public isPotentialForMore(): boolean {
-    return Boolean(this.state.nextPageToken) || !this.state.hasMadeAtLeastOneFetch;
+    return Boolean(this.state.nextPageToken) ||
+      !this.state.hasMadeAtLeastOneFetch;
   }
 
   /**
@@ -45,7 +47,7 @@ export class PageableListState<T> {
    * @return {boolean}
    */
   public shouldFetchMore(
-    paginationCurrent: number, paginationPageSize?: number,
+      paginationCurrent: number, paginationPageSize?: number,
   ): boolean {
     const b: number = paginationPageSize || 0;
     const count: number = this.state.items.length;

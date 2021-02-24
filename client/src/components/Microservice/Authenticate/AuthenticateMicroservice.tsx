@@ -1,14 +1,14 @@
-import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../openapi-generator';
-import { IPageableListState, PageableListState } from '../../PageableList/PageableListState';
-import { Space, Typography } from 'antd';
+import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
+import {IPageableListState, PageableListState} from '../../PageableList/PageableListState';
+import {Space, Typography} from 'antd';
 
-import { AccountList } from './AccountList/AccountList';
-import { AccountLoginButton } from './AccountLoginButton/AccountLoginButton';
-import { AccountLogoutButton } from './AccountLogoutButton/AccountLogoutButton';
-import { AppPage } from '../../AppPage/AppPage';
+import {AccountList} from './AccountList/AccountList';
+import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
+import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
+import {AppPage} from '../../AppPage/AppPage';
 import React from 'react';
 
-const { Paragraph } = Typography;
+const {Paragraph} = Typography;
 
 /**
  * A demonstration where the user can sign in to the application.
@@ -20,7 +20,7 @@ export function AuthenticateMicroservice(): JSX.Element {
 
   const [mineAccounts, setMineAccounts] =
     React.useState<PageableListState<ApplicationUser>>(
-      new PageableListState<ApplicationUser>());
+        new PageableListState<ApplicationUser>());
 
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
@@ -31,13 +31,19 @@ export function AuthenticateMicroservice(): JSX.Element {
   React.useEffect(() => {
     if (isPotentialForMore && !errorOccur) {
       onFetchNextPageAsync(mineAccounts)
-        .then((response) => setMineAccounts(response))
-        .catch((err) => setErrorOccur(true));
+          .then((response) => setMineAccounts(response))
+          .catch((err) => setErrorOccur(true));
     }
   }, [isPotentialForMore, errorOccur]);
 
+  /**
+   * Tigger to load the next page of data.
+   *
+   * @param {PageableListState<ApplicationUser>} current
+   * @return {Promise<PageableListState<ApplicationUser>>}
+   */
   async function onFetchNextPageAsync(
-    current: PageableListState<ApplicationUser>,
+      current: PageableListState<ApplicationUser>,
   ) {
     const request: ApplicationUserServiceGetListRequest = {
       mine: true,
@@ -57,7 +63,7 @@ export function AuthenticateMicroservice(): JSX.Element {
       items: currentItems.concat(additionalItems),
       nextPageToken: response.nextPageToken,
       hasMadeAtLeastOneFetch: true,
-    }
+    };
 
     return new PageableListState<ApplicationUser>(nextValue);
   }
@@ -78,7 +84,7 @@ export function AuthenticateMicroservice(): JSX.Element {
         </Paragraph>
       </Typography>
 
-      <Space className="max-cell-xs" style={{ padding: '2em 24px' }}>
+      <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
         {atLeastOneAccount && <AccountLogoutButton />}
         {!atLeastOneAccount && <AccountLoginButton />}
       </Space>

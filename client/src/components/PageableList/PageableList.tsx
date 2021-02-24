@@ -1,13 +1,14 @@
-import { Alert, List, ListProps, Space } from 'antd';
-import InfiniteScroll, { Props as InfiniteScrollProps } from 'react-infinite-scroll-component';
+import {Alert, List, ListProps, Space} from 'antd';
+import InfiniteScroll, {Props as InfiniteScrollProps} from 'react-infinite-scroll-component';
 
-import { PageableListState } from './PageableListState';
+import {PageableListState} from './PageableListState';
 import React from 'react';
-import { Rfc7807Alert } from '../Rfc7807Alert/Rfc7807Alert';
+import {Rfc7807Alert} from '../Rfc7807Alert/Rfc7807Alert';
 
 /** The props for the pagination list component. */
 export interface PageableListProps<T> {
-  onFetchNextPageAsync: (current: PageableListState<T>) => Promise<PageableListState<T>>;
+  onFetchNextPageAsync: (current: PageableListState<T>) =>
+    Promise<PageableListState<T>>;
   value?: PageableListState<T>;
   onChange?: (value: PageableListState<T>) => void;
   paginationPageSize: number;
@@ -28,7 +29,7 @@ export interface PageableListProps<T> {
  * @return {JSX.Element}
  */
 export function PageableList<T>(
-  props: PageableListProps<T>,
+    props: PageableListProps<T>,
 ): JSX.Element {
   const [internalValue, setInternalValue] =
     React.useState<PageableListState<T>>(new PageableListState<T>());
@@ -38,7 +39,7 @@ export function PageableList<T>(
     value = internalValue, // use internal value as default
     onChange,
     paginationPageSize,
-    pluralWord = "resources",
+    pluralWord = 'resources',
   } = props;
 
   const [paginationCurrent, setPaginationCurrent] =
@@ -64,8 +65,8 @@ export function PageableList<T>(
   React.useEffect(() => {
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
       onFetchNextPageAsync(value)
-        .then((response) => setInternalValue(response))
-        .catch((err) => setErrorOccur(true));
+          .then((response) => setInternalValue(response))
+          .catch((err) => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);
 
@@ -94,6 +95,14 @@ export function PageableList<T>(
     }
   }
 
+  const warnMessage: string =
+    `The request to fetch additional ${pluralWord} 
+    was successful but no ${pluralWord} were found.`;
+
+  const errorMessage: string =
+    `The request to fetch additional ${pluralWord} 
+    was unsuccessful.`;
+
   return (
     <Space
       className="max-cell"
@@ -116,13 +125,13 @@ export function PageableList<T>(
       {(!itemLength && value.state.hasMadeAtLeastOneFetch) &&
         <Alert
           type="warning"
-          message={`The request to fetch additional ${pluralWord} was successful but no ${pluralWord} were found.`}
+          message={warnMessage}
         />
       }
 
       {errorOccur &&
         <Rfc7807Alert
-          title={`The request to fetch additional ${pluralWord} was unsuccessful.`}
+          title={errorMessage}
           type="/error/infinite-scroll-page-list"
           onClickRetry={onClickRetry}
         />
