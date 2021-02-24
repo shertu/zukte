@@ -1,6 +1,7 @@
+import { IPageableListState, PageableListState } from '../../PageableList/PageableListState';
+
 import { AppPage } from '../../AppPage/AppPage';
 import { ImageShareList } from './ImageShareList/ImageShareList';
-import { PaginationListInformation } from '../../PaginationList/PaginationListInformation';
 import React from 'react';
 import { Typography } from 'antd';
 
@@ -16,9 +17,9 @@ const MAX_FILE_SIZE: number = 5000000; // bytes = 5 MB
 export function ImageShareMicroservice(): JSX.Element {
   const MAX_FILE_SIZE_MB: string = (MAX_FILE_SIZE / 1000000).toFixed(2);
 
-  const [information, setInformation] =
-    React.useState<PaginationListInformation<string>>(
-      new PaginationListInformation<string>());
+  const [images, setImages] =
+    React.useState<PageableListState<string>>(
+      new PageableListState<string>());
 
   /**
    * A hook to prepend the uploaded image to the image item collection.
@@ -27,17 +28,13 @@ export function ImageShareMicroservice(): JSX.Element {
    */
   function onChangeUploadImageUrl(url: string | null | undefined): void {
     if (url) {
-      const nextInformation: PaginationListInformation<string> =
-        new PaginationListInformation<string>();
+      const nextImages: IPageableListState<string> = {
+        ...images.state,
+        items: [url, ...images.state.items],
+      }
 
-      nextInformation.items = [url, ...information.items];
-
-      nextInformation.nextPageToken =
-        information.nextPageToken;
-      nextInformation.hasMadeAtLeastOneFetch =
-        information.hasMadeAtLeastOneFetch;
-
-      setInformation(nextInformation);
+      const nextValue = new PageableListState<string>(nextImages);
+      setImages(nextValue);
     }
   }
 
@@ -45,7 +42,7 @@ export function ImageShareMicroservice(): JSX.Element {
     <AppPage pageTitle="Image Share Demo">
       <Typography>
         <Paragraph>
-          To use this demo service please click or drag images into the upload area; 
+          To use this demo service please click or drag images into the upload area;
           each image is required to be smaller than {MAX_FILE_SIZE_MB} MB.
           You <Text strong>cannot</Text> delete an image once it is uploaded.
         </Paragraph>
@@ -53,8 +50,8 @@ export function ImageShareMicroservice(): JSX.Element {
 
       <AppPage pageTitle="Uploaded Images">
         <ImageShareList
-          information={information}
-          onChangeInformation={setInformation}
+          value={images}
+          onChange={setImages}
         />
       </AppPage>
     </AppPage >

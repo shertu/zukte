@@ -1,50 +1,44 @@
-import {Alert, List, ListProps, Space} from 'antd';
-import InfiniteScroll, {Props as InfiniteScrollProps} from 'react-infinite-scroll-component';
+import { Alert, List, ListProps, Space } from 'antd';
+import InfiniteScroll, { Props as InfiniteScrollProps } from 'react-infinite-scroll-component';
 
-import {PaginationListInformation} from './PaginationListInformation';
+import { PageableListState } from './PageableListState';
 import React from 'react';
-import {Rfc7807Alert} from '../Rfc7807Alert/Rfc7807Alert';
+import { Rfc7807Alert } from '../Rfc7807Alert/Rfc7807Alert';
 
 /** The props for the pagination list component. */
-export interface PaginationListProps<T> {
-  // TODO update definition to include page size
-  onFetchAdditionalInformation: (
-    current: PaginationListInformation<T>) =>
-    Promise<PaginationListInformation<T>>;
-
-  information?: PaginationListInformation<T>;
-  onChangeInformation?: (
-    information: PaginationListInformation<T>) => void;
-  paginationPageSize?: number;
+export interface PageableListProps<T> {
+  onFetchNextPageAsync: (current: PageableListState<T>) => Promise<PageableListState<T>>;
+  value?: PageableListState<T>;
+  onChange?: (value: PageableListState<T>) => void;
+  paginationPageSize: number;
 
   infinite?: Omit<InfiniteScrollProps,
     'dataLength' | 'next' | 'hasMore' | 'loader'>;
   list?: Omit<ListProps<T>,
     'loading' | 'dataSource'>;
 
-  plural?: string;
+  pluralWord?: string;
 };
 
 /**
  * An infinite scroll list of items which loads
  * additional content using pagination.
  *
- * @param {PaginationListProps<T>} props
+ * @param {PageableListProps<T>} props
  * @return {JSX.Element}
  */
-export function PaginationList<T>(
-    props: PaginationListProps<T>,
+export function PageableList<T>(
+  props: PageableListProps<T>,
 ): JSX.Element {
-  const [informationLocal, setInformationLocal] =
-    React.useState<PaginationListInformation<T>>(
-        new PaginationListInformation<T>());
+  const [internalValue, setInternalValue] =
+    React.useState<PageableListState<T>>(new PageableListState<T>());
 
   const {
-    onFetchAdditionalInformation,
-    information = informationLocal,
-    onChangeInformation,
+    onFetchNextPageAsync,
+    value = internalValue, // use internal value as default
+    onChange,
     paginationPageSize,
-    plural = "resources",
+    pluralWord = "resources",
   } = props;
 
   const [paginationCurrent, setPaginationCurrent] =
@@ -54,24 +48,24 @@ export function PaginationList<T>(
     React.useState<boolean>(false);
 
   const itemLength: number =
-    information.length;
+    internalValue.length;
   const shouldFetchMore: boolean =
-    information.shouldFetchMore(paginationCurrent, paginationPageSize);
+    internalValue.shouldFetchMore(paginationCurrent, paginationPageSize);
   const isPotentialForMore: boolean =
-    information.isPotentialForMore();
+    internalValue.isPotentialForMore();
 
   React.useEffect(() => {
-    if (onChangeInformation) {
-      onChangeInformation(informationLocal);
+    if (onChange) {
+      onChange(internalValue);
     }
-  }, [informationLocal]);
+  }, [internalValue]);
 
   /** trigger to fetch additional items */
   React.useEffect(() => {
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
-      onFetchAdditionalInformation(information)
-          .then((response) => setInformationLocal(response))
-          .catch((err) => setErrorOccur(true));
+      onFetchNextPageAsync(value)
+        .then((response) => setInternalValue(response))
+        .catch((err) => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);
 
@@ -93,7 +87,7 @@ export function PaginationList<T>(
 
   /** The event called to increment the page no. */
   function onNext(): void {
-    if (information.hasMadeAtLeastOneFetch) {
+    if (value.state.hasMadeAtLeastOneFetch) {
       onChangePagination(paginationCurrent + 1);
     } else {
       onChangePagination(1);
@@ -115,21 +109,20 @@ export function PaginationList<T>(
         <List
           {...props.list}
           loading={isPotentialForMore && shouldFetchMore && !errorOccur}
-          dataSource={information.items}
+          dataSource={value.state.items}
         />
       </InfiniteScroll>
 
-
-      {(!itemLength && information.hasMadeAtLeastOneFetch) &&
+      {(!itemLength && value.state.hasMadeAtLeastOneFetch) &&
         <Alert
           type="warning"
-          message={`The request to fetch additional ${plural} was successful but no ${plural} were found.`}
+          message={`The request to fetch additional ${pluralWord} was successful but no ${pluralWord} were found.`}
         />
       }
 
       {errorOccur &&
         <Rfc7807Alert
-          title={`The request to fetch additional ${plural} was unsuccessful.`}
+          title={`The request to fetch additional ${pluralWord} was unsuccessful.`}
           type="/error/infinite-scroll-page-list"
           onClickRetry={onClickRetry}
         />

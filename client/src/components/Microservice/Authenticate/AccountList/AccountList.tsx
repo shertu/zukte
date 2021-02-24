@@ -1,9 +1,9 @@
-import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
+import { ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../../openapi-generator';
+import { IPageableListState, PageableListState } from '../../../PageableList/PageableListState';
 
-import {AccountListItem} from './ListItem/AccountListItem';
-import {ListProps} from 'antd';
-import {PaginationList} from '../../../PaginationList/PaginationList';
-import {PaginationListInformation} from '../../../PaginationList/PaginationListInformation';
+import { AccountListItem } from './ListItem/AccountListItem';
+import { ListProps } from 'antd';
+import { PageableList } from '../../../PageableList/PageableList';
 import React from 'react';
 
 /**
@@ -15,68 +15,41 @@ import React from 'react';
 export function AccountList(props: {
   mineAccounts?: ApplicationUser[];
 }): JSX.Element {
-  const {mineAccounts = []} = props;
+  const { mineAccounts } = props;
+
+  const [value, onChange] =
+    React.useState<PageableListState<ApplicationUser>>(
+      new PageableListState<ApplicationUser>());
+
+  console.log('AccountList', {
+    value: value,
+  });
 
   const client = new ApplicationUserServiceApi();
 
-  const [information, setInformation] =
-    React.useState<PaginationListInformation<ApplicationUser>>(
-        new PaginationListInformation<ApplicationUser>());
-
-  /**
-   * An event to fetch an additional page of items.
-   * @param {PaginationListInformation<ApplicationUser>} current
-   * @return {Promise<PaginationListInformation<ApplicationUser>>}
-   */
-  async function onFetchAdditionalInformation(
-      current: PaginationListInformation<ApplicationUser>,
-  ): Promise<PaginationListInformation<ApplicationUser>> {
+  async function onFetchNextPageAsync(
+    current: PageableListState<ApplicationUser>,
+  ) {
     const request: ApplicationUserServiceGetListRequest = {
-
     };
 
-    if (current.nextPageToken) {
-      request.pageToken = current.nextPageToken;
+    const nextPageToken = current.state.nextPageToken;
+    if (nextPageToken) {
+      request.pageToken = nextPageToken;
     }
 
     const response = await client.applicationUserServiceGetList(request);
 
+    const currentItems: ApplicationUser[] = current.state.items || [];
     const additionalItems: ApplicationUser[] = response.items || [];
 
-    const nextInformation: PaginationListInformation<ApplicationUser> =
-      new PaginationListInformation<ApplicationUser>();
+    const nextValue: IPageableListState<ApplicationUser> = {
+      items: currentItems.concat(additionalItems),
+      nextPageToken: response.nextPageToken,
+      hasMadeAtLeastOneFetch: true,
+    }
 
-    nextInformation.items = current.items.concat(additionalItems);
-    nextInformation.nextPageToken = response.nextPageToken;
-    nextInformation.hasMadeAtLeastOneFetch = true;
-
-    return nextInformation;
-  }
-
-  // this should be set using state
-  let infoSorted: PaginationListInformation<ApplicationUser> =
-    new PaginationListInformation<ApplicationUser>();
-
-  if (mineAccounts.length) {
-    infoSorted.items =
-      information.items.sort((a, b) => {
-        const aIsMineAccount =
-          Boolean(mineAccounts.find((elem) => elem.id === a.id));
-        const bIsMineAccount =
-          Boolean(mineAccounts.find((elem) => elem.id === b.id));
-
-        const aScore: number = aIsMineAccount ? -1 : 0;
-        const bScore: number = bIsMineAccount ? 1 : 0;
-
-        return aScore + bScore;
-      });
-
-    infoSorted.nextPageToken =
-      information.nextPageToken;
-    infoSorted.hasMadeAtLeastOneFetch =
-      information.hasMadeAtLeastOneFetch;
-  } else {
-    infoSorted = information;
+    return new PageableListState<ApplicationUser>(nextValue);
   }
 
   /**
@@ -91,19 +64,42 @@ export function AccountList(props: {
     );
   }
 
-  const listProps: ListProps<ApplicationUser> = {
-    renderItem: renderListItem,
-    itemLayout: 'vertical',
-  };
+  // order elements with mine accounts first
+  let nextValueSorted: IPageableListState<ApplicationUser> | undefined;
+
+  if (mineAccounts?.length) {
+    nextValueSorted = {
+      ...value.state,
+    }
+
+    nextValueSorted.items = value.state.items.sort((a, b) => {
+      const aIsMineAccount =
+        Boolean(mineAccounts.find((elem) => elem.id === a.id));
+      const bIsMineAccount =
+        Boolean(mineAccounts.find((elem) => elem.id === b.id));
+
+      const aScore: number = aIsMineAccount ? -1 : 0;
+      const bScore: number = bIsMineAccount ? 1 : 0;
+
+      return aScore + bScore;
+    });
+  }
+
+  const usedValue: PageableListState<ApplicationUser> = nextValueSorted ?
+    new PageableListState<ApplicationUser>(nextValueSorted) :
+    value;
 
   return (
-    <PaginationList
-      onFetchAdditionalInformation={onFetchAdditionalInformation}
-      onChangeInformation={setInformation}
-      information={infoSorted}
+    <PageableList
+      onFetchNextPageAsync={onFetchNextPageAsync}
+      onChange={onChange}
+      value={usedValue}
       paginationPageSize={25}
-      list={listProps}
-      plural="accounts"
+      list={{
+        renderItem: renderListItem,
+        itemLayout: 'vertical',
+      }}
+      pluralWord="images"
     />
   );
 }

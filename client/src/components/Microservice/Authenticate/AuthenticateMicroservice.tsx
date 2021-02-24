@@ -1,14 +1,14 @@
-import {ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
-import {Space, Typography} from 'antd';
+import { ApplicationUser, ApplicationUserListResponse, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest } from '../../../openapi-generator';
+import { IPageableListState, PageableListState } from '../../PageableList/PageableListState';
+import { Space, Typography } from 'antd';
 
-import {AccountList} from './AccountList/AccountList';
-import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
-import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
-import {AppPage} from '../../AppPage/AppPage';
-import {PaginationListInformation} from '../../PaginationList/PaginationListInformation';
+import { AccountList } from './AccountList/AccountList';
+import { AccountLoginButton } from './AccountLoginButton/AccountLoginButton';
+import { AccountLogoutButton } from './AccountLogoutButton/AccountLogoutButton';
+import { AppPage } from '../../AppPage/AppPage';
 import React from 'react';
 
-const {Paragraph} = Typography;
+const { Paragraph } = Typography;
 
 /**
  * A demonstration where the user can sign in to the application.
@@ -18,64 +18,53 @@ const {Paragraph} = Typography;
 export function AuthenticateMicroservice(): JSX.Element {
   const client = new ApplicationUserServiceApi();
 
-  const [mineAccountInformation, setMineAccountInformation] =
-    React.useState<PaginationListInformation<ApplicationUser>>(
-        new PaginationListInformation<ApplicationUser>());
+  const [mineAccounts, setMineAccounts] =
+    React.useState<PageableListState<ApplicationUser>>(
+      new PageableListState<ApplicationUser>());
 
   const [errorOccur, setErrorOccur] =
     React.useState<boolean>(false);
 
-  // console.log('AuthenticationAtomicDemo', {
-  //   mineAccountInformation: mineAccountInformation,
-  //   errorOccur: errorOccur,
-  // });
-
-  const isPotentialForMore: boolean =
-    mineAccountInformation.isPotentialForMore();
+  const isPotentialForMore: boolean = mineAccounts.isPotentialForMore();
 
   /** An automatic trigger to fetch additional items. */
   React.useEffect(() => {
     if (isPotentialForMore && !errorOccur) {
-      onFetchAdditionalInformation(mineAccountInformation)
-          .then((response) => setMineAccountInformation(response))
-          .catch((err) => setErrorOccur(true));
+      onFetchNextPageAsync(mineAccounts)
+        .then((response) => setMineAccounts(response))
+        .catch((err) => setErrorOccur(true));
     }
   }, [isPotentialForMore, errorOccur]);
 
-  /**
-   * An event to fetch an additional page of items.
-   * @param {PaginationListInformation<ApplicationUser>} current
-   * @return {Promise<PaginationListInformation<ApplicationUser>>}
-   */
-  async function onFetchAdditionalInformation(
-      current: PaginationListInformation<ApplicationUser>,
-  ): Promise<PaginationListInformation<ApplicationUser>> {
+  async function onFetchNextPageAsync(
+    current: PageableListState<ApplicationUser>,
+  ) {
     const request: ApplicationUserServiceGetListRequest = {
       mine: true,
     };
 
-    if (current.nextPageToken) {
-      request.pageToken = current.nextPageToken;
+    const nextPageToken = current.state.nextPageToken;
+    if (nextPageToken) {
+      request.pageToken = nextPageToken;
     }
 
-    const response: ApplicationUserListResponse =
-      await client.applicationUserServiceGetList(request);
+    const response = await client.applicationUserServiceGetList(request);
 
+    const currentItems: ApplicationUser[] = current.state.items || [];
     const additionalItems: ApplicationUser[] = response.items || [];
 
-    const nextInformation: PaginationListInformation<ApplicationUser> =
-      new PaginationListInformation<ApplicationUser>();
+    const nextValue: IPageableListState<ApplicationUser> = {
+      items: currentItems.concat(additionalItems),
+      nextPageToken: response.nextPageToken,
+      hasMadeAtLeastOneFetch: true,
+    }
 
-    nextInformation.items = current.items.concat(additionalItems);
-    nextInformation.nextPageToken = response.nextPageToken;
-    nextInformation.hasMadeAtLeastOneFetch = true;
-
-    return nextInformation;
+    return new PageableListState<ApplicationUser>(nextValue);
   }
 
   const atLeastOneAccount: boolean =
-    mineAccountInformation.length > 0 &&
-    mineAccountInformation.hasMadeAtLeastOneFetch;
+    mineAccounts.length > 0 &&
+    mineAccounts.state.hasMadeAtLeastOneFetch;
 
   return (
     <AppPage pageTitle="Authentication Demo">
@@ -89,14 +78,14 @@ export function AuthenticateMicroservice(): JSX.Element {
         </Paragraph>
       </Typography>
 
-      <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
+      <Space className="max-cell-xs" style={{ padding: '2em 24px' }}>
         {atLeastOneAccount && <AccountLogoutButton />}
         {!atLeastOneAccount && <AccountLoginButton />}
       </Space>
 
       <AppPage pageTitle="Accounts">
         <AccountList
-          mineAccounts={mineAccountInformation.items}
+          mineAccounts={mineAccounts.state.items}
         />
       </AppPage>
     </AppPage>

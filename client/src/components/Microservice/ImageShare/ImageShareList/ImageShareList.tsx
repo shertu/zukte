@@ -1,8 +1,8 @@
-import {ImageStorageServiceApi, ImageStorageServiceGetListRequest} from '../../../../openapi-generator';
-import {List, ListProps} from 'antd';
+import { IPageableListState, PageableListState } from '../../../PageableList/PageableListState';
+import { ImageStorageServiceApi, ImageStorageServiceGetListRequest } from '../../../../openapi-generator';
+import { List, ListProps } from 'antd';
 
-import {PaginationList} from '../../../PaginationList/PaginationList';
-import {PaginationListInformation} from '../../../PaginationList/PaginationListInformation';
+import { PageableList } from '../../../PageableList/PageableList';
 import React from 'react';
 
 /**
@@ -12,43 +12,35 @@ import React from 'react';
  * @return {JSX.Element}
  */
 export function ImageShareList(props: {
-  information: PaginationListInformation<string>;
-  onChangeInformation: (
-    information: PaginationListInformation<string>
-  ) => void;
+  value?: PageableListState<string>;
+  onChange?: (value: PageableListState<string>) => void;
 }): JSX.Element {
-  const {information, onChangeInformation} = props;
-
+  const { value, onChange } = props;
   const client = new ImageStorageServiceApi();
 
-  /**
-   * An event to fetch an additional page of items.
-   * @param {PaginationListInformation<ApplicationUser>} current
-   * @return {Promise<PaginationListInformation<ApplicationUser>>}
-   */
-  async function onFetchAdditionalInformation(
-      current: PaginationListInformation<string>,
-  ): Promise<PaginationListInformation<string>> {
+  async function onFetchNextPageAsync(
+    current: PageableListState<string>,
+  ) {
     const request: ImageStorageServiceGetListRequest = {
-
     };
 
-    if (current.nextPageToken) {
-      request.pageToken = current.nextPageToken;
+    const nextPageToken = current.state.nextPageToken;
+    if (nextPageToken) {
+      request.pageToken = nextPageToken;
     }
 
     const response = await client.imageStorageServiceGetList(request);
 
+    const currentItems: string[] = current.state.items || [];
     const additionalItems: string[] = response.items || [];
 
-    const nextInformation: PaginationListInformation<string> =
-      new PaginationListInformation<string>();
+    const nextValue: IPageableListState<string> = {
+      items: currentItems.concat(additionalItems),
+      nextPageToken: response.nextPageToken,
+      hasMadeAtLeastOneFetch: true,
+    }
 
-    nextInformation.items = current.items.concat(additionalItems);
-    nextInformation.nextPageToken = response.nextPageToken;
-    nextInformation.hasMadeAtLeastOneFetch = true;
-
-    return nextInformation;
+    return new PageableListState<string>(nextValue);
   }
 
   /**
@@ -65,18 +57,16 @@ export function ImageShareList(props: {
     );
   }
 
-  const listProps: ListProps<string> = {
-    renderItem: renderListItem,
-  };
-
   return (
-    <PaginationList
-      onFetchAdditionalInformation={onFetchAdditionalInformation}
-      onChangeInformation={onChangeInformation}
-      information={information}
+    <PageableList
+      onFetchNextPageAsync={onFetchNextPageAsync}
+      onChange={onChange}
+      value={value}
       paginationPageSize={25}
-      list={listProps}
-      plural="images"
+      list={{
+        renderItem: renderListItem,
+      }}
+      pluralWord="images"
     />
   );
 }

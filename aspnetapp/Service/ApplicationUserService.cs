@@ -111,7 +111,7 @@ namespace Zukte.Service {
 		[NonAction]
 		private IQueryable<ApplicationUser> ApplyIdFilter(IQueryable<ApplicationUser> query, bool skipOnEmptyArr, string? idFilterArr) {
 			if (!string.IsNullOrEmpty(idFilterArr)) {
-				query = ApplyIdFilter(query, skipOnEmptyArr, idFilterArr);
+				query = ApplyIdFilter(query, skipOnEmptyArr, new string[1] { idFilterArr });
 			}
 
 			return query;
