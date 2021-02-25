@@ -31,15 +31,19 @@ export function MockUpload(props: {
       file: RcFile,
       fileList: RcFile[],
   ): boolean | Promise<void | Blob | File> {
-    if (file.size < maximumFileSize) {
-      if (onChange) {
-        onChange([...value, ...fileList]);
+    const fileListA: RcFile[] = [];
+
+    fileList.forEach((element: RcFile) => {
+      if (element.size < maximumFileSize) {
+        fileListA.push(element);
+      } else {
+        message.error(`file size require to be less 
+        than ${MAX_FILE_SIZE_MB} MB\n${element.name}`);
       }
-    } else {
-      message.error(
-          `file size require to be less than 
-        or equal to ${MAX_FILE_SIZE_MB} MB`,
-      );
+    });
+
+    if (fileListA.length && onChange) {
+      onChange([...value, ...fileListA]);
     }
 
     return false;
