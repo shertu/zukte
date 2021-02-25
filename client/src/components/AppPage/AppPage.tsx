@@ -8,6 +8,7 @@ export interface PageProps
   HTMLElement
   > {
   pageTitle?: string;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 /**
@@ -17,12 +18,12 @@ export interface PageProps
  * @return {JSX.Element}
  */
 export function AppPage(props: PageProps): JSX.Element {
-  const {className, pageTitle, children, ...other} = props;
+  const {className, pageTitle, size = 'md', children, ...other} = props;
 
   return (
     <section
       {...other}
-      className={classNames(className, 'max-cell-lg', 'app-page')}
+      className={classNames(className, `max-cell-${size}`, 'app-page')}
     >
       {pageTitle && <PageHeader title={pageTitle} />}
       {children}

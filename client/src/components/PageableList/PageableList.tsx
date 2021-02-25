@@ -17,8 +17,6 @@ export interface PageableListProps<T> {
     'dataLength' | 'next' | 'hasMore' | 'loader'>;
   list?: Omit<ListProps<T>,
     'loading' | 'dataSource'>;
-
-  pluralWord?: string;
 };
 
 /**
@@ -39,7 +37,6 @@ export function PageableList<T>(
     value = internalValue, // use internal value as default
     onChange,
     paginationPageSize,
-    pluralWord = 'resources',
   } = props;
 
   const [paginationCurrent, setPaginationCurrent] =
@@ -66,7 +63,7 @@ export function PageableList<T>(
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
       onFetchNextPageAsync(value)
           .then((response) => setInternalValue(response))
-          .catch((err) => setErrorOccur(true));
+          .catch(() => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);
 
@@ -95,12 +92,14 @@ export function PageableList<T>(
     }
   }
 
+  const messageKeyWord: string = 'resources';
+
   const warnMessage: string =
-    `The request to fetch additional ${pluralWord} 
-    was successful but no ${pluralWord} were found.`;
+    `The request to fetch additional ${messageKeyWord} 
+    was successful but no ${messageKeyWord} were found.`;
 
   const errorMessage: string =
-    `The request to fetch additional ${pluralWord} 
+    `The request to fetch additional ${messageKeyWord} 
     was unsuccessful.`;
 
   return (

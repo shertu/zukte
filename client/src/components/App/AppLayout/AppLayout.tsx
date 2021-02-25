@@ -35,7 +35,7 @@ export function AppLayout(): JSX.Element {
       </Switch>
 
       <Content>
-        <div id="content-viewport" className="max-cell-lg">
+        <div id="content-viewport" className="max-cell-md">
           <AppContentSwitch />
         </div>
       </Content>

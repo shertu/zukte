@@ -16,7 +16,7 @@ const errorMessage: string =
 export function AccountLogoutButton(props: { redirect?: string }): JSX.Element {
   const {redirect} = props;
 
-  const client: AccountApi = new AccountApi();
+  const client = new AccountApi();
 
   /** The click event for this button. */
   function onClick(): void {

@@ -1,12 +1,12 @@
 import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
 import {IPageableListState, PageableListState} from '../../PageableList/PageableListState';
-import {Space, Typography} from 'antd';
 
 import {AccountList} from './AccountList/AccountList';
 import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
 import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
 import {AppPage} from '../../AppPage/AppPage';
 import React from 'react';
+import {Typography} from 'antd';
 
 const {Paragraph} = Typography;
 
@@ -32,7 +32,7 @@ export function AuthenticateMicroservice(): JSX.Element {
     if (isPotentialForMore && !errorOccur) {
       onFetchNextPageAsync(mineAccounts)
           .then((response) => setMineAccounts(response))
-          .catch((err) => setErrorOccur(true));
+          .catch(() => setErrorOccur(true));
     }
   }, [isPotentialForMore, errorOccur]);
 
@@ -84,10 +84,10 @@ export function AuthenticateMicroservice(): JSX.Element {
         </Paragraph>
       </Typography>
 
-      <Space className="max-cell-xs" style={{padding: '2em 24px'}}>
+      <div style={{padding: '2em 24px'}}>
         {atLeastOneAccount && <AccountLogoutButton />}
         {!atLeastOneAccount && <AccountLoginButton />}
-      </Space>
+      </div>
 
       <AppPage pageTitle="Accounts">
         <AccountList

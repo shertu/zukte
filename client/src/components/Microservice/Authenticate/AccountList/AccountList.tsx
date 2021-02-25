@@ -16,11 +16,11 @@ export function AccountList(props: {
 }): JSX.Element {
   const {mineAccounts} = props;
 
+  const client = new ApplicationUserServiceApi();
+
   const [value, onChange] =
     React.useState<PageableListState<ApplicationUser>>(
         new PageableListState<ApplicationUser>());
-
-  const client = new ApplicationUserServiceApi();
 
   /**
    * Tigger to load the next page of data.
@@ -100,7 +100,6 @@ export function AccountList(props: {
         renderItem: renderListItem,
         itemLayout: 'vertical',
       }}
-      pluralWord="images"
     />
   );
 }

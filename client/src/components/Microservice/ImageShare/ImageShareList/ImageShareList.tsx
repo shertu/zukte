@@ -1,3 +1,5 @@
+import './style.less';
+
 import {IPageableListState, PageableListState} from '../../../PageableList/PageableListState';
 import {ImageStorageServiceApi, ImageStorageServiceGetListRequest} from '../../../../openapi-generator';
 
@@ -16,9 +18,10 @@ export function ImageShareList(props: {
   onChange?: (value: PageableListState<string>) => void;
 }): JSX.Element {
   const {value, onChange} = props;
+
   const client = new ImageStorageServiceApi();
 
-  const paginationPageSize: number = 3;
+  const paginationPageSize: number = 6;
 
   /**
    * Tigger to load the next page of data.
@@ -61,10 +64,12 @@ export function ImageShareList(props: {
   function renderListItem(item: string, index: number): JSX.Element {
     return (
       <List.Item key={index}>
-        <img className="max-cell-xs" src={item} />
+        <img className="max-cell-xs imageshare-list-image" src={item} />
       </List.Item>
     );
   }
+
+  const spacing: number | undefined = 16;
 
   return (
     <PageableList
@@ -74,8 +79,14 @@ export function ImageShareList(props: {
       paginationPageSize={paginationPageSize}
       list={{
         renderItem: renderListItem,
+        grid: {
+          gutter: spacing,
+          xs: 1,
+          md: 2,
+          xl: 3,
+        },
+        style: {padding: (spacing)},
       }}
-      pluralWord="images"
     />
   );
 }

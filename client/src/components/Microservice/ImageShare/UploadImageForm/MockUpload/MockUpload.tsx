@@ -33,7 +33,7 @@ export function MockUpload(props: {
   ): boolean | Promise<void | Blob | File> {
     if (file.size < maximumFileSize) {
       if (onChange) {
-        onChange([...value, file]);
+        onChange([...value, ...fileList]);
       }
     } else {
       message.error(
@@ -65,6 +65,7 @@ export function MockUpload(props: {
       beforeUpload={beforeUpload}
       onRemove={onRemove}
       fileList={value}
+      multiple={true}
     >
       <p className="ant-upload-drag-icon">
         <UploadOutlined />
