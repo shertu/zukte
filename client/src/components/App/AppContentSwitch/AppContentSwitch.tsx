@@ -5,9 +5,9 @@ import AppRouteCollection from '../../../constants/AppRouteCollection';
 import {AuthenticateMicroservice} from '../../Microservice/Authenticate/AuthenticateMicroservice';
 import {ImageShareMicroservice} from '../../Microservice/ImageShare/ImageShareMicroservice';
 import {LandingPage} from '../../LandingPage/LandingPage';
-import Mailto from 'react-mailto.js';
 import {PrivacyPolicyPage} from '../../PrivacyPolicyPage/PrivacyPolicyPage';
 import React from 'react';
+import {mail} from 'fluent-mailto';
 
 const {Paragraph} = Typography;
 
@@ -19,6 +19,10 @@ const {Paragraph} = Typography;
 export function AppContentSwitch(): JSX.Element {
   const mailToSubject: string =
     `An error occured when I visited ${window.location.href}`;
+
+  const mailto = mail.to('djared.xeknau@outlook.com')
+      .subject(mailToSubject)
+      .build();
 
   return (
     <Switch>
@@ -45,12 +49,7 @@ export function AppContentSwitch(): JSX.Element {
           extra={
             <Paragraph>
               please&nbsp;
-              <Mailto
-                subject={mailToSubject}
-                to="djared.xeknau@outlook.com"
-              >
-                report this error to a developer
-              </Mailto>
+              <a href={mailto}>report this error to a developer</a>
             </Paragraph>
           }
         />

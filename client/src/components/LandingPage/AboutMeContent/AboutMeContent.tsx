@@ -2,15 +2,18 @@ import './style.less';
 
 import {Col, Divider, Row, Space, Typography} from 'antd';
 
-import Mailto from 'react-mailto.js';
 import React from 'react';
 import {calculateAgeFromBirthdate} from '../../../utilities/AgeCalculator';
+import {mail} from 'fluent-mailto';
 
 const {Paragraph, Link} = Typography;
 
 const shertuDateOfBirth = new Date('1996-06-10');
 const aboutMeStylePersonalInfoSize: number = 60;
 const aboutMeStyleMaxWidth: number = 420;
+
+const mailto = mail.to('djared.xeknau@outlook.com')
+    .build();
 
 const welcomeTypography: React.ReactNode = (
   <Typography
@@ -21,10 +24,8 @@ const welcomeTypography: React.ReactNode = (
     </Paragraph>
     <Paragraph>
       For those who wish to know more about me, please&nbsp;
-      <Mailto to="djared.xeknau@outlook.com">
-        send an email
-      </Mailto>
-    &nbsp;or&nbsp;
+      <a href={mailto}>send an email</a>
+      &nbsp;or&nbsp;
       <Link href="https://www.linkedin.com/in/jared-blackman-71445098/">
         read my LinkedIn
       </Link>
