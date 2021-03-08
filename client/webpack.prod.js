@@ -26,7 +26,7 @@ module.exports = merge(common, {
       // https://webpack.js.org/plugins/terser-webpack-plugin/
       new TerserPlugin(),
 
-      // https://github.com/NMFR/optimize-css-assets-webpack-plugin
+      // https://webpack.js.org/plugins/css-minimizer-webpack-plugin/
       new CssMinimizerPlugin(),
     ],
   },
