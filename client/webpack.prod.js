@@ -2,7 +2,7 @@ const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 const path = require("path");
 const TerserPlugin = require("terser-webpack-plugin");
-const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const StylelintPlugin = require("stylelint-webpack-plugin");
 const ESLintPlugin = require("eslint-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -27,9 +27,7 @@ module.exports = merge(common, {
       new TerserPlugin(),
 
       // https://github.com/NMFR/optimize-css-assets-webpack-plugin
-      new OptimizeCssAssetsPlugin({
-        cssProcessor: require("cssnano"),
-      }),
+      new CssMinimizerPlugin(),
     ],
   },
 
