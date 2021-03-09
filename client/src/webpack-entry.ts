@@ -1,4 +1,3 @@
-import 'antd/dist/antd.less';
 import './style/index.less';
 
 import {App} from './components/App/App';

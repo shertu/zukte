@@ -2,6 +2,7 @@ const BabelPresetEnv = require("@babel/preset-env");
 const BabelPresetReact = require("@babel/preset-react");
 const BabelPluginClassProperties = require("@babel/plugin-proposal-class-properties");
 const BabelPluginTransformTypescript = require("@babel/plugin-transform-typescript");
+const BabelPluginImport = require("babel-plugin-import");
 
 module.exports = {
   presets: [BabelPresetEnv, BabelPresetReact],
@@ -14,5 +15,9 @@ module.exports = {
       },
     ],
     BabelPluginClassProperties,
+    [BabelPluginImport, {
+      "libraryName": "antd",
+      "style": true,   // or 'css'
+    }]
   ],
 };
