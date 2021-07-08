@@ -5,11 +5,11 @@
 /.next/
 /out/
 
-# production
-/build
-
 # misc
 .env*
 
-# sentry
-/sentry.properties
+# OpenAPI specification
+/openapi.json
+
+# openapi-generator
+/src/openapi-generator
