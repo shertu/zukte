@@ -27,6 +27,10 @@
     },
     "aspnetapp": {
       "tags": []
+    },
+    "api-client": {
+      "tags": [],
+      "implicitDependencies": ["aspnetapp"]
     }
   },
   "affected": {

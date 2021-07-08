@@ -1,0 +1,9 @@
+# dependencies
+/node_modules
+
+# open api
+/openapi.json
+/src/openapi-generator
+
+# output
+/dist

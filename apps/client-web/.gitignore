@@ -7,9 +7,3 @@
 
 # misc
 .env*
-
-# OpenAPI specification
-/openapi.json
-
-# openapi-generator
-/src/openapi-generator

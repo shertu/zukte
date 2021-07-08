@@ -1,16 +1,6 @@
 {
-  "name": "front-end",
+  "name": "zukte",
   "private": true,
-  "homepage": "https://github.com/entailapp/front-end#readme",
-  "bugs": {
-    "url": "https://github.com/entailapp/front-end/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/entailapp/front-end.git"
-  },
-  "license": "ISC",
-  "author": "entail",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
     "prepare": "husky install",

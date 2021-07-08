@@ -2,10 +2,13 @@ param (
     [Parameter(Mandatory=$true)][System.Uri]$url = "https://localhost:8080"
 )
 
-$filename = "openapi.json"
-$filepath = "$PSScriptRoot/client/$filename"
+$LocationT = "$PSScriptRoot/libs/api-client"
+$LocationAspnetapp = "$PSScriptRoot/apps/aspnetapp"
 
-Copy-Item "$PSScriptRoot/aspnetapp/$filename" -Destination "$PSScriptRoot/client"
+$filename = "openapi.json"
+$filepath = "$LocationT/$filename"
+
+Copy-Item "$LocationAspnetapp/$filename" -Destination $LocationT
 
 if($url) {
     $json = Get-Content $filepath | ConvertFrom-Json
@@ -19,7 +22,7 @@ if($url) {
 }
 
 # execute open-api-generator cli
-Set-Location "$PSScriptRoot/client"
+Set-Location $LocationT
 Remove-Item -Recurse -Force ./src/openapi-generator -ErrorAction SilentlyContinue
 npm run openapi
 

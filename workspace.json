@@ -13,6 +13,10 @@
     "aspnetapp": {
       "root": "apps/aspnetapp",
       "projectType": "application"
+    },
+    "api-client": {
+      "root": "libs/api-client",
+      "projectType": "library"
     }
   }
 }
