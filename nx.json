@@ -12,33 +12,24 @@
     "default": {
       "runner": "@nrwl/workspace/tasks-runners/default",
       "options": {
-        "cacheableOperations": ["build", "eslint", "test"]
+        "cacheableOperations": ["build", "eslint", "stylelint", "test"]
       }
     }
   },
   "projects": {
     "client-web": {
-      "tags": []
+      "tags": [],
+      "implicitDependencies": ["aspnetapp"]
     },
     "client-web-storybook": {
       "tags": [],
       "implicitDependencies": ["client-web"]
     },
-    "client-mobile": {
-      "tags": []
-    },
-    "client-capacitor": {
-      "tags": [],
-      "implicitDependencies": ["client-web"]
-    },
-    "api-client": {
-      "tags": []
-    },
-    "business-logic": {
+    "aspnetapp": {
       "tags": []
     }
   },
   "affected": {
-    "defaultBase": "develop"
+    "defaultBase": "main"
   }
 }

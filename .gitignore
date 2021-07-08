@@ -4,8 +4,6 @@
 # pnpm
 package-lock.json
 pnpm-lock.yaml
-
 !/pnpm-lock.yaml
-!/apps/client-mobile/package-lock.json
 
 .pnpm-debug.log
