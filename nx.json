@@ -1,0 +1,44 @@
+{
+  "npmScope": "front-end",
+  "implicitDependencies": {
+    "workspace.json": "*",
+    "package.json": {
+      "dependencies": "*",
+      "devDependencies": "*"
+    },
+    "nx.json": "*"
+  },
+  "tasksRunnerOptions": {
+    "default": {
+      "runner": "@nrwl/workspace/tasks-runners/default",
+      "options": {
+        "cacheableOperations": ["build", "eslint", "test"]
+      }
+    }
+  },
+  "projects": {
+    "client-web": {
+      "tags": []
+    },
+    "client-web-storybook": {
+      "tags": [],
+      "implicitDependencies": ["client-web"]
+    },
+    "client-mobile": {
+      "tags": []
+    },
+    "client-capacitor": {
+      "tags": [],
+      "implicitDependencies": ["client-web"]
+    },
+    "api-client": {
+      "tags": []
+    },
+    "business-logic": {
+      "tags": []
+    }
+  },
+  "affected": {
+    "defaultBase": "develop"
+  }
+}

@@ -1,0 +1,6 @@
+packages:
+  - 'apps/client-capacitor'
+  - 'apps/client-web'
+  - 'apps/client-web-storybook'
+  - 'libs/api-client'
+  - 'libs/business-logic'

@@ -1,0 +1,5 @@
+{
+  // https://github.com/tsconfig/bases/blob/master/bases/recommended.json
+  "extends": "./node_modules/gts/tsconfig-google.json",
+  "exclude": ["node_modules"]
+}

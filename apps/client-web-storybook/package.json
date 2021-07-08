@@ -1,0 +1,22 @@
+{
+  "name": "entail",
+  "private": true,
+  "scripts": {
+    "start": "start-storybook -p 6006",
+    "build": "build-storybook"
+  },
+  "dependencies": {
+    "@material-ui/core": "^4.11.4",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@storybook/addon-essentials": "^6.3.2",
+    "@storybook/react": "^6.3.2",
+    "css-loader": "^5.2.6",
+    "postcss": "^8.3.5",
+    "postcss-loader": "^6.1.1",
+    "style-loader": "^3.0.0",
+    "tailwindcss": "^2.2.4"
+  }
+}

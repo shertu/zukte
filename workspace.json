@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "defaultProject": "client-web",
+  "projects": {
+    "client-web": {
+      "root": "apps/client-web",
+      "projectType": "application"
+    },
+    "client-web-storybook": {
+      "root": "apps/client-web-storybook",
+      "projectType": "application"
+    },
+    "client-mobile": {
+      "root": "apps/client-mobile",
+      "projectType": "application"
+    },
+    "client-capacitor": {
+      "root": "apps/client-capacitor",
+      "projectType": "application"
+    },
+    "api-client": {
+      "root": "libs/api-client",
+      "projectType": "library"
+    },
+    "business-logic": {
+      "root": "libs/business-logic",
+      "projectType": "library"
+    }
+  }
+}
