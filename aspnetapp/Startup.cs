@@ -87,7 +87,7 @@ namespace Zukte {
 			services.AddControllers();
 
 			#region OpenAPI
-			services.AddSwaggerDocument();
+			services.AddOpenApiDocument(); // add OpenAPI v3 document
 			#endregion
 
 			//services.AddSingleton<ConfigurationLogger>();
@@ -133,8 +133,8 @@ namespace Zukte {
 			});
 
 			#region OpenAPI
-			_ = app.UseOpenApi();
-			_ = app.UseSwaggerUi3();
+			app.UseOpenApi(); // serve OpenAPI/Swagger documents
+			app.UseSwaggerUi3(); // serve Swagger UI
 			#endregion
 		}
 

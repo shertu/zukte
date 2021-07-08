@@ -7,16 +7,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.8.0" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.9.1" />
     <PackageReference Include="Chance.NET" Version="2.2.0" />
-    <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.50.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.2">
+    <PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.52.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="5.0.7">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.0-m8.0.23" />
-    <PackageReference Include="NSwag.AspNetCore" Version="13.10.1" />
-    <PackageReference Include="NSwag.MSBuild" Version="13.10.3">
+    <PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.3.1" />
+    <PackageReference Include="NSwag.AspNetCore" Version="13.11.3" />
+    <PackageReference Include="NSwag.MSBuild" Version="13.11.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

@@ -9,22 +9,9 @@ Copy-Item "$PSScriptRoot/aspnetapp/$filename" -Destination "$PSScriptRoot/client
 
 if($url) {
     $json = Get-Content $filepath | ConvertFrom-Json
-
-    $http = [System.Uri]::UriSchemeHttp
-    $https = [System.Uri]::UriSchemeHttps
-
-    $schemes = @()
-
-    if ($url.Scheme -eq $http) {
-        $schemes += $http
-    }
-
-    if ($url.Scheme -eq $https) {
-        $schemes += $https
-    }
-
-    $json | Add-Member -Type NoteProperty -Name "host" -Value $url.Authority
-    $json | Add-Member -Type NoteProperty -Name "schemes" -Value $schemes
+    
+    $servers = @(@{"url" = $url.ToString()})
+    $json | Add-Member -Type NoteProperty -Name "servers" -Value $servers
 
     Write-Output $json
 
