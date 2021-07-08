@@ -1,5 +1,4 @@
 {
-  "npmScope": "front-end",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {

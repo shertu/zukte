@@ -3,7 +3,7 @@ import './style.less';
 import {Col, Divider, Row, Space, Typography} from 'antd';
 
 import React from 'react';
-import {calculateAgeFromBirthdate} from '../../utilities/AgeCalculator';
+import {calculateAgeFromBirthdate} from '../../lib/utilities/AgeCalculator';
 import {mail} from 'fluent-mailto';
 
 const {Paragraph, Link} = Typography;
