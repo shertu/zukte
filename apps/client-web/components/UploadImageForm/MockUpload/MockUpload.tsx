@@ -28,8 +28,8 @@ export function MockUpload(props: {
    * @return {boolean | Promise<void | Blob | File>}
    */
   function beforeUpload(
-      file: RcFile,
-      fileList: RcFile[],
+    file: RcFile,
+    fileList: RcFile[]
   ): boolean | Promise<void | Blob | File> {
     const fileListA: RcFile[] = [];
 

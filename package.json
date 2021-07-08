@@ -13,7 +13,6 @@
   "author": "entail",
   "scripts": {
     "preinstall": "npx only-allow pnpm",
-    "postinstall": "nx run-many --target=build --projects=business-logic,api-client",
     "prepare": "husky install",
     "graph": "nx dep-graph",
     "storybook": "nx run client-web-storybook:start",
@@ -24,7 +23,6 @@
     "@nrwl/cli": "^12.5.7",
     "@nrwl/tao": "^12.5.7",
     "@nrwl/workspace": "^12.5.7",
-    "eslint-plugin-react": "^7.24.0",
     "gts": "^3.1.0",
     "husky": "^7.0.1",
     "prettier": "^2.3.2",

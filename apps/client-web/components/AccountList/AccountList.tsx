@@ -1,8 +1,15 @@
-import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../../openapi-generator';
-import {IPageableListState, PageableListState} from '../../../PageableList/PageableListState';
+import {
+  ApplicationUser,
+  ApplicationUserServiceApi,
+  ApplicationUserServiceGetListRequest,
+} from '../../../../openapi-generator';
+import {
+  IPageableListState,
+  PageableListState,
+} from '../PageableList/PageableListState';
 
 import {AccountListItem} from './ListItem/AccountListItem';
-import {PageableList} from '../../../PageableList/PageableList';
+import {PageableList} from '../PageableList/PageableList';
 import React from 'react';
 
 /**
@@ -18,9 +25,9 @@ export function AccountList(props: {
 
   const client = new ApplicationUserServiceApi();
 
-  const [value, onChange] =
-    React.useState<PageableListState<ApplicationUser>>(
-        new PageableListState<ApplicationUser>());
+  const [value, onChange] = React.useState<PageableListState<ApplicationUser>>(
+    new PageableListState<ApplicationUser>()
+  );
 
   /**
    * Tigger to load the next page of data.
@@ -29,10 +36,9 @@ export function AccountList(props: {
    * @return {Promise<PageableListState<ApplicationUser>>}
    */
   async function onFetchNextPageAsync(
-      current: PageableListState<ApplicationUser>,
+    current: PageableListState<ApplicationUser>
   ) {
-    const request: ApplicationUserServiceGetListRequest = {
-    };
+    const request: ApplicationUserServiceGetListRequest = {};
 
     const nextPageToken = current.state.nextPageToken;
     if (nextPageToken) {
@@ -60,9 +66,7 @@ export function AccountList(props: {
    * @return {JSX.Element}
    */
   function renderListItem(item: ApplicationUser, index: number): JSX.Element {
-    return (
-      <AccountListItem user={item} mineAccounts={mineAccounts} />
-    );
+    return <AccountListItem user={item} mineAccounts={mineAccounts} />;
   }
 
   // order elements with mine accounts first
@@ -74,10 +78,12 @@ export function AccountList(props: {
     };
 
     nextValueSorted.items = value.state.items.sort((a, b) => {
-      const aIsMineAccount =
-        Boolean(mineAccounts.find((elem) => elem.id === a.id));
-      const bIsMineAccount =
-        Boolean(mineAccounts.find((elem) => elem.id === b.id));
+      const aIsMineAccount = Boolean(
+        mineAccounts.find(elem => elem.id === a.id)
+      );
+      const bIsMineAccount = Boolean(
+        mineAccounts.find(elem => elem.id === b.id)
+      );
 
       const aScore: number = aIsMineAccount ? -1 : 0;
       const bScore: number = bIsMineAccount ? 1 : 0;
@@ -86,9 +92,9 @@ export function AccountList(props: {
     });
   }
 
-  const usedValue: PageableListState<ApplicationUser> = nextValueSorted ?
-    new PageableListState<ApplicationUser>(nextValueSorted) :
-    value;
+  const usedValue: PageableListState<ApplicationUser> = nextValueSorted
+    ? new PageableListState<ApplicationUser>(nextValueSorted)
+    : value;
 
   return (
     <PageableList

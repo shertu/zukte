@@ -1,10 +1,16 @@
 import './style.less';
 
-import {IPageableListState, PageableListState} from '../../../PageableList/PageableListState';
-import {ImageStorageServiceApi, ImageStorageServiceGetListRequest} from '../../../../openapi-generator';
+import {
+  IPageableListState,
+  PageableListState,
+} from '../PageableList/PageableListState';
+import {
+  ImageStorageServiceApi,
+  ImageStorageServiceGetListRequest,
+} from '../../../../openapi-generator';
 
 import {List} from 'antd';
-import {PageableList} from '../../../PageableList/PageableList';
+import {PageableList} from '../PageableList/PageableList';
 import React from 'react';
 
 /**
@@ -21,7 +27,7 @@ export function ImageShareList(props: {
 
   const client = new ImageStorageServiceApi();
 
-  const paginationPageSize: number = 6;
+  const paginationPageSize = 6;
 
   /**
    * Tigger to load the next page of data.
@@ -29,9 +35,7 @@ export function ImageShareList(props: {
    * @param {PageableListState<string>} current
    * @return {Promise<PageableListState<string>>}
    */
-  async function onFetchNextPageAsync(
-      current: PageableListState<string>,
-  ) {
+  async function onFetchNextPageAsync(current: PageableListState<string>) {
     const request: ImageStorageServiceGetListRequest = {
       maxResults: paginationPageSize,
     };
@@ -85,7 +89,7 @@ export function ImageShareList(props: {
           md: 2,
           xl: 3,
         },
-        style: {padding: (spacing)},
+        style: {padding: spacing},
       }}
     />
   );

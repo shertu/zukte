@@ -2,9 +2,9 @@ import {Result, Typography} from 'antd';
 import {Route, Switch} from 'react-router-dom';
 
 import AppRouteCollection from '../../../constants/AppRouteCollection';
-import {AuthenticateMicroservice} from '../../Microservice/Authenticate/AuthenticateMicroservice';
-import {ImageShareMicroservice} from '../../Microservice/ImageShare/ImageShareMicroservice';
-import {LandingPage} from '../../LandingPage/LandingPage';
+import {AuthenticateMicroservice} from '../../../pages/AuthenticateMicroservice';
+import {ImageShareMicroservice} from '../../../pages/ImageShareMicroservice';
+import {LandingPage} from '../../../pages/LandingPage';
 import {PrivacyPolicyPage} from '../../PrivacyPolicyPage/PrivacyPolicyPage';
 import React from 'react';
 import {mail} from 'fluent-mailto';
@@ -17,12 +17,12 @@ const {Paragraph} = Typography;
  * @return {JSX.Element}
  */
 export function AppContentSwitch(): JSX.Element {
-  const mailToSubject: string =
-    `An error occured when I visited ${window.location.href}`;
+  const mailToSubject = `An error occured when I visited ${window.location.href}`;
 
-  const mailto = mail.to('djared.xeknau@outlook.com')
-      .subject(mailToSubject)
-      .build();
+  const mailto = mail
+    .to('djared.xeknau@outlook.com')
+    .subject(mailToSubject)
+    .build();
 
   return (
     <Switch>

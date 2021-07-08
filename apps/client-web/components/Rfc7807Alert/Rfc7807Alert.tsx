@@ -9,7 +9,7 @@ export interface Rfc7807Props {
   detail?: string;
   instance?: string;
   onClickRetry?: React.MouseEventHandler<HTMLElement>;
-};
+}
 
 /**
  * A error message component which implements
@@ -28,8 +28,7 @@ export function Rfc7807Alert(props: Rfc7807Props): JSX.Element {
     onClickRetry,
   } = props;
 
-  const [showDetails, setShowDetails] =
-    React.useState<boolean>(false);
+  const [showDetails, setShowDetails] = React.useState<boolean>(false);
 
   return (
     <Alert
@@ -37,49 +36,33 @@ export function Rfc7807Alert(props: Rfc7807Props): JSX.Element {
       type="error"
       action={
         <Space>
-          {!showDetails &&
-            <Button
-              size="small"
-              onClick={() => setShowDetails(true)}
-            >
+          {!showDetails && (
+            <Button size="small" onClick={() => setShowDetails(true)}>
               details
             </Button>
-          }
-          {onClickRetry &&
-            <Button
-              size="small"
-              danger
-              onClick={onClickRetry}
-            >
+          )}
+          {onClickRetry && (
+            <Button size="small" danger onClick={onClickRetry}>
               retry
             </Button>
-          }
+          )}
         </Space>
       }
       description={
-        showDetails &&
-        <Descriptions title="Error Information">
-          <Descriptions.Item
-            label="Problem Classification"
-          >
-            {type}
-          </Descriptions.Item>
-          <Descriptions.Item
-            label="Detail"
-          >
-            {detail}
-          </Descriptions.Item>
-          <Descriptions.Item
-            label="HTTP Status Code"
-          >
-            {status}
-          </Descriptions.Item>
-          <Descriptions.Item
-            label="Trace Instance"
-          >
-            {instance}
-          </Descriptions.Item>
-        </Descriptions>
+        showDetails && (
+          <Descriptions title="Error Information">
+            <Descriptions.Item label="Problem Classification">
+              {type}
+            </Descriptions.Item>
+            <Descriptions.Item label="Detail">{detail}</Descriptions.Item>
+            <Descriptions.Item label="HTTP Status Code">
+              {status}
+            </Descriptions.Item>
+            <Descriptions.Item label="Trace Instance">
+              {instance}
+            </Descriptions.Item>
+          </Descriptions>
+        )
       }
     />
   );

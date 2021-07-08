@@ -34,8 +34,8 @@ export function PrivacyPolicyPage(): JSX.Element {
         <Title level={2}>How we collect and use your information</Title>
 
         <Paragraph>
-          This website will store personal information such as your name,
-          email address, phone number, etc.
+          This website will store personal information such as your name, email
+          address, phone number, etc.
         </Paragraph>
 
         <Paragraph>

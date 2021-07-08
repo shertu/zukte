@@ -1,10 +1,17 @@
-import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceGetListRequest} from '../../../openapi-generator';
-import {IPageableListState, PageableListState} from '../../PageableList/PageableListState';
+import {
+  ApplicationUser,
+  ApplicationUserServiceApi,
+  ApplicationUserServiceGetListRequest,
+} from '../../../openapi-generator';
+import {
+  IPageableListState,
+  PageableListState,
+} from '../components/PageableList/PageableListState';
 
-import {AccountList} from './AccountList/AccountList';
+import {AccountList} from '../components/AccountList/AccountList';
 import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
 import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
-import {AppPage} from '../../AppPage/AppPage';
+import {AppPage} from '../components/AppPage/AppPage';
 import React from 'react';
 import {Typography} from 'antd';
 
@@ -18,12 +25,11 @@ const {Paragraph} = Typography;
 export function AuthenticateMicroservice(): JSX.Element {
   const client = new ApplicationUserServiceApi();
 
-  const [mineAccounts, setMineAccounts] =
-    React.useState<PageableListState<ApplicationUser>>(
-        new PageableListState<ApplicationUser>());
+  const [mineAccounts, setMineAccounts] = React.useState<
+    PageableListState<ApplicationUser>
+  >(new PageableListState<ApplicationUser>());
 
-  const [errorOccur, setErrorOccur] =
-    React.useState<boolean>(false);
+  const [errorOccur, setErrorOccur] = React.useState<boolean>(false);
 
   const isPotentialForMore: boolean = mineAccounts.isPotentialForMore();
 
@@ -31,8 +37,8 @@ export function AuthenticateMicroservice(): JSX.Element {
   React.useEffect(() => {
     if (isPotentialForMore && !errorOccur) {
       onFetchNextPageAsync(mineAccounts)
-          .then((response) => setMineAccounts(response))
-          .catch(() => setErrorOccur(true));
+        .then(response => setMineAccounts(response))
+        .catch(() => setErrorOccur(true));
     }
   }, [isPotentialForMore, errorOccur]);
 
@@ -43,7 +49,7 @@ export function AuthenticateMicroservice(): JSX.Element {
    * @return {Promise<PageableListState<ApplicationUser>>}
    */
   async function onFetchNextPageAsync(
-      current: PageableListState<ApplicationUser>,
+    current: PageableListState<ApplicationUser>
   ) {
     const request: ApplicationUserServiceGetListRequest = {
       mine: true,
@@ -69,8 +75,7 @@ export function AuthenticateMicroservice(): JSX.Element {
   }
 
   const atLeastOneAccount: boolean =
-    mineAccounts.length > 0 &&
-    mineAccounts.state.hasMadeAtLeastOneFetch;
+    mineAccounts.length > 0 && mineAccounts.state.hasMadeAtLeastOneFetch;
 
   return (
     <AppPage pageTitle="Authentication Demo">
@@ -79,8 +84,8 @@ export function AuthenticateMicroservice(): JSX.Element {
           To use this demo service please sign in to Google and authorize this
           application to access your Google profile. The application will
           automatically create an account from the information in your Google
-          profile. You can delete this account at anytime; this will not
-          affect your Google profile.
+          profile. You can delete this account at anytime; this will not affect
+          your Google profile.
         </Paragraph>
       </Typography>
 
@@ -90,9 +95,7 @@ export function AuthenticateMicroservice(): JSX.Element {
       </div>
 
       <AppPage pageTitle="Accounts">
-        <AccountList
-          mineAccounts={mineAccounts.state.items}
-        />
+        <AccountList mineAccounts={mineAccounts.state.items} />
       </AppPage>
     </AppPage>
   );

@@ -4,8 +4,8 @@ import classNames from 'classnames';
 
 export interface PageProps
   extends React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLElement>,
-  HTMLElement
+    React.HTMLAttributes<HTMLElement>,
+    HTMLElement
   > {
   pageTitle?: string;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';

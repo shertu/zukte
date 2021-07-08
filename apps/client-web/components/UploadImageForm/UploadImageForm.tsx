@@ -1,5 +1,8 @@
 import {Button, Form, message} from 'antd';
-import {ImageStorageInsertResponse, ImageStorageServiceApi} from '../../../../openapi-generator';
+import {
+  ImageStorageInsertResponse,
+  ImageStorageServiceApi,
+} from '../../../../openapi-generator';
 
 import {MockUpload} from './MockUpload/MockUpload';
 import React from 'react';
@@ -23,8 +26,7 @@ export function UploadImageForm(props: {
 
   const client = new ImageStorageServiceApi();
 
-  const [uploading, setUploading] =
-    React.useState<boolean>(false);
+  const [uploading, setUploading] = React.useState<boolean>(false);
 
   /**
    * Trigger after submitting the form
@@ -40,14 +42,17 @@ export function UploadImageForm(props: {
     for (let i = 0; i < files.length; i++) {
       const element: File = files[i];
 
-      const promise = client.imageStorageServiceInsert({
-        image: element,
-      }).catch((reason: any) => {
-        message.error(
+      const promise = client
+        .imageStorageServiceInsert({
+          image: element,
+        })
+        .catch((reason: any) => {
+          message.error(
             `file ${element.name} failed to 
-          upload with status ${reason?.status}`);
-        return reason;
-      });
+          upload with status ${reason?.status}`
+          );
+          return reason;
+        });
 
       promises.push(promise);
     }
@@ -55,18 +60,19 @@ export function UploadImageForm(props: {
     setUploading(true);
 
     Promise.all(promises)
-        .then((responses: ImageStorageInsertResponse[]) => {
+      .then((responses: ImageStorageInsertResponse[]) => {
         // stop the upload symbol
-          setUploading(false);
+        setUploading(false);
 
-          // call hook method
-          if (onSuccessfulUpload) {
-            onSuccessfulUpload(responses);
-          }
-        }).catch(() => {
-          setUploading(false);
-        });
-  };
+        // call hook method
+        if (onSuccessfulUpload) {
+          onSuccessfulUpload(responses);
+        }
+      })
+      .catch(() => {
+        setUploading(false);
+      });
+  }
 
   return (
     <Form onFinish={onFinishUploadForm} className={className}>
@@ -75,14 +81,10 @@ export function UploadImageForm(props: {
       </Form.Item>
 
       <Form.Item>
-        <Button
-          type="primary"
-          htmlType="submit"
-          loading={uploading}
-        >
+        <Button type="primary" htmlType="submit" loading={uploading}>
           upload
         </Button>
       </Form.Item>
-    </Form >
+    </Form>
   );
 }

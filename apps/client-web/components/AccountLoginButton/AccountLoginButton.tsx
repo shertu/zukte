@@ -1,4 +1,7 @@
-import {AccountGoogleOpenIdConnectChallengeRequest, BASE_PATH} from '../../../../openapi-generator';
+import {
+  AccountGoogleOpenIdConnectChallengeRequest,
+  BASE_PATH,
+} from '../../../../openapi-generator';
 
 import GoogleButton from 'react-google-button';
 import React from 'react';
@@ -10,9 +13,7 @@ import React from 'react';
  * @param {object} props
  * @return {JSX.Element}
  */
-export function AccountLoginButton(props: {
-  redirect?: string;
-}): JSX.Element {
+export function AccountLoginButton(props: {redirect?: string}): JSX.Element {
   const {redirect} = props;
 
   /** The click event for this button. */
@@ -24,7 +25,7 @@ export function AccountLoginButton(props: {
     };
 
     const searchParams: URLSearchParams = new URLSearchParams(
-      requestParameters as URLSearchParams,
+      requestParameters as URLSearchParams
     );
 
     const authorizationCodeRequestUrl: string =

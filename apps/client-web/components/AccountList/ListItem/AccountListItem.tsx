@@ -1,8 +1,12 @@
-import {ApplicationUser, ApplicationUserServiceApi, ApplicationUserServiceDeleteRequest} from '../../../../../openapi-generator';
+import {
+  ApplicationUser,
+  ApplicationUserServiceApi,
+  ApplicationUserServiceDeleteRequest,
+} from '../../../../../openapi-generator';
 import {Avatar, Button, List, Typography} from 'antd';
 
 import React from 'react';
-import {Rfc7807Alert} from '../../../../Rfc7807Alert/Rfc7807Alert';
+import {Rfc7807Alert} from '../../Rfc7807Alert/Rfc7807Alert';
 import {UserDeleteOutlined} from '@ant-design/icons';
 
 const {Text} = Typography;
@@ -23,11 +27,11 @@ export function AccountListItem(props: {
 
   const client = new ApplicationUserServiceApi();
 
-  const [errorOccur, setErrorOccur] =
-    React.useState<boolean>(false);
+  const [errorOccur, setErrorOccur] = React.useState<boolean>(false);
 
-  const isMineApplicationUser: boolean = Boolean(mineAccounts
-      .find((elem) => elem.id && elem.id === id));
+  const isMineApplicationUser = Boolean(
+    mineAccounts.find(elem => elem.id && elem.id === id)
+  );
 
   /**
    * Executes a simple request to delete an application user.
@@ -39,9 +43,10 @@ export function AccountListItem(props: {
       id: id,
     };
 
-    client.applicationUserServiceDelete(request)
-        .then(() => window.location.reload())
-        .catch(() => setErrorOccur(true));
+    client
+      .applicationUserServiceDelete(request)
+      .then(() => window.location.reload())
+      .catch(() => setErrorOccur(true));
   }
 
   let deleteApplicationUserAction: JSX.Element | undefined;
@@ -57,23 +62,16 @@ export function AccountListItem(props: {
   }
 
   return (
-    <List.Item
-      key={id}
-      actions={[deleteApplicationUserAction]}
-    >
+    <List.Item key={id} actions={[deleteApplicationUserAction]}>
       <List.Item.Meta
         avatar={<Avatar src={picture} />}
         title={name}
-        description={
-          <Text style={{fontFamily: 'monospace'}}>{id}</Text>
-        }
+        description={<Text style={{fontFamily: 'monospace'}}>{id}</Text>}
       />
 
-      {errorOccur &&
-        <Rfc7807Alert
-          title="The request to delete your account was unsuccessful."
-        />
-      }
+      {errorOccur && (
+        <Rfc7807Alert title="The request to delete your account was unsuccessful." />
+      )}
     </List.Item>
   );
 }

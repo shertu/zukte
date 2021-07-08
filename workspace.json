@@ -10,21 +10,9 @@
       "root": "apps/client-web-storybook",
       "projectType": "application"
     },
-    "client-mobile": {
-      "root": "apps/client-mobile",
+    "aspnetapp": {
+      "root": "apps/aspnetapp",
       "projectType": "application"
-    },
-    "client-capacitor": {
-      "root": "apps/client-capacitor",
-      "projectType": "application"
-    },
-    "api-client": {
-      "root": "libs/api-client",
-      "projectType": "library"
-    },
-    "business-logic": {
-      "root": "libs/business-logic",
-      "projectType": "library"
     }
   }
 }

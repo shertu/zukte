@@ -11,7 +11,7 @@ export class PageableListState<T> {
     items: [],
     nextPageToken: undefined,
     hasMadeAtLeastOneFetch: false,
-  }
+  };
 
   /**
    * @param {IPageableListState<T>} state
@@ -30,14 +30,14 @@ export class PageableListState<T> {
     return this.state.items.length;
   }
 
-
   /**
    * Is there the potential to fetch more items?
    * @return {boolean}
    */
   public isPotentialForMore(): boolean {
-    return Boolean(this.state.nextPageToken) ||
-      !this.state.hasMadeAtLeastOneFetch;
+    return (
+      Boolean(this.state.nextPageToken) || !this.state.hasMadeAtLeastOneFetch
+    );
   }
 
   /**
@@ -47,7 +47,8 @@ export class PageableListState<T> {
    * @return {boolean}
    */
   public shouldFetchMore(
-      paginationCurrent: number, paginationPageSize?: number,
+    paginationCurrent: number,
+    paginationPageSize?: number
   ): boolean {
     const b: number = paginationPageSize || 0;
     const count: number = this.state.items.length;

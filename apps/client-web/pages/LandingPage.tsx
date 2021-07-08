@@ -1,8 +1,8 @@
 import {Divider, Space} from 'antd';
 
-import {AboutMeContent} from './AboutMeContent/AboutMeContent';
-import {AppPage} from '../AppPage/AppPage';
-import {PortfolioNav} from './PortfolioNav/PortfolioNav';
+import {AboutMeContent} from '../components/AboutMeContent/AboutMeContent';
+import {AppPage} from '../components/AppPage/AppPage';
+import {PortfolioNav} from '../components/PortfolioNav/PortfolioNav';
 import React from 'react';
 
 /**

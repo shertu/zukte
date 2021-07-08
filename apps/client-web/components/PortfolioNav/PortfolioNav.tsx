@@ -1,6 +1,6 @@
 import {Card, Col, Row} from 'antd';
 
-import AppRouteCollection from '../../../constants/AppRouteCollection';
+import AppRouteCollection from '../../constants/AppRouteCollection';
 import {Link} from 'react-router-dom';
 import React from 'react';
 
@@ -22,8 +22,7 @@ const portfolioNavItemArr: PortfolioNavItemProps[] = [
     to: AppRouteCollection.ImageShareDemo,
     src: 'https://i.imgur.com/iHoOXPu.jpg',
     title: 'image share demo',
-    description:
-      'where the user can upload images to blob storage',
+    description: 'where the user can upload images to blob storage',
   },
   {
     to: AppRouteCollection.MapDemo,
@@ -42,7 +41,7 @@ export function PortfolioNav(): JSX.Element {
   return (
     <nav>
       <Row>
-        {portfolioNavItemArr.map((item) => (
+        {portfolioNavItemArr.map(item => (
           <Col key={item.to} xs={24} md={12} xl={8}>
             <Link to={item.to}>
               <Card hoverable cover={<img src={item.src} />}>

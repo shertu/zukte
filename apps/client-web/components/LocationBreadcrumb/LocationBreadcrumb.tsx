@@ -13,7 +13,7 @@ import React from 'react';
  */
 export function LocationBreadcrumb(props: BreadcrumbProps): JSX.Element {
   const location = useLocation();
-  const pathSnippets = location.pathname.split('/').filter((i) => i);
+  const pathSnippets = location.pathname.split('/').filter(i => i);
 
   const extraBreadcrumbItems = pathSnippets.map((_, index) => {
     const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;

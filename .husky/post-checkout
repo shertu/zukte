@@ -2,7 +2,7 @@
 . "$(dirname "$0")/_/husky.sh"
 
 readonly branch_name="$(git rev-parse --abbrev-ref HEAD)"
-readonly branch_name_regex="^(story|release|hotfix|support)\/[[:lower:]]+\/[[:upper:]]+-[[:digit:]]+(-[[:lower:]]+)+$"
+readonly branch_name_regex="^(feature|release|hotfix|support)\/[[:lower:]]+(-[[:lower:]]+)+$"
 
 if [[ ! $branch_name =~ $branch_name_regex ]]; then
     printf "Your branch name should match the regular expression: %s\n" "$branch_name_regex"

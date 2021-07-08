@@ -1,5 +1,7 @@
 import {Alert, List, ListProps, Space} from 'antd';
-import InfiniteScroll, {Props as InfiniteScrollProps} from 'react-infinite-scroll-component';
+import InfiniteScroll, {
+  Props as InfiniteScrollProps,
+} from 'react-infinite-scroll-component';
 
 import {PageableListState} from './PageableListState';
 import React from 'react';
@@ -7,17 +9,19 @@ import {Rfc7807Alert} from '../Rfc7807Alert/Rfc7807Alert';
 
 /** The props for the pagination list component. */
 export interface PageableListProps<T> {
-  onFetchNextPageAsync: (current: PageableListState<T>) =>
-    Promise<PageableListState<T>>;
+  onFetchNextPageAsync: (
+    current: PageableListState<T>
+  ) => Promise<PageableListState<T>>;
   value?: PageableListState<T>;
   onChange?: (value: PageableListState<T>) => void;
   paginationPageSize: number;
 
-  infinite?: Omit<InfiniteScrollProps,
-    'dataLength' | 'next' | 'hasMore' | 'loader'>;
-  list?: Omit<ListProps<T>,
-    'loading' | 'dataSource'>;
-};
+  infinite?: Omit<
+    InfiniteScrollProps,
+    'dataLength' | 'next' | 'hasMore' | 'loader'
+  >;
+  list?: Omit<ListProps<T>, 'loading' | 'dataSource'>;
+}
 
 /**
  * An infinite scroll list of items which loads
@@ -26,11 +30,10 @@ export interface PageableListProps<T> {
  * @param {PageableListProps<T>} props
  * @return {JSX.Element}
  */
-export function PageableList<T>(
-    props: PageableListProps<T>,
-): JSX.Element {
-  const [internalValue, setInternalValue] =
-    React.useState<PageableListState<T>>(new PageableListState<T>());
+export function PageableList<T>(props: PageableListProps<T>): JSX.Element {
+  const [internalValue, setInternalValue] = React.useState<
+    PageableListState<T>
+  >(new PageableListState<T>());
 
   const {
     onFetchNextPageAsync,
@@ -39,18 +42,16 @@ export function PageableList<T>(
     paginationPageSize,
   } = props;
 
-  const [paginationCurrent, setPaginationCurrent] =
-    React.useState<number>(1);
+  const [paginationCurrent, setPaginationCurrent] = React.useState<number>(1);
 
-  const [errorOccur, setErrorOccur] =
-    React.useState<boolean>(false);
+  const [errorOccur, setErrorOccur] = React.useState<boolean>(false);
 
-  const itemLength: number =
-    internalValue.length;
-  const shouldFetchMore: boolean =
-    internalValue.shouldFetchMore(paginationCurrent, paginationPageSize);
-  const isPotentialForMore: boolean =
-    internalValue.isPotentialForMore();
+  const itemLength: number = internalValue.length;
+  const shouldFetchMore: boolean = internalValue.shouldFetchMore(
+    paginationCurrent,
+    paginationPageSize
+  );
+  const isPotentialForMore: boolean = internalValue.isPotentialForMore();
 
   React.useEffect(() => {
     if (onChange) {
@@ -62,8 +63,8 @@ export function PageableList<T>(
   React.useEffect(() => {
     if (isPotentialForMore && shouldFetchMore && !errorOccur) {
       onFetchNextPageAsync(value)
-          .then((response) => setInternalValue(response))
-          .catch(() => setErrorOccur(true));
+        .then(response => setInternalValue(response))
+        .catch(() => setErrorOccur(true));
     }
   }, [isPotentialForMore, shouldFetchMore, errorOccur]);
 
@@ -92,21 +93,16 @@ export function PageableList<T>(
     }
   }
 
-  const messageKeyWord: string = 'resources';
+  const messageKeyWord = 'resources';
 
-  const warnMessage: string =
-    `The request to fetch additional ${messageKeyWord} 
+  const warnMessage = `The request to fetch additional ${messageKeyWord} 
     was successful but no ${messageKeyWord} were found.`;
 
-  const errorMessage: string =
-    `The request to fetch additional ${messageKeyWord} 
+  const errorMessage = `The request to fetch additional ${messageKeyWord} 
     was unsuccessful.`;
 
   return (
-    <Space
-      className="max-cell"
-      direction="vertical"
-    >
+    <Space className="max-cell" direction="vertical">
       <InfiniteScroll
         {...props.infinite}
         dataLength={itemLength}
@@ -121,20 +117,17 @@ export function PageableList<T>(
         />
       </InfiniteScroll>
 
-      {(!itemLength && value.state.hasMadeAtLeastOneFetch) &&
-        <Alert
-          type="warning"
-          message={warnMessage}
-        />
-      }
+      {!itemLength && value.state.hasMadeAtLeastOneFetch && (
+        <Alert type="warning" message={warnMessage} />
+      )}
 
-      {errorOccur &&
+      {errorOccur && (
         <Rfc7807Alert
           title={errorMessage}
           type="/error/infinite-scroll-page-list"
           onClickRetry={onClickRetry}
         />
-      }
+      )}
     </Space>
   );
 }
