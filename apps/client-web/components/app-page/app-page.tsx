@@ -17,11 +17,11 @@ export function AppPage(props: PageProps): JSX.Element {
   const {pageTitle, children, ...other} = props;
 
   return (
-    <main {...other}>
-      <Container fixed>
+    <Container fixed style={{backgroundColor: 'red'}}>
+      <main {...other}>
         {pageTitle && <Typography variant="h1">{pageTitle}</Typography>}
         {children}
-      </Container>
-    </main>
+      </main>
+    </Container>
   );
 }

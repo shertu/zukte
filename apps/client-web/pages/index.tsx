@@ -8,16 +8,11 @@ import React from 'react';
  */
 export function LandingPage(): JSX.Element {
   return (
-    <AppPage>
-      {/* <Space direction="vertical" align="center" size={40}> */}
-      <div
-        style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}
-      >
-        <AboutMeContent />
+    <AppPage className="flex flex-col items-center space-y-6">
+      <AboutMeContent />
 
-        {/* <Divider>examples</Divider> */}
-        <PortfolioNav />
-      </div>
+      {/* <Divider>examples</Divider> */}
+      <PortfolioNav />
     </AppPage>
   );
 }

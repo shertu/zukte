@@ -18,42 +18,40 @@ export function PrivacyPolicy(): JSX.Element {
 
   return (
     <AppPage>
+      <Typography variant="h1">Privacy Policy for {hostname}</Typography>
+
       <Typography>
-        <Typography variant="h1">Privacy Policy for {hostname}</Typography>
+        This Privacy Policy document outlines how information about&nbsp;
+        <strong>you</strong> is collected and used whilst you visit this
+        website.
+      </Typography>
 
-        <Typography>
-          This Privacy Policy document outlines how information about
-          <strong>you</strong> is collected and used whilst you visit this
-          website.
-        </Typography>
+      <Typography>
+        Further use of this website is to be considered&nbsp;
+        <strong>consent</strong> to our Privacy Policy and agreemnent to its
+        terms.
+      </Typography>
 
-        <Typography>
-          Further use of this website is to be considered
-          <strong>consent</strong> to our Privacy Policy and agreemnent to its
-          terms.
-        </Typography>
+      <Typography variant="h2">
+        How we collect and use your information
+      </Typography>
 
-        <Typography variant="h2">
-          How we collect and use your information
-        </Typography>
+      <Typography>
+        This website will store personal information such as your name, email
+        address, phone number, etc.
+      </Typography>
 
-        <Typography>
-          This website will store personal information such as your name, email
-          address, phone number, etc.
-        </Typography>
+      <Typography>
+        This website will use https://www.googleapis.com/auth/userinfo.profile
+        to create an account in this web application from the information which
+        is publically available from your Google account.
+      </Typography>
 
-        <Typography>
-          This website will use https://www.googleapis.com/auth/userinfo.profile
-          to create an account in this web application from the information
-          which is publically available from your Google account.
-        </Typography>
+      <Typography variant="h2">Cookies</Typography>
 
-        <Typography variant="h2">Cookies</Typography>
-
-        <Typography>
-          This website, like many other websites, uses computer cookies to help
-          keep track of your preferences, authenticaiton session, etc.
-        </Typography>
+      <Typography>
+        This website, like many other websites, uses computer cookies to help
+        keep track of your preferences, authenticaiton session, etc.
       </Typography>
     </AppPage>
   );
