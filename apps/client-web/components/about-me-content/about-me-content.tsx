@@ -1,8 +1,4 @@
-// #personal-infomation-sex {
-//   color: #00a8ff;
-// }
-
-import {Box, CardMedia, Typography} from '@material-ui/core';
+import {Box, CardMedia, Link, Typography} from '@material-ui/core';
 
 import React from 'react';
 import {calculateAgeFromBirthdate} from '../../lib/utilities/age-calculator';
@@ -19,55 +15,33 @@ const mailto = mail.to('djared.xeknau@outlook.com').build();
  */
 export function AboutMeContent() {
   return (
-    <div>
-      {/* <Space direction="vertical" align="center" size={0}> */}
-      {/* <Space
-        split={<Divider type="vertical" />}
-        size={aboutMeStylePersonalInfoSize / 1.618}
-        style={{marginBottom: aboutMeStylePersonalInfoSize}}
-      > */}
-
-      <div className="flex">
+    <div className="w-full flex flex-col items-center">
+      <div className="flex flex-row items-center space-x-4 text-6xl h-16">
         <span>{calculateAgeFromBirthdate(jaredblackmanDOB)}</span>
-        <span>♂</span>
-
-        <CardMedia
-          image="https://i.imgur.com/4Ae8JgG.png"
-          style={{height: '100%'}}
-        />
-        {/* <Box height={aboutMeStylePersonalInfoSize}>
-          <img
-            // style={{}}
-            src="https://i.imgur.com/4Ae8JgG.png"
-          />
-        </Box> */}
+        <span style={{color: '#00a8ff'}}>♂</span>
+        <img className="h-12" src="https://i.imgur.com/4Ae8JgG.png" />
       </div>
 
-      {/* <Row
-        gutter={[48, 60]}
-        align="middle"
-        justify="center"
-        style={{marginLeft: 0, marginRight: 0}}
-      > */}
-      <div>
-        <Typography style={{fontSize: 'large', maxWidth: aboutMeStyleMaxWidth}}>
-          <p>Hello and welcome to my personal website.</p>
-          <p>
-            For those who wish to know more about me, please&nbsp;
-            <a href={mailto}>send an email</a>
+      <div className="w-full flex flex-row items-center justify-center flex-wrap">
+        <div className="w-full max-w-xs m-4">
+          <Typography>
+            Hello and welcome to my personal website. For those who wish to know
+            more about me, please&nbsp;
+            <Link href={mailto}>send me an email</Link>
             &nbsp;or&nbsp;
-            <a href="https://www.linkedin.com/in/jared-blackman-71445098/">
+            <Link href="https://www.linkedin.com/in/jared-blackman-71445098/">
               read my LinkedIn
-            </a>
+            </Link>
             &nbsp;profile.
-          </p>
-        </Typography>
-        <img
-          className="image-cover"
-          src="https://i.imgur.com/gcWo3ZE.jpg"
-          style={{borderRadius: 16, maxWidth: aboutMeStyleMaxWidth}}
+          </Typography>
+        </div>
+        <CardMedia
+          className="w-full max-w-xs m-4 rounded h-52"
+          image="https://i.imgur.com/gcWo3ZE.jpg"
         />
       </div>
     </div>
   );
 }
+
+export default AboutMeContent;
