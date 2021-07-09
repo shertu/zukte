@@ -18,7 +18,7 @@ const MAX_FILE_SIZE = 5000000; // bytes = 5 MB
  * A demonstration where the user can upload
  * and share images with other users.
  */
-export function ImageShareMicroservice(): JSX.Element {
+export function ImageShareMicroservice() {
   const MAX_FILE_SIZE_MB: string = (MAX_FILE_SIZE / 1000000).toFixed(2);
 
   const [images, setImages] = React.useState<PageableListState<string>>(
@@ -28,7 +28,7 @@ export function ImageShareMicroservice(): JSX.Element {
   /**
    * A hook to prepend the uploaded image to the image item collection.
    */
-  function onSuccessfulUpload(responses: ImageStorageInsertResponse[]): void {
+  function onSuccessfulUpload(responses: ImageStorageInsertResponse[]) {
     const additionalUrls: string[] = [];
 
     responses.forEach((element: ImageStorageInsertResponse) => {

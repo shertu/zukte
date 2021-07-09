@@ -1,10 +1,9 @@
-import {
-  AccountApi,
-  AccountHttpContextSignOutRequest,
-} from '../../../../openapi-generator';
-import {Button, message} from 'antd';
+import {AccountApi, AccountHttpContextSignOutRequest} from '@zukte/api-client';
+import {Button, Snackbar} from '@material-ui/core';
 
 import React from 'react';
+
+// import {Button, message} from 'antd';
 
 const errorMessage =
   'an unexpected error occurred while attempting to sign out';
@@ -13,13 +12,20 @@ const errorMessage =
  * A button component used to sign out of
  * the application.
  */
-export function AccountLogoutButton(props: {redirect?: string}): JSX.Element {
+export function AccountLogoutButton(props: {redirect?: string}) {
   const {redirect} = props;
 
   const client = new AccountApi();
 
+  const [open, setOpen] = React.useState(false);
+
+  /**  */
+  function handleClose(event?: React.SyntheticEvent, reason?: string) {
+    setOpen(false);
+  }
+
   /** The click event for this button. */
-  function onClick(): void {
+  function onClick() {
     const redirectUri: string = redirect || window.location.pathname;
 
     const requestParameters: AccountHttpContextSignOutRequest = {
@@ -29,12 +35,17 @@ export function AccountLogoutButton(props: {redirect?: string}): JSX.Element {
     client
       .accountHttpContextSignOut(requestParameters)
       .then(() => window.location.assign(redirectUri))
-      .catch(() => message.error(errorMessage));
+      .catch(() => setOpen(true));
   }
 
   return (
-    <Button type="primary" onClick={onClick}>
-      Sign Out
-    </Button>
+    <>
+      <Button variant="contained" color="primary" onClick={onClick}>
+        Sign Out
+      </Button>
+      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+        {errorMessage}
+      </Snackbar>
+    </>
   );
 }

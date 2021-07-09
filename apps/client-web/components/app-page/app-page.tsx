@@ -13,7 +13,7 @@ export interface PageProps
 /**
  * A large, full-width view component to display a section of content.
  */
-export function AppPage(props: PageProps): JSX.Element {
+export function AppPage(props: PageProps) {
   const {pageTitle, children, ...other} = props;
 
   return (

@@ -11,7 +11,7 @@ const {Title} = Typography;
 /**
  * The first screen of content which the user will see.
  */
-export function LandingScreen(): JSX.Element {
+export function LandingScreen() {
   return (
     <div className="max-cell">
       <VantaNetContainer className="vanta-net-container">

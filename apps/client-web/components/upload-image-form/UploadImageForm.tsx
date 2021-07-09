@@ -18,7 +18,7 @@ export function UploadImageForm(props: {
   maximumFileSize: number;
   onSuccessfulUpload?: (response: ImageStorageInsertResponse[]) => void;
   className?: string;
-}): JSX.Element {
+}) {
   const {className, maximumFileSize, onSuccessfulUpload} = props;
 
   const client = new ImageStorageServiceApi();
@@ -29,7 +29,7 @@ export function UploadImageForm(props: {
    * Trigger after submitting the form
    * and verifying data successfully.
    */
-  function onFinishUploadForm(values: ImageShareFormValues): void {
+  function onFinishUploadForm(values: ImageShareFormValues) {
     const files = values.files ?? [];
 
     const promises: Promise<ImageStorageInsertResponse>[] = [];

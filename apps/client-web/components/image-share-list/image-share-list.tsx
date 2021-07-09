@@ -9,8 +9,8 @@ import {
   ImageStorageServiceGetListRequest,
 } from '../../../../openapi-generator';
 
+import {InfiniteScrollList} from '../pageable-list/infinite-scroll-list';
 import {List} from 'antd';
-import {PageableList} from '../pageable-list/pageable-list';
 import React from 'react';
 
 /**
@@ -19,7 +19,7 @@ import React from 'react';
 export function ImageShareList(props: {
   value?: PageableListState<string>;
   onChange?: (value: PageableListState<string>) => void;
-}): JSX.Element {
+}) {
   const {value, onChange} = props;
 
   const client = new ImageStorageServiceApi();
@@ -56,7 +56,7 @@ export function ImageShareList(props: {
   /**
    * A display name wrapper for the account list item component.
    */
-  function renderListItem(item: string, index: number): JSX.Element {
+  function renderListItem(item: string, index: number) {
     return (
       <List.Item key={index}>
         <img className="max-cell-xs imageshare-list-image" src={item} />
@@ -67,7 +67,7 @@ export function ImageShareList(props: {
   const spacing: number | undefined = 16;
 
   return (
-    <PageableList
+    <InfiniteScrollList
       onFetchNextPageAsync={onFetchNextPageAsync}
       onChange={onChange}
       value={value}

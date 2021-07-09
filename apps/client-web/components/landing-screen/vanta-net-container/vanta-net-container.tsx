@@ -14,7 +14,7 @@ export function VantaNetContainer(
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   >
-): JSX.Element {
+) {
   const [vantaEffect, setVantaEffect] = React.useState<any>(0);
 
   const vantaRef = React.useRef(null);

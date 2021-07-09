@@ -12,7 +12,7 @@ export function MockUpload(props: {
   value?: UploadFile[];
   onChange?: (value: UploadFile[]) => void;
   maximumFileSize: number;
-}): JSX.Element {
+}) {
   const {value = [], onChange, maximumFileSize} = props;
 
   const MAX_FILE_SIZE_MB: string = (maximumFileSize / 1000000).toFixed(2);
@@ -46,7 +46,7 @@ export function MockUpload(props: {
    * A callback function, will be executed when
    * removing file button is clicked.
    */
-  function onRemove(file: UploadFile): void {
+  function onRemove(file: UploadFile) {
     const index = value.indexOf(file);
     const newFileList = value.slice();
     newFileList.splice(index, 1);

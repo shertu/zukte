@@ -17,7 +17,7 @@ const mailto = mail.to('djared.xeknau@outlook.com').build();
 /**
  * A page of information about me, Jared Michael Blackman.
  */
-export function AboutMeContent(): JSX.Element {
+export function AboutMeContent() {
   return (
     <div>
       {/* <Space direction="vertical" align="center" size={0}> */}

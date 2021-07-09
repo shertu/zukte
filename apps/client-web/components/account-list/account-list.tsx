@@ -2,22 +2,16 @@ import {
   ApplicationUser,
   ApplicationUserServiceApi,
   ApplicationUserServiceGetListRequest,
-} from '../../../../openapi-generator';
-import {
-  IPageableListState,
-  PageableListState,
-} from '../pageable-list/pageable-list-state';
+} from '@zukte/api-client';
 
 import {AccountListItem} from './list-item/list-item';
-import {PageableList} from '../pageable-list/pageable-list';
+import {InfiniteScrollList} from '../pageable-list/infinite-scroll-list';
 import React from 'react';
 
 /**
  * A list of the application users or accounts stored in the application.
  */
-export function AccountList(props: {
-  mineAccounts?: ApplicationUser[];
-}): JSX.Element {
+export function AccountList(props: {mineAccounts?: ApplicationUser[]}) {
   const {mineAccounts} = props;
 
   const client = new ApplicationUserServiceApi();
@@ -56,7 +50,7 @@ export function AccountList(props: {
   /**
    * A display name wrapper for the account list item component.
    */
-  function renderListItem(item: ApplicationUser, index: number): JSX.Element {
+  function renderListItem(item: ApplicationUser, index: number) {
     return <AccountListItem user={item} mineAccounts={mineAccounts} />;
   }
 
@@ -88,7 +82,7 @@ export function AccountList(props: {
     : value;
 
   return (
-    <PageableList
+    <InfiniteScrollList
       onFetchNextPageAsync={onFetchNextPageAsync}
       onChange={onChange}
       value={usedValue}

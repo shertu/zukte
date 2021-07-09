@@ -2,25 +2,23 @@ import {
   ApplicationUser,
   ApplicationUserServiceApi,
   ApplicationUserServiceGetListRequest,
-} from '../../../openapi-generator';
+} from '@zukte/api-client';
 import {
   IPageableListState,
   PageableListState,
 } from '../components/pageable-list/pageable-list-state';
 
 import {AccountList} from '../components/account-list/account-list';
-import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
-import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
+import {AccountLoginButton} from '../components/account-login-button/account-login-button';
+import {AccountLogoutButton} from '../components/account-logout-button/account-logout-button';
 import {AppPage} from '../components/app-page/app-page';
 import React from 'react';
-import {Typography} from 'antd';
-
-const {Paragraph} = Typography;
+import {Typography} from '@material-ui/core';
 
 /**
  * A demonstration where the user can sign in to the application.
  */
-export function AuthenticateMicroservice(): JSX.Element {
+export function AuthenticateMicroservice() {
   const client = new ApplicationUserServiceApi();
 
   const [mineAccounts, setMineAccounts] = React.useState<
@@ -75,13 +73,11 @@ export function AuthenticateMicroservice(): JSX.Element {
   return (
     <AppPage pageTitle="Authentication Demo">
       <Typography>
-        <Paragraph>
-          To use this demo service please sign in to Google and authorize this
-          application to access your Google profile. The application will
-          automatically create an account from the information in your Google
-          profile. You can delete this account at anytime; this will not affect
-          your Google profile.
-        </Paragraph>
+        To use this demo service please sign in to Google and authorize this
+        application to access your Google profile. The application will
+        automatically create an account from the information in your Google
+        profile. You can delete this account at anytime; this will not affect
+        your Google profile.
       </Typography>
 
       <div style={{padding: '2em 24px'}}>

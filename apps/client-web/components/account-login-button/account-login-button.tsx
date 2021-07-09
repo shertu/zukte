@@ -1,7 +1,7 @@
 import {
   AccountGoogleOpenIdConnectChallengeRequest,
   BASE_PATH,
-} from '../../../../openapi-generator';
+} from '@zukte/api-client';
 
 import GoogleButton from 'react-google-button';
 import React from 'react';
@@ -10,11 +10,11 @@ import React from 'react';
  * A button component used to sign in to
  * the application via the Google Auth API.
  */
-export function AccountLoginButton(props: {redirect?: string}): JSX.Element {
+export function AccountLoginButton(props: {redirect?: string}) {
   const {redirect} = props;
 
   /** The click event for this button. */
-  function onClick(): void {
+  function onClick() {
     const redirectUri: string = redirect || window.location.pathname;
 
     const requestParameters: AccountGoogleOpenIdConnectChallengeRequest = {

@@ -7,7 +7,7 @@ import {Typography} from '@material-ui/core';
  * regards to their online privacy while using
  * this web application.
  */
-export function PrivacyPolicy(): JSX.Element {
+export function PrivacyPolicy() {
   const [hostname, setHostname] = React.useState<string>();
 
   function onFirstMount() {

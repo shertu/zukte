@@ -28,7 +28,7 @@
 // /**
 //  * A demonstration where the user can mark locations on a map.
 //  */
-// export function MapAtomicDemo(): JSX.Element {
+// export function MapAtomicDemo() {
 //   const mapContainerRef = React.createRef<HTMLDivElement>();
 //   const pushpinControlRef = React.createRef<HTMLDivElement>();
 
@@ -96,7 +96,7 @@
 //   }, [pushpinModeActive]);
 
 //   // /** */
-//   // function addPointFeatureToPushpinSource(): void {
+//   // function addPointFeatureToPushpinSource() {
 //   //  const longitude: number = chance.longitude();
 //   //  const latitude: number = chance.latitude();
 //   //  const coord: Coordinate = fromLonLat([longitude, latitude]);
@@ -114,7 +114,7 @@
 //   function onChangePushpinControl(
 //     checked: boolean,
 //     event: MouseEvent
-//   ): void {
+//   ) {
 //     setPushpinModeActive(checked);
 //   }
 

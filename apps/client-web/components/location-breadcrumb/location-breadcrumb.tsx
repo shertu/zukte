@@ -8,7 +8,7 @@ import React from 'react';
 /**
  * A breadcrumb component for the window's location.
  */
-export function LocationBreadcrumb(props: BreadcrumbProps): JSX.Element {
+export function LocationBreadcrumb(props: BreadcrumbProps) {
   const location = useLocation();
   const pathSnippets = location.pathname.split('/').filter(i => i);
 

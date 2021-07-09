@@ -6,7 +6,7 @@ import React from 'react';
 /**
  * The page the user scrolls down to after seeing the landing screen.
  */
-export function LandingPage(): JSX.Element {
+export function LandingPage() {
   return (
     <AppPage className="flex flex-col items-center space-y-6">
       <AboutMeContent />
