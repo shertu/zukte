@@ -30,8 +30,6 @@ const welcomeTypography: React.ReactNode = (
 
 /**
  * A page of information about me, Jared Michael Blackman.
- *
- * @return {JSX.Element}
  */
 export function AboutMeContent(): JSX.Element {
   return (

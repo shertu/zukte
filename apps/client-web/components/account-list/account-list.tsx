@@ -14,9 +14,6 @@ import React from 'react';
 
 /**
  * A list of the application users or accounts stored in the application.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function AccountList(props: {
   mineAccounts?: ApplicationUser[];
@@ -31,9 +28,6 @@ export function AccountList(props: {
 
   /**
    * Tigger to load the next page of data.
-   *
-   * @param {PageableListState<ApplicationUser>} current
-   * @return {Promise<PageableListState<ApplicationUser>>}
    */
   async function onFetchNextPageAsync(
     current: PageableListState<ApplicationUser>
@@ -61,9 +55,6 @@ export function AccountList(props: {
 
   /**
    * A display name wrapper for the account list item component.
-   * @param {ApplicationUser} item
-   * @param {string} index
-   * @return {JSX.Element}
    */
   function renderListItem(item: ApplicationUser, index: number): JSX.Element {
     return <AccountListItem user={item} mineAccounts={mineAccounts} />;

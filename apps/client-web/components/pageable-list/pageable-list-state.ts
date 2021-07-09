@@ -13,9 +13,6 @@ export class PageableListState<T> {
     hasMadeAtLeastOneFetch: false,
   };
 
-  /**
-   * @param {IPageableListState<T>} state
-   */
   constructor(state?: IPageableListState<T>) {
     if (state) {
       this.state = state;
@@ -24,7 +21,6 @@ export class PageableListState<T> {
 
   /**
    * The number of items currently in the list.
-   * @return {number}
    */
   public get length(): number {
     return this.state.items.length;
@@ -32,7 +28,6 @@ export class PageableListState<T> {
 
   /**
    * Is there the potential to fetch more items?
-   * @return {boolean}
    */
   public isPotentialForMore(): boolean {
     return (
@@ -42,9 +37,6 @@ export class PageableListState<T> {
 
   /**
    * Should the client try to fetch more items regardless of potential?
-   * @param {number} paginationCurrent
-   * @param {number | undefined} paginationPageSize
-   * @return {boolean}
    */
   public shouldFetchMore(
     paginationCurrent: number,

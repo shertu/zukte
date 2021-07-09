@@ -9,9 +9,6 @@ import React from 'react';
 /**
  * A button component used to sign in to
  * the application via the Google Auth API.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function AccountLoginButton(props: {redirect?: string}): JSX.Element {
   const {redirect} = props;

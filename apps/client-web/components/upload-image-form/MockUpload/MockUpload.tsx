@@ -7,9 +7,6 @@ import {UploadOutlined} from '@ant-design/icons';
 
 /**
  * Used to upload an image to the application's image share container.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function MockUpload(props: {
   value?: UploadFile[];
@@ -22,10 +19,6 @@ export function MockUpload(props: {
 
   /**
    * Hook function which will be executed before uploading.
-   *
-   * @param {RcFile} file
-   * @param {RcFile[]} fileList
-   * @return {boolean | Promise<void | Blob | File>}
    */
   function beforeUpload(
     file: RcFile,
@@ -52,8 +45,6 @@ export function MockUpload(props: {
   /**
    * A callback function, will be executed when
    * removing file button is clicked.
-   *
-   * @param {UploadFile} file
    */
   function onRemove(file: UploadFile): void {
     const index = value.indexOf(file);

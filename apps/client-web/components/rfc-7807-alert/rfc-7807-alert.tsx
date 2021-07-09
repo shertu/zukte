@@ -14,9 +14,6 @@ export interface Rfc7807Props {
 /**
  * A error message component which implements
  * the https://tools.ietf.org/html/rfc7807 standard.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function Rfc7807Alert(props: Rfc7807Props): JSX.Element {
   const {

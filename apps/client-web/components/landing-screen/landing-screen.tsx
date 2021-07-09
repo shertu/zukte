@@ -10,8 +10,6 @@ const {Title} = Typography;
 
 /**
  * The first screen of content which the user will see.
- *
- * @return {JSX.Element}
  */
 export function LandingScreen(): JSX.Element {
   return (

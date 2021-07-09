@@ -13,9 +13,6 @@ export interface ImageShareFormValues {
 
 /**
  * Used to upload an image to the application's image share container.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function UploadImageForm(props: {
   maximumFileSize: number;
@@ -31,8 +28,6 @@ export function UploadImageForm(props: {
   /**
    * Trigger after submitting the form
    * and verifying data successfully.
-   *
-   * @param {ImageShareFormValues} values
    */
   function onFinishUploadForm(values: ImageShareFormValues): void {
     const files = values.files ?? [];

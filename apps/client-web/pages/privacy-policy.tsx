@@ -1,56 +1,62 @@
 import {AppPage} from '../components/app-page/app-page';
 import React from 'react';
-import {Typography} from 'antd';
-
-const {Paragraph, Text, Title} = Typography;
+import {Typography} from '@material-ui/core';
 
 /**
  * This page outlines the rights of the user in
  * regards to their online privacy while using
  * this web application.
- *
- * @return {JSX.Element}
  */
-export function PrivacyPolicyPage(): JSX.Element {
+export function PrivacyPolicy(): JSX.Element {
+  const [hostname, setHostname] = React.useState<string>();
+
+  function onFirstMount() {
+    setHostname(window.location.hostname.toUpperCase());
+  }
+
+  React.useEffect(onFirstMount, []);
+
   return (
     <AppPage>
       <Typography>
-        <Title level={1}>
-          Privacy Policy for {window.location.hostname.toUpperCase()}
-        </Title>
+        <Typography variant="h1">Privacy Policy for {hostname}</Typography>
 
-        <Paragraph>
-          This Privacy Policy document outlines how information about{' '}
-          <Text strong>you</Text> is collected and used whilst you visit this
+        <Typography>
+          This Privacy Policy document outlines how information about
+          <strong>you</strong> is collected and used whilst you visit this
           website.
-        </Paragraph>
+        </Typography>
 
-        <Paragraph>
-          Further use of this website is to be considered{' '}
-          <Text strong>consent</Text> to our Privacy Policy and agreemnent to
-          its terms.
-        </Paragraph>
+        <Typography>
+          Further use of this website is to be considered
+          <strong>consent</strong> to our Privacy Policy and agreemnent to its
+          terms.
+        </Typography>
 
-        <Title level={2}>How we collect and use your information</Title>
+        <Typography variant="h2">
+          How we collect and use your information
+        </Typography>
 
-        <Paragraph>
+        <Typography>
           This website will store personal information such as your name, email
           address, phone number, etc.
-        </Paragraph>
+        </Typography>
 
-        <Paragraph>
+        <Typography>
           This website will use https://www.googleapis.com/auth/userinfo.profile
           to create an account in this web application from the information
           which is publically available from your Google account.
-        </Paragraph>
+        </Typography>
 
-        <Title level={2}>Cookies</Title>
+        <Typography variant="h2">Cookies</Typography>
 
-        <Paragraph>
+        <Typography>
           This website, like many other websites, uses computer cookies to help
           keep track of your preferences, authenticaiton session, etc.
-        </Paragraph>
+        </Typography>
       </Typography>
     </AppPage>
   );
 }
+
+export default PrivacyPolicy;

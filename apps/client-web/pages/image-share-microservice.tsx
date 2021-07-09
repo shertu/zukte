@@ -17,8 +17,6 @@ const MAX_FILE_SIZE = 5000000; // bytes = 5 MB
 /**
  * A demonstration where the user can upload
  * and share images with other users.
- *
- * @return {JSX.Element}
  */
 export function ImageShareMicroservice(): JSX.Element {
   const MAX_FILE_SIZE_MB: string = (MAX_FILE_SIZE / 1000000).toFixed(2);
@@ -29,8 +27,6 @@ export function ImageShareMicroservice(): JSX.Element {
 
   /**
    * A hook to prepend the uploaded image to the image item collection.
-   *
-   * @param {ImageStorageInsertResponse} responses
    */
   function onSuccessfulUpload(responses: ImageStorageInsertResponse[]): void {
     const additionalUrls: string[] = [];

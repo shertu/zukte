@@ -27,8 +27,6 @@
 
 // /**
 //  * A demonstration where the user can mark locations on a map.
-//  *
-//  * @return {JSX.Element}
 //  */
 // export function MapAtomicDemo(): JSX.Element {
 //   const mapContainerRef = React.createRef<HTMLDivElement>();
@@ -112,9 +110,6 @@
 
 //   /**
 //    * Handles the change of state for the pushpin mode switch.
-//    *
-//    * @param {boolean} checked
-//    * @param {MouseEvent} event
 //    */
 //   function onChangePushpinControl(
 //     checked: boolean,

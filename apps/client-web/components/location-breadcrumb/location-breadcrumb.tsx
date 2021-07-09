@@ -7,9 +7,6 @@ import React from 'react';
 
 /**
  * A breadcrumb component for the window's location.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function LocationBreadcrumb(props: BreadcrumbProps): JSX.Element {
   const location = useLocation();

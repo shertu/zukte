@@ -5,23 +5,19 @@ import React from 'react';
 
 /**
  * The page the user scrolls down to after seeing the landing screen.
- *
- * @return {JSX.Element}
  */
 export function LandingPage(): JSX.Element {
   return (
-    <AppPage style={{minHeight: '100vh'}}>
-      <div>
+    <AppPage>
+      {/* <Space direction="vertical" align="center" size={40}> */}
+      <div
+        style={{display: 'flex', flexDirection: 'column', alignItems: 'center'}}
+      >
         <AboutMeContent />
 
-        <AppPage>
-          {/* <Divider>examples</Divider> */}
-          <PortfolioNav />
-        </AppPage>
+        {/* <Divider>examples</Divider> */}
+        <PortfolioNav />
       </div>
-      {/* <Space direction="vertical" align="center" size={40}>
-
-      </Space> */}
     </AppPage>
   );
 }

@@ -15,9 +15,6 @@ import React from 'react';
 
 /**
  * A list of the application users or accounts stored in the application.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function ImageShareList(props: {
   value?: PageableListState<string>;
@@ -31,9 +28,6 @@ export function ImageShareList(props: {
 
   /**
    * Tigger to load the next page of data.
-   *
-   * @param {PageableListState<string>} current
-   * @return {Promise<PageableListState<string>>}
    */
   async function onFetchNextPageAsync(current: PageableListState<string>) {
     const request: ImageStorageServiceGetListRequest = {
@@ -61,9 +55,6 @@ export function ImageShareList(props: {
 
   /**
    * A display name wrapper for the account list item component.
-   * @param {string} item
-   * @param {string} index
-   * @return {JSX.Element}
    */
   function renderListItem(item: string, index: number): JSX.Element {
     return (

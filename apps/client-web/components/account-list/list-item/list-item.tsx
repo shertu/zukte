@@ -13,9 +13,6 @@ const {Text} = Typography;
 
 /**
  * A list of the application users or accounts stored in the application.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function AccountListItem(props: {
   user: ApplicationUser;
@@ -35,8 +32,6 @@ export function AccountListItem(props: {
 
   /**
    * Executes a simple request to delete an application user.
-   *
-   * @param {string} id
    */
   function onDeleteApplicationUser(id?: string | null): void {
     const request: ApplicationUserServiceDeleteRequest = {

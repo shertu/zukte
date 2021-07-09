@@ -8,15 +8,12 @@ import React from 'react';
 
 /**
  * A component which renders a Vanta NET 3D visual effect.
- *
- * @param {RowProps} props
- * @return {JSX.Element}
  */
 export function VantaNetContainer(
   props: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
-  >,
+  >
 ): JSX.Element {
   const [vantaEffect, setVantaEffect] = React.useState<any>(0);
 
@@ -28,9 +25,9 @@ export function VantaNetContainer(
         NET({
           el: vantaRef.current,
           THREE: ThreeJs, // use a custom THREE when initializing
-          color: 0xACACDE,
-          backgroundColor: 0xE5FCFF,
-        }),
+          color: 0xacacde,
+          backgroundColor: 0xe5fcff,
+        })
       );
     }
 

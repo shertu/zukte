@@ -41,8 +41,6 @@ const portfolioNavItemArr: PortfolioNavItemProps[] = [
 
 /**
  * A nav element which links to various examples of my work.
- *
- * @return {JSX.Element}
  */
 export function PortfolioNav(): JSX.Element {
   return (

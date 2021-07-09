@@ -1,16 +1,12 @@
 import '../styles/global.scss';
 
+import {Container, CssBaseline} from '@material-ui/core';
 import {StylesProvider, ThemeProvider} from '@material-ui/core/styles';
 
 import {AppProps} from 'next/app';
-import {ApplicationUser} from '@entail/api-client';
-import {CssBaseline} from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
-import {EntailAppBar} from '../components/entail-app-bar/entail-app-bar';
-import {EntailCreateAccountDialog} from '../components/entail-create-account-dialog/entail-create-account-dialog';
-import {EntailSignInDialog} from '../components/entail-sign-in-dialog/entail-sign-in-dialog';
 import EntailTheme from '../styles/entail-mui-theme';
-import Head from 'next/head';
+import Link from 'next/link';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import NProgress from 'nprogress';
 import React from 'react';
@@ -28,37 +24,22 @@ Router.events.on('routeChangeError', () => NProgress.done());
  */
 function CustomApp({Component, pageProps}: AppProps) {
   return (
+    // <StylesProvider injectFirst>
+    //   <ThemeProvider theme={EntailTheme}>
     <MuiPickersUtilsProvider utils={DateFnsUtils}>
-      <Layout id="app-layout">
-        <Switch>
-          <Route exact path={AppRouteCollection.Home}>
-            <LandingScreen />
-          </Route>
+      <CssBaseline />
+      <div style={{backgroundColor: 'green'}}>
+        <Component {...pageProps} />
 
-          <Route>
-            <Header style={{backgroundColor: 'transparent'}}>
-              <Space className="max-height" align="center">
-                <LocationBreadcrumb />
-              </Space>
-            </Header>
-          </Route>
-        </Switch>
-
-        <Content>
-          <div id="content-viewport" className="max-cell-md">
-            <AppContentSwitch />
-          </div>
-        </Content>
-
-        <Footer>
-          <Space className="max-height" align="center">
-            <Link to={AppRouteCollection.PrivacyPolicy}>
-              <Button type="link">Privacy Policy</Button>
-            </Link>
-          </Space>
-        </Footer>
-      </Layout>
+        <footer style={{backgroundColor: 'blue'}}>
+          <Container fixed>
+            <Link href="/privacy-policy">Privacy Policy</Link>
+          </Container>
+        </footer>
+      </div>
     </MuiPickersUtilsProvider>
+    //   </ThemeProvider>
+    // </StylesProvider>
   );
 }
 

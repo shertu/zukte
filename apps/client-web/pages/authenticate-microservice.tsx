@@ -19,8 +19,6 @@ const {Paragraph} = Typography;
 
 /**
  * A demonstration where the user can sign in to the application.
- *
- * @return {JSX.Element}
  */
 export function AuthenticateMicroservice(): JSX.Element {
   const client = new ApplicationUserServiceApi();
@@ -44,9 +42,6 @@ export function AuthenticateMicroservice(): JSX.Element {
 
   /**
    * Tigger to load the next page of data.
-   *
-   * @param {PageableListState<ApplicationUser>} current
-   * @return {Promise<PageableListState<ApplicationUser>>}
    */
   async function onFetchNextPageAsync(
     current: PageableListState<ApplicationUser>

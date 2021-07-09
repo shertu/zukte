@@ -12,9 +12,6 @@ const errorMessage =
 /**
  * A button component used to sign out of
  * the application.
- *
- * @param {object} props
- * @return {JSX.Element}
  */
 export function AccountLogoutButton(props: {redirect?: string}): JSX.Element {
   const {redirect} = props;

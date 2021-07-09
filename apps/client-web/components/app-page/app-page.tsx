@@ -1,6 +1,6 @@
+import {Container, Typography} from '@material-ui/core';
+
 import React from 'react';
-import {Typography} from '@material-ui/core';
-import classNames from 'classnames';
 
 export interface PageProps
   extends React.DetailedHTMLProps<
@@ -8,25 +8,20 @@ export interface PageProps
     HTMLElement
   > {
   pageTitle?: string;
-  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
 /**
  * A large, full-width view component to display a section of content.
- *
- * @param {PageProps} props
- * @return {JSX.Element}
  */
 export function AppPage(props: PageProps): JSX.Element {
-  const {className, pageTitle, size = 'md', children, ...other} = props;
+  const {pageTitle, children, ...other} = props;
 
   return (
-    <section
-      {...other}
-      className={classNames(className, `max-cell-${size}`, 'app-page')}
-    >
-      {pageTitle && <Typography variant="h1">{pageTitle}</Typography>}
-      {children}
-    </section>
+    <main {...other}>
+      <Container fixed>
+        {pageTitle && <Typography variant="h1">{pageTitle}</Typography>}
+        {children}
+      </Container>
+    </main>
   );
 }

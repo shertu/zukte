@@ -26,9 +26,6 @@ export interface PageableListProps<T> {
 /**
  * An infinite scroll list of items which loads
  * additional content using pagination.
- *
- * @param {PageableListProps<T>} props
- * @return {JSX.Element}
  */
 export function PageableList<T>(props: PageableListProps<T>): JSX.Element {
   const [internalValue, setInternalValue] = React.useState<
@@ -71,9 +68,6 @@ export function PageableList<T>(props: PageableListProps<T>): JSX.Element {
   /**
    * Called when the page number is changed, and it takes
    * the resulting page number and page size as its arguments.
-   *
-   * @param {number} page
-   * @param {number} pageSize
    */
   function onChangePagination(page: number, pageSize?: number): void {
     setPaginationCurrent(page);
