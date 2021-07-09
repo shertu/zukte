@@ -1,4 +1,4 @@
-import {calculateAgeFromBirthdate} from './AgeCalculator';
+import {calculateAgeFromBirthdate} from './age-calculator';
 
 test('How old am I?', () => {
   const dateOfBirth: Date = new Date('1996-10-06');

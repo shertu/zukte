@@ -1,4 +1,4 @@
-import {AppPage} from '../AppPage/AppPage';
+import {AppPage} from '../components/app-page/app-page';
 import React from 'react';
 import {Typography} from 'antd';
 

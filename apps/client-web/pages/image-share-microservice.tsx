@@ -1,14 +1,14 @@
 import {
   IPageableListState,
   PageableListState,
-} from '../components/PageableList/PageableListState';
+} from '../components/pageable-list/pageable-list-state';
 
-import {AppPage} from '../components/AppPage/AppPage';
-import {ImageShareList} from '../components/ImageShareList/ImageShareList';
+import {AppPage} from '../components/app-page/app-page';
+import {ImageShareList} from '../components/image-share-list/image-share-list';
 import {ImageStorageInsertResponse} from '../../../openapi-generator';
 import React from 'react';
 import {Typography} from 'antd';
-import {UploadImageForm} from '../components/UploadImageForm/UploadImageForm';
+import {UploadImageForm} from '../components/upload-image-form/UploadImageForm';
 
 const {Paragraph, Text} = Typography;
 

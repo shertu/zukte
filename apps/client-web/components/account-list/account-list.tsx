@@ -6,10 +6,10 @@ import {
 import {
   IPageableListState,
   PageableListState,
-} from '../PageableList/PageableListState';
+} from '../pageable-list/pageable-list-state';
 
-import {AccountListItem} from './ListItem/AccountListItem';
-import {PageableList} from '../PageableList/PageableList';
+import {AccountListItem} from './list-item/list-item';
+import {PageableList} from '../pageable-list/pageable-list';
 import React from 'react';
 
 /**

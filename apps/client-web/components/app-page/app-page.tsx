@@ -1,5 +1,5 @@
-import {PageHeader} from 'antd';
 import React from 'react';
+import {Typography} from '@material-ui/core';
 import classNames from 'classnames';
 
 export interface PageProps
@@ -25,7 +25,7 @@ export function AppPage(props: PageProps): JSX.Element {
       {...other}
       className={classNames(className, `max-cell-${size}`, 'app-page')}
     >
-      {pageTitle && <PageHeader title={pageTitle} />}
+      {pageTitle && <Typography variant="h1">{pageTitle}</Typography>}
       {children}
     </section>
   );

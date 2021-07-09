@@ -6,7 +6,7 @@ import {
 import {Avatar, Button, List, Typography} from 'antd';
 
 import React from 'react';
-import {Rfc7807Alert} from '../../Rfc7807Alert/Rfc7807Alert';
+import {Rfc7807Alert} from '../../rfc-7807-alert/rfc-7807-alert';
 import {UserDeleteOutlined} from '@ant-design/icons';
 
 const {Text} = Typography;

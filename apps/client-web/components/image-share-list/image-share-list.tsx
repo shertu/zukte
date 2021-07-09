@@ -3,14 +3,14 @@ import './style.less';
 import {
   IPageableListState,
   PageableListState,
-} from '../PageableList/PageableListState';
+} from '../pageable-list/pageable-list-state';
 import {
   ImageStorageServiceApi,
   ImageStorageServiceGetListRequest,
 } from '../../../../openapi-generator';
 
 import {List} from 'antd';
-import {PageableList} from '../PageableList/PageableList';
+import {PageableList} from '../pageable-list/pageable-list';
 import React from 'react';
 
 /**

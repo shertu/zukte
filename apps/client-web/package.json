@@ -14,14 +14,15 @@
     "@date-io/date-fns": "1.x",
     "@material-ui/core": "^4.12.1",
     "@material-ui/pickers": "^3.3.10",
+    "@zukte/api-client": "workspace:*",
     "classnames": "^2.3.1",
     "date-fns": "^2.22.1",
+    "fluent-mailto": "^1.0.2",
     "formik": "^2.2.9",
     "next": "^11.0.1",
     "nprogress": "^0.2.0",
     "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "@entail/api-client": "workspace:*"
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@storybook/react": "^6.3.3",

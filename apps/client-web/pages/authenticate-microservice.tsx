@@ -6,12 +6,12 @@ import {
 import {
   IPageableListState,
   PageableListState,
-} from '../components/PageableList/PageableListState';
+} from '../components/pageable-list/pageable-list-state';
 
-import {AccountList} from '../components/AccountList/AccountList';
+import {AccountList} from '../components/account-list/account-list';
 import {AccountLoginButton} from './AccountLoginButton/AccountLoginButton';
 import {AccountLogoutButton} from './AccountLogoutButton/AccountLogoutButton';
-import {AppPage} from '../components/AppPage/AppPage';
+import {AppPage} from '../components/app-page/app-page';
 import React from 'react';
 import {Typography} from 'antd';
 

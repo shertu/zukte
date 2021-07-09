@@ -3,9 +3,9 @@ import InfiniteScroll, {
   Props as InfiniteScrollProps,
 } from 'react-infinite-scroll-component';
 
-import {PageableListState} from './PageableListState';
+import {PageableListState} from './pageable-list-state';
 import React from 'react';
-import {Rfc7807Alert} from '../Rfc7807Alert/Rfc7807Alert';
+import {Rfc7807Alert} from '../rfc-7807-alert/rfc-7807-alert';
 
 /** The props for the pagination list component. */
 export interface PageableListProps<T> {

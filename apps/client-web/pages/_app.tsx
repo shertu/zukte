@@ -1,10 +1,5 @@
 import '../styles/global.scss';
 
-import {
-  AccountsContext,
-  CreateAccountModalOpenContext,
-  SignInModalOpenContext,
-} from '@entail/business-logic';
 import {StylesProvider, ThemeProvider} from '@material-ui/core/styles';
 
 import {AppProps} from 'next/app';
@@ -25,59 +20,45 @@ Router.events.on('routeChangeStart', () => NProgress.start());
 Router.events.on('routeChangeComplete', () => NProgress.done());
 Router.events.on('routeChangeError', () => NProgress.done());
 
-/** https://nextjs.org/docs/advanced-features/custom-app. */
+/**
+ * A layout component used to describe general structure of
+ * the application, e.g. main, header, footer, etc.
+ *
+ * https://nextjs.org/docs/advanced-features/custom-app.
+ */
 function CustomApp({Component, pageProps}: AppProps) {
-  const [accounts, setAccounts] = React.useState<ApplicationUser[]>([]);
-  const [openSignIn, setOpenSignIn] = React.useState<boolean>(false);
-  const [openCreateAccount, setOpenCreateAccount] =
-    React.useState<boolean>(false);
-
-  React.useEffect(() => {
-    /** @todo replace with fetch to backend */
-    fetch('/api/accounts')
-      .then(response => response.json())
-      .then(data => setAccounts(data))
-      .catch(err => console.log(err));
-  }, []);
-
   return (
-    <StylesProvider injectFirst>
-      <ThemeProvider theme={EntailTheme}>
-        <CssBaseline />
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <AccountsContext.Provider value={[accounts, setAccounts]}>
-            <SignInModalOpenContext.Provider value={setOpenSignIn}>
-              <CreateAccountModalOpenContext.Provider
-                value={setOpenCreateAccount}
-              >
-                <Head>
-                  <title>Welcome to entail-dev!</title>
-                  <link
-                    rel="icon"
-                    type="image/svg+xml"
-                    href="/entail-logo.svg"
-                  />
-                </Head>
-                <EntailAppBar />
-                <main>
-                  <Component {...pageProps} />
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <Layout id="app-layout">
+        <Switch>
+          <Route exact path={AppRouteCollection.Home}>
+            <LandingScreen />
+          </Route>
 
-                  <EntailSignInDialog
-                    open={openSignIn}
-                    onClose={() => setOpenSignIn(false)}
-                  />
+          <Route>
+            <Header style={{backgroundColor: 'transparent'}}>
+              <Space className="max-height" align="center">
+                <LocationBreadcrumb />
+              </Space>
+            </Header>
+          </Route>
+        </Switch>
 
-                  <EntailCreateAccountDialog
-                    open={openCreateAccount}
-                    onClose={() => setOpenCreateAccount(false)}
-                  />
-                </main>
-              </CreateAccountModalOpenContext.Provider>
-            </SignInModalOpenContext.Provider>
-          </AccountsContext.Provider>
-        </MuiPickersUtilsProvider>
-      </ThemeProvider>
-    </StylesProvider>
+        <Content>
+          <div id="content-viewport" className="max-cell-md">
+            <AppContentSwitch />
+          </div>
+        </Content>
+
+        <Footer>
+          <Space className="max-height" align="center">
+            <Link to={AppRouteCollection.PrivacyPolicy}>
+              <Button type="link">Privacy Policy</Button>
+            </Link>
+          </Space>
+        </Footer>
+      </Layout>
+    </MuiPickersUtilsProvider>
   );
 }
 

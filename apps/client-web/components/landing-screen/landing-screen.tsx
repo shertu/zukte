@@ -4,7 +4,7 @@ import {Button, Card, Space, Typography} from 'antd';
 
 import React from 'react';
 import {Link as ScrollLink} from 'react-scroll';
-import {VantaNetContainer} from './VantaNetContainer/VantaNetContainer';
+import {VantaNetContainer} from './vanta-net-container/vanta-net-container';
 
 const {Title} = Typography;
 

@@ -1,12 +1,11 @@
-import './style.less';
-
-import {Col, Divider, Row, Space, Typography} from 'antd';
+// #personal-infomation-sex {
+//   color: #00a8ff;
+// }
 
 import React from 'react';
-import {calculateAgeFromBirthdate} from '../../lib/utilities/AgeCalculator';
+import {Typography} from '@material-ui/core';
+import {calculateAgeFromBirthdate} from '../../lib/utilities/age-calculator';
 import {mail} from 'fluent-mailto';
-
-const {Paragraph, Link} = Typography;
 
 const shertuDateOfBirth = new Date('1996-06-10');
 const aboutMeStylePersonalInfoSize = 60;
@@ -16,16 +15,16 @@ const mailto = mail.to('djared.xeknau@outlook.com').build();
 
 const welcomeTypography: React.ReactNode = (
   <Typography style={{fontSize: 'large', maxWidth: aboutMeStyleMaxWidth}}>
-    <Paragraph>Hello and welcome to my personal website.</Paragraph>
-    <Paragraph>
+    <p>Hello and welcome to my personal website.</p>
+    <p>
       For those who wish to know more about me, please&nbsp;
       <a href={mailto}>send an email</a>
       &nbsp;or&nbsp;
-      <Link href="https://www.linkedin.com/in/jared-blackman-71445098/">
+      <a href="https://www.linkedin.com/in/jared-blackman-71445098/">
         read my LinkedIn
-      </Link>
+      </a>
       &nbsp;profile.
-    </Paragraph>
+    </p>
   </Typography>
 );
 

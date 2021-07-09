@@ -1,7 +1,6 @@
-import {Card, Col, Row} from 'antd';
+import {Card, CardContent, CardMedia, Typography} from '@material-ui/core';
 
-import AppRouteCollection from '../../constants/AppRouteCollection';
-import {Link} from 'react-router-dom';
+import Link from 'next/link';
 import React from 'react';
 
 interface PortfolioNavItemProps {
@@ -11,21 +10,29 @@ interface PortfolioNavItemProps {
   description?: string;
 }
 
+const microservices: string[] = [
+  '/authenticate-microservice',
+  '/image-share-microservice',
+  '/map-microservice',
+];
+
+export default microservices;
+
 const portfolioNavItemArr: PortfolioNavItemProps[] = [
   {
-    to: AppRouteCollection.AuthenticationDemo,
+    to: microservices[0],
     src: 'https://i.imgur.com/MawioTF.jpg',
     title: 'authentication demo',
     description: 'where the user can sign in to a web application',
   },
   {
-    to: AppRouteCollection.ImageShareDemo,
+    to: microservices[1],
     src: 'https://i.imgur.com/iHoOXPu.jpg',
     title: 'image share demo',
     description: 'where the user can upload images to blob storage',
   },
   {
-    to: AppRouteCollection.MapDemo,
+    to: microservices[2],
     src: 'https://i.stack.imgur.com/QKlat.png',
     title: 'map demo',
     description: 'where the user can mark locations on a map',
@@ -40,17 +47,19 @@ const portfolioNavItemArr: PortfolioNavItemProps[] = [
 export function PortfolioNav(): JSX.Element {
   return (
     <nav>
-      <Row>
-        {portfolioNavItemArr.map(item => (
-          <Col key={item.to} xs={24} md={12} xl={8}>
-            <Link to={item.to}>
-              <Card hoverable cover={<img src={item.src} />}>
-                <Card.Meta title={item.title} description={item.description} />
-              </Card>
-            </Link>
-          </Col>
-        ))}
-      </Row>
+      {portfolioNavItemArr.map(item => (
+        <div key={item.to}>
+          <Link href={item.to}>
+            <Card>
+              <CardMedia image={item.src} title={item.title} />
+              <CardContent>
+                <Typography>{item.title}</Typography>
+                <Typography>{item.description}</Typography>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      ))}
     </nav>
   );
 }
