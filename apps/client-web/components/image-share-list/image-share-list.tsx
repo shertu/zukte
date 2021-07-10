@@ -3,13 +3,13 @@ import './style.less';
 import {
   IPageableListState,
   PageableListState,
-} from '../pageable-list/pageable-list-state';
+} from '../infinite-scroll-list/pageable-list-state';
 import {
   ImageStorageServiceApi,
   ImageStorageServiceGetListRequest,
 } from '../../../../openapi-generator';
 
-import {InfiniteScrollList} from '../pageable-list/infinite-scroll-list';
+import {InfiniteScrollList} from '../infinite-scroll-list/infinite-scroll-list';
 import {List} from 'antd';
 import React from 'react';
 

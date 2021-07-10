@@ -1,6 +1,6 @@
 import '../styles/global.scss';
 
-import {Container, CssBaseline, Link} from '@material-ui/core';
+import {Button, Container, CssBaseline} from '@material-ui/core';
 import {StylesProvider, ThemeProvider} from '@material-ui/core/styles';
 
 import {AppProps} from 'next/app';
@@ -27,13 +27,13 @@ function CustomApp({Component, pageProps}: AppProps) {
       <ThemeProvider theme={ZukteTheme}>
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <CssBaseline />
-          <div style={{backgroundColor: 'green'}}>
+          <div style={{backgroundColor: '#FFE7C7'}}>
             <Component {...pageProps} />
 
-            <footer style={{backgroundColor: 'blue'}}>
-              <Container fixed>
+            <footer style={{backgroundColor: '#E1F8DC'}}>
+              <Container fixed className="py-4">
                 <NextLink href="/privacy-policy">
-                  <Link>Privacy Policy</Link>
+                  <Button variant="outlined">Privacy Policy</Button>
                 </NextLink>
               </Container>
             </footer>

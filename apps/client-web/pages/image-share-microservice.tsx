@@ -1,7 +1,7 @@
 import {
   IPageableListState,
   PageableListState,
-} from '../components/pageable-list/pageable-list-state';
+} from '../components/infinite-scroll-list/pageable-list-state';
 
 import {AppPage} from '../components/app-page/app-page';
 import {ImageShareList} from '../components/image-share-list/image-share-list';

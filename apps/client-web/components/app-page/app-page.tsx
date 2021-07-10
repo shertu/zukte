@@ -17,7 +17,7 @@ export function AppPage(props: PageProps) {
   const {pageTitle, children, ...other} = props;
 
   return (
-    <Container fixed style={{backgroundColor: 'red'}}>
+    <Container fixed style={{backgroundColor: '#FEF8DD'}}>
       <main {...other}>
         {pageTitle && <Typography variant="h1">{pageTitle}</Typography>}
         {children}

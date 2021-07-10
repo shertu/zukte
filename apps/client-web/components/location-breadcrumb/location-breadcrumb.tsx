@@ -1,33 +1,35 @@
-import {Link, useLocation} from 'react-router-dom';
+import {Breadcrumbs, BreadcrumbsProps} from '@material-ui/core';
 
-import {Breadcrumb} from 'antd';
-import {BreadcrumbProps} from 'antd/lib/breadcrumb';
-import {HomeFilled} from '@ant-design/icons';
+import {Home} from '@material-ui/icons';
+import Link from '../next-link-composed/next-link-composed';
 import React from 'react';
+import {useRouter} from 'next/router';
 
 /**
  * A breadcrumb component for the window's location.
  */
-export function LocationBreadcrumb(props: BreadcrumbProps) {
-  const location = useLocation();
-  const pathSnippets = location.pathname.split('/').filter(i => i);
+export function LocationBreadcrumb(props: BreadcrumbsProps) {
+  const router = useRouter();
+  const pathSnippets = router.pathname.split('/').filter(i => i);
 
   const extraBreadcrumbItems = pathSnippets.map((_, index) => {
     const url = `/${pathSnippets.slice(0, index + 1).join('/')}`;
     return (
-      <Breadcrumb.Item key={index}>
-        <Link to={url}>{_}</Link>
-      </Breadcrumb.Item>
+      <Link key={index} href={url} className="align-middle">
+        {_}
+      </Link>
     );
   });
 
   const breadcrumbItems = [
-    <Breadcrumb.Item key="home">
-      <Link to="/">
-        <HomeFilled />
-      </Link>
-    </Breadcrumb.Item>,
+    <Link key="home" href="/">
+      <Home className="align-middle" />
+    </Link>,
   ].concat(extraBreadcrumbItems);
 
-  return <Breadcrumb {...props}>{breadcrumbItems}</Breadcrumb>;
+  return (
+    <Breadcrumbs className="flex items-center h-16" aria-label="breadcrumb">
+      {breadcrumbItems}
+    </Breadcrumbs>
+  );
 }

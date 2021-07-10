@@ -1,12 +1,10 @@
-import {Box, CardMedia, Link, Typography} from '@material-ui/core';
+import {CardMedia, Link as MuiLink, Typography} from '@material-ui/core';
 
 import React from 'react';
 import {calculateAgeFromBirthdate} from '../../lib/utilities/age-calculator';
 import {mail} from 'fluent-mailto';
 
 const jaredblackmanDOB = new Date('1996-06-10');
-const aboutMeStylePersonalInfoSize = 60;
-const aboutMeStyleMaxWidth = 420;
 
 const mailto = mail.to('djared.xeknau@outlook.com').build();
 
@@ -23,20 +21,19 @@ export function AboutMeContent() {
       </div>
 
       <div className="w-full flex flex-row items-center justify-center flex-wrap">
-        <div className="w-full max-w-xs m-4">
+        <div className="w-full max-w-sm m-4">
           <Typography>
             Hello and welcome to my personal website. For those who wish to know
             more about me, please&nbsp;
-            <Link href={mailto}>send me an email</Link>
+            <MuiLink href={mailto}>send me an email</MuiLink>
             &nbsp;or&nbsp;
-            <Link href="https://www.linkedin.com/in/jared-blackman-71445098/">
-              read my LinkedIn
-            </Link>
-            &nbsp;profile.
+            <MuiLink href="https://www.linkedin.com/in/jared-blackman-71445098/">
+              read my LinkedIn profile.
+            </MuiLink>
           </Typography>
         </div>
         <CardMedia
-          className="w-full max-w-xs m-4 rounded h-52"
+          className="w-full max-w-sm m-4 rounded h-52"
           image="https://i.imgur.com/gcWo3ZE.jpg"
         />
       </div>

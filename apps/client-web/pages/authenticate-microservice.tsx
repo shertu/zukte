@@ -3,10 +3,6 @@ import {
   ApplicationUserServiceApi,
   ApplicationUserServiceGetListRequest,
 } from '@zukte/api-client';
-import {
-  IPageableListState,
-  PageableListState,
-} from '../components/pageable-list/pageable-list-state';
 
 import {AccountList} from '../components/account-list/account-list';
 import {AccountLoginButton} from '../components/account-login-button/account-login-button';

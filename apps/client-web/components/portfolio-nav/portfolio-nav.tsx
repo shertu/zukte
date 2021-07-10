@@ -1,4 +1,10 @@
-import {Card, CardContent, CardMedia, Typography} from '@material-ui/core';
+import {
+  Card,
+  CardActionArea,
+  CardContent,
+  CardMedia,
+  Typography,
+} from '@material-ui/core';
 
 import Link from 'next/link';
 import React from 'react';
@@ -46,17 +52,21 @@ export function PortfolioNav() {
   return (
     <nav>
       {portfolioNavItemArr.map(item => (
-        <div key={item.to}>
+        <Card key={item.to}>
           <Link href={item.to}>
-            <Card>
-              <CardMedia image={item.src} title={item.title} />
+            <CardActionArea>
+              <CardMedia image={item.src} title={item.title} className="h-48" />
               <CardContent>
-                <Typography>{item.title}</Typography>
-                <Typography>{item.description}</Typography>
+                <Typography gutterBottom variant="h5" component="h2">
+                  {item.title}
+                </Typography>
+                <Typography variant="body2" color="textSecondary" component="p">
+                  {item.description}
+                </Typography>
               </CardContent>
-            </Card>
+            </CardActionArea>
           </Link>
-        </div>
+        </Card>
       ))}
     </nav>
   );

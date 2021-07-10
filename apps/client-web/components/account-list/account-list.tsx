@@ -5,7 +5,7 @@ import {
 } from '@zukte/api-client';
 
 import {AccountListItem} from './list-item/list-item';
-import {InfiniteScrollList} from '../pageable-list/infinite-scroll-list';
+import {InfiniteScrollList} from '../infinite-scroll-list/infinite-scroll-list';
 import React from 'react';
 
 /**

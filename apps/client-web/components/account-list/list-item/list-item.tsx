@@ -17,7 +17,6 @@ export function AccountListItem(props: {
   mineAccounts?: ApplicationUser[];
 }) {
   const {mineAccounts = []} = props;
-
   const {id, name, picture} = props.user;
 
   const client = new ApplicationUserServiceApi();
