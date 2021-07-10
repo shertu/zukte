@@ -26,10 +26,10 @@ export function AccountLogoutButton(props: {redirect?: string}) {
 
   /** The click event for this button. */
   function onClick() {
-    const redirectUri: string = redirect || window.location.pathname;
+    const redirectUri: string = redirect || window.location.toString();
 
     const requestParameters: AccountHttpContextSignOutRequest = {
-      returnUrl: redirectUri,
+      redirectUrl: redirectUri,
     };
 
     client
@@ -43,9 +43,9 @@ export function AccountLogoutButton(props: {redirect?: string}) {
       <Button variant="contained" color="primary" onClick={onClick}>
         Sign Out
       </Button>
-      <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
+      {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
         {errorMessage}
-      </Snackbar>
+      </Snackbar> */}
     </>
   );
 }

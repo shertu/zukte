@@ -4,41 +4,42 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using Zukte.Utilities;
 
 namespace Zukte.Service {
   [ApiController]
   [Route("api/[controller]")]
   public class AccountController : ControllerBase {
-    private readonly IConfiguration _configuration;
+    // private readonly ICollection<string> allowedOrigins;
 
-    public AccountController(IConfiguration configuration) {
-      _configuration = configuration;
-    }
+    // public AccountController(IConfiguration configuration) {
+    //   allowedOrigins = configuration.GetAllowedOrigins().ToHashSet();
+    // }
 
-    public string defaultRedirectUrl => Request.Host.ToString();
-
-    private bool OpenRedirectValidation(Uri uri) {
-      IConfigurationSection originsSection = _configuration.GetSection("CorsOrigins");
-      var origins = originsSection.GetChildren().Select(kv => kv.Value).ToHashSet();
-
-      if (Url.IsLocalUrl(uri.AbsoluteUri)) {
-        return true;
-      } else {
-        return origins.Contains(uri.Host);
-      }
-    }
+    /// <summary>
+    /// Checks if specified url is safe against open redirect attacks.
+    /// </summary>
+    // private bool IsValidRedirectUrl(Uri url) {
+    //   var origin = url.GetLeftPart(UriPartial.Authority);
+    //   return allowedOrigins.Contains(origin);
+    // }
 
     /// <summary>
     /// Starts the Google OAuth 2.0 flow for application sign in.
     /// </summary>
     [HttpGet("Login")]
     public IActionResult GoogleOpenIdConnectChallenge([FromQuery] string? redirectUrl) {
-      Uri uri = new Uri(redirectUrl ?? defaultRedirectUrl);
-
-      if (!OpenRedirectValidation(uri)) {
-        return BadRequest($"\"{uri}\" is an invalid open redirect url");
+      if (string.IsNullOrEmpty(redirectUrl)) {
+        return BadRequest($"{nameof(redirectUrl)} is null or empty");
       }
+
+      Uri uri = new Uri(redirectUrl);
+
+      // if (!IsValidRedirectUrl(redirectUri)) {
+      //   return BadRequest($"\"{redirectUri}\" is an invalid redirect url");
+      // }
 
       AuthenticationProperties authenticationProperties = new AuthenticationProperties {
         RedirectUri = uri.AbsoluteUri,
@@ -57,11 +58,15 @@ namespace Zukte.Service {
     /// </summary>
     [HttpDelete("Logout")]
     public IActionResult HttpContextSignOut([FromQuery] string? redirectUrl) {
-      Uri uri = new Uri(redirectUrl ?? defaultRedirectUrl);
-
-      if (!OpenRedirectValidation(uri)) {
-        return BadRequest($"\"{uri}\" is an invalid open redirect url");
+      if (string.IsNullOrEmpty(redirectUrl)) {
+        return BadRequest($"{nameof(redirectUrl)} is null or empty");
       }
+
+      Uri uri = new Uri(redirectUrl);
+
+      // if (!IsValidRedirectUrl(redirectUri)) {
+      //   return BadRequest($"\"{redirectUri}\" is an invalid redirect url");
+      // }
 
       AuthenticationProperties authenticationProperties = new AuthenticationProperties {
         RedirectUri = uri.AbsoluteUri,

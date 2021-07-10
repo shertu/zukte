@@ -15,10 +15,10 @@ export function AccountLoginButton(props: {redirect?: string}) {
 
   /** The click event for this button. */
   function onClick() {
-    const redirectUri: string = redirect || window.location.pathname;
+    const redirectUri: string = redirect || window.location.toString();
 
     const requestParameters: AccountGoogleOpenIdConnectChallengeRequest = {
-      returnUrl: redirectUri,
+      redirectUrl: redirectUri,
     };
 
     const searchParams: URLSearchParams = new URLSearchParams(

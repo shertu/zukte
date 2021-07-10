@@ -13,11 +13,12 @@ using Zukte.Authentication;
 using Zukte.Authorization.Handlers;
 using Zukte.Database;
 using Zukte.Middleware.DatabaseSeeder;
+using Zukte.Utilities;
 using Zukte.Utilities.Account;
 
 namespace Zukte {
   public class Startup {
-    private const string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+    private readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
     private readonly IConfiguration _configuration;
 
     public Startup(IConfiguration configuration) {
@@ -87,8 +88,7 @@ namespace Zukte {
       #endregion
 
       #region CORS
-      IConfigurationSection originsSection = _configuration.GetSection("CorsOrigins");
-      string[] origins = originsSection.GetChildren().Select(kv => kv.Value).ToArray();
+      string[] origins = _configuration.GetAllowedOrigins().ToArray();
 
       services.AddCors(options => {
         options.AddPolicy(name: MyAllowSpecificOrigins,
