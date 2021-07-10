@@ -3,66 +3,76 @@ import {
   ApplicationUserServiceApi,
   ApplicationUserServiceGetListRequest,
 } from '@zukte/api-client';
+import {
+  InfiniteScrollList,
+  InfiniteScrollListValue,
+} from '../infinite-scroll-list/infinite-scroll-list';
 
 import {AccountListItem} from './list-item/list-item';
-import {InfiniteScrollList} from '../infinite-scroll-list/infinite-scroll-list';
 import React from 'react';
+
+export interface AccountListProps {
+  mineAccounts?: ApplicationUser[];
+}
 
 /**
  * A list of the application users or accounts stored in the application.
  */
-export function AccountList(props: {mineAccounts?: ApplicationUser[]}) {
+export function AccountList(props: AccountListProps) {
   const {mineAccounts} = props;
 
   const client = new ApplicationUserServiceApi();
 
-  const [value, onChange] = React.useState<PageableListState<ApplicationUser>>(
-    new PageableListState<ApplicationUser>()
-  );
+  const [value, onChange] = React.useState<
+    InfiniteScrollListValue<ApplicationUser>
+  >({
+    items: [],
+  });
 
   /**
    * Tigger to load the next page of data.
    */
   async function onFetchNextPageAsync(
-    current: PageableListState<ApplicationUser>
-  ) {
+    current: InfiniteScrollListValue<ApplicationUser>
+  ): Promise<InfiniteScrollListValue<ApplicationUser>> {
     const request: ApplicationUserServiceGetListRequest = {};
 
-    const nextPageToken = current.state.nextPageToken;
+    const nextPageToken = current.nextPageToken;
     if (nextPageToken) {
       request.pageToken = nextPageToken;
     }
 
     const response = await client.applicationUserServiceGetList(request);
 
-    const currentItems: ApplicationUser[] = current.state.items || [];
+    const currentItems: ApplicationUser[] = current.items || [];
     const additionalItems: ApplicationUser[] = response.items || [];
 
-    const nextValue: IPageableListState<ApplicationUser> = {
+    const nextValue: InfiniteScrollListValue<ApplicationUser> = {
       items: currentItems.concat(additionalItems),
       nextPageToken: response.nextPageToken,
       hasMadeAtLeastOneFetch: true,
     };
 
-    return new PageableListState<ApplicationUser>(nextValue);
+    return nextValue;
   }
 
   /**
    * A display name wrapper for the account list item component.
    */
-  function renderListItem(item: ApplicationUser, index: number) {
+  function renderListItem(
+    item: ApplicationUser,
+    index: number
+  ): React.ReactNode {
     return <AccountListItem user={item} mineAccounts={mineAccounts} />;
   }
 
   // order elements with mine accounts first
-  let nextValueSorted: IPageableListState<ApplicationUser> | undefined;
+  let sorted: InfiniteScrollListValue<ApplicationUser> = {
+    ...value,
+  };
 
-  if (mineAccounts?.length) {
-    nextValueSorted = {
-      ...value.state,
-    };
-
-    nextValueSorted.items = value.state.items.sort((a, b) => {
+  if (mineAccounts?.length && value.items) {
+    sorted.items = value.items.sort((a, b) => {
       const aIsMineAccount = Boolean(
         mineAccounts.find(elem => elem.id === a.id)
       );
@@ -77,20 +87,13 @@ export function AccountList(props: {mineAccounts?: ApplicationUser[]}) {
     });
   }
 
-  const usedValue: PageableListState<ApplicationUser> = nextValueSorted
-    ? new PageableListState<ApplicationUser>(nextValueSorted)
-    : value;
-
   return (
-    <InfiniteScrollList
-      onFetchNextPageAsync={onFetchNextPageAsync}
+    <InfiniteScrollList<ApplicationUser>
+      value={sorted}
       onChange={onChange}
-      value={usedValue}
+      onFetchNextPageAsync={onFetchNextPageAsync}
       paginationPageSize={25}
-      list={{
-        renderItem: renderListItem,
-        itemLayout: 'vertical',
-      }}
+      render={renderListItem}
     />
   );
 }

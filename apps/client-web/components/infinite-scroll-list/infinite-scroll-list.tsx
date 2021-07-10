@@ -40,13 +40,13 @@ export interface InfiniteScrollListProps<T>
     InfiniteScrollProps,
     'dataLength' | 'next' | 'hasMore' | 'loader' | 'children'
   > {
-  onFetchNextPage: (
+  onFetchNextPageAsync: (
     current: InfiniteScrollListValue<T>
-  ) => InfiniteScrollListValue<T>;
+  ) => Promise<InfiniteScrollListValue<T>>;
   value?: InfiniteScrollListValue<T>;
   onChange?: (value: InfiniteScrollListValue<T>) => void;
   paginationPageSize: number;
-  render?: (value: T) => React.ReactNode;
+  render?: (value: T, index: number) => React.ReactNode;
 }
 
 /**
@@ -63,7 +63,7 @@ export function InfiniteScrollList<T>(props: InfiniteScrollListProps<T>) {
   }
 
   const {
-    onFetchNextPage,
+    onFetchNextPageAsync,
     value = value_, // use internal value as default
     onChange = setValue_,
     paginationPageSize,
@@ -85,13 +85,9 @@ export function InfiniteScrollList<T>(props: InfiniteScrollListProps<T>) {
   /** trigger to fetch additional items */
   React.useEffect(() => {
     if (potential && should && !errorOccur) {
-      try {
-        const response: InfiniteScrollListValue<T> = onFetchNextPage(value);
-        response.hasMadeAtLeastOneFetch = true;
-        onChange(response);
-      } catch (error) {
-        setErrorOccur(true);
-      }
+      onFetchNextPageAsync(value)
+        .then(response => onChange(response))
+        .catch(() => setErrorOccur(true));
     }
   }, [potential, should, errorOccur]);
 
