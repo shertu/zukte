@@ -4,50 +4,58 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Zukte.Service {
-	[ApiController]
-	[Route("api/[controller]")]
-	public class AccountController : ControllerBase {
-		public const string RETURN_URL_DEFAULT = "/";
+  [ApiController]
+  [Route("api/[controller]")]
+  public class AccountController : ControllerBase {
+    public const string RETURN_URL_DEFAULT = "/";
 
-		/// <summary>
-		/// Starts the Google OAuth 2.0 flow for application sign in.
-		/// </summary>
-		[HttpGet("Login")]
-		public IActionResult GoogleOpenIdConnectChallenge([FromQuery] string? ReturnUrl) {
-			ReturnUrl ??= RETURN_URL_DEFAULT;
+    private bool OpenRedirectValidation(string? url) {
+      if (string.IsNullOrEmpty(url)) {
+        return false;
+      }
 
-			if (!Url.IsLocalUrl(ReturnUrl)) {
-				return BadRequest($"\"{ReturnUrl}\" is not a local url");
-			}
+      return Url.IsLocalUrl(url);
+    }
 
-			AuthenticationProperties authenticationProperties = new AuthenticationProperties {
-				RedirectUri = ReturnUrl,
-			};
+    /// <summary>
+    /// Starts the Google OAuth 2.0 flow for application sign in.
+    /// </summary>
+    [HttpGet("Login")]
+    public IActionResult GoogleOpenIdConnectChallenge([FromQuery] string? ReturnUrl) {
+      ReturnUrl ??= RETURN_URL_DEFAULT;
 
-			bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
-			if (isAuthenticated) {
-				return LocalRedirect(authenticationProperties.RedirectUri);
-			} else {
-				return Challenge(authenticationProperties, new string[] { GoogleOpenIdConnectDefaults.AuthenticationScheme });
-			}
-		}
+      if (!OpenRedirectValidation(ReturnUrl)) {
+        return BadRequest($"\"{ReturnUrl}\" is not a local url");
+      }
 
-		/// <summary>
-		/// Creates an action result that on execution will sign out the user.
-		/// </summary>
-		[HttpDelete("Logout")]
-		public IActionResult HttpContextSignOut([FromQuery] string? ReturnUrl) {
-			ReturnUrl ??= RETURN_URL_DEFAULT;
+      AuthenticationProperties authenticationProperties = new AuthenticationProperties {
+        RedirectUri = ReturnUrl,
+      };
 
-			if (!Url.IsLocalUrl(ReturnUrl)) {
-				return BadRequest($"\"{ReturnUrl}\" is not a local url");
-			}
+      bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
+      if (isAuthenticated) {
+        return Redirect(authenticationProperties.RedirectUri);
+      } else {
+        return Challenge(authenticationProperties, new string[] { GoogleOpenIdConnectDefaults.AuthenticationScheme });
+      }
+    }
 
-			AuthenticationProperties authenticationProperties = new AuthenticationProperties {
-				RedirectUri = ReturnUrl,
-			};
+    /// <summary>
+    /// Creates an action result that on execution will sign out the user.
+    /// </summary>
+    [HttpDelete("Logout")]
+    public IActionResult HttpContextSignOut([FromQuery] string? ReturnUrl) {
+      ReturnUrl ??= RETURN_URL_DEFAULT;
 
-			return SignOut(authenticationProperties, new string[] { CookieAuthenticationDefaults.AuthenticationScheme });
-		}
-	}
+      if (!OpenRedirectValidation(ReturnUrl)) {
+        return BadRequest($"\"{ReturnUrl}\" is not a local url");
+      }
+
+      AuthenticationProperties authenticationProperties = new AuthenticationProperties {
+        RedirectUri = ReturnUrl,
+      };
+
+      return SignOut(authenticationProperties, new string[] { CookieAuthenticationDefaults.AuthenticationScheme });
+    }
+  }
 }

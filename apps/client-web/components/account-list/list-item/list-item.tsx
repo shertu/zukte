@@ -3,9 +3,17 @@ import {
   ApplicationUserServiceApi,
   ApplicationUserServiceDeleteRequest,
 } from '@zukte/api-client';
+import {
+  Avatar,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+  Typography,
+} from '@material-ui/core';
 import {Button, IconButton} from '@material-ui/core';
 
-import {DeleteForever} from '@material-ui/icons';
+import {Delete} from '@material-ui/icons';
 import React from 'react';
 import {Rfc7807Alert} from '../../rfc-7807-alert/rfc-7807-alert';
 
@@ -44,23 +52,37 @@ export function AccountListItem(props: {
   let deleteApplicationUserAction: JSX.Element | undefined;
   if (isMineApplicationUser) {
     deleteApplicationUserAction = (
-      <Button variant="contained" startIcon={<DeleteForever />}>
+      <Button variant="contained" startIcon={<Delete />}>
         remove account
       </Button>
     );
   }
 
-  return (
-    <List.Item key={id} actions={[deleteApplicationUserAction]}>
-      <List.Item.Meta
-        avatar={<Avatar src={picture} />}
-        title={name}
-        description={<Text style={{fontFamily: 'monospace'}}>{id}</Text>}
-      />
+  // <List dense={dense}>
 
-      {errorOccur && (
-        <Rfc7807Alert title="The request to delete your account was unsuccessful." />
+  return (
+    <ListItem>
+      <ListItemAvatar>
+        <Avatar alt="Remy Sharp" src={picture ?? undefined} />
+      </ListItemAvatar>
+      <ListItemText
+        primary={name}
+        secondary={
+          <Typography style={{fontFamily: 'monospace'}}>{id}</Typography>
+        }
+      />
+      {isMineApplicationUser && (
+        <ListItemSecondaryAction>
+          <IconButton edge="end" aria-label="delete">
+            <Delete />
+          </IconButton>
+        </ListItemSecondaryAction>
       )}
-    </List.Item>
+    </ListItem>
+
+    //   {errorOccur && (
+    //     <Rfc7807Alert title="The request to delete your account was unsuccessful." />
+    //   )}
+    // </div>
   );
 }
