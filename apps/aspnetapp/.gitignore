@@ -1,32 +1,8 @@
-# webpack production build output
-/wwwroot
-
-# protobuf code generation
-# /protobuf /// exlcusion requires CI pipeline to have protoc installed
+# dependencies
+/node_modules
 
 # OpenAPI specification generation
 /openapi.json
-
-# https://raw.githubusercontent.com/dotnet/core/master/.gitignore
-
-*.swp
-*.*~
-project.lock.json
-.DS_Store
-*.pyc
-nupkg/
-
-# Visual Studio Code
-.vscode
-
-# Rider
-.idea
-
-# User-specific files
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
 
 # Build results
 [Dd]ebug/
@@ -43,6 +19,3 @@ bld/
 msbuild.log
 msbuild.err
 msbuild.wrn
-
-# Visual Studio 2015
-.vs/

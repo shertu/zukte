@@ -2,34 +2,46 @@ using Google.Apis.Auth.AspNetCore3;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Linq;
 
 namespace Zukte.Service {
   [ApiController]
   [Route("api/[controller]")]
   public class AccountController : ControllerBase {
-    public const string RETURN_URL_DEFAULT = "/";
+    private readonly IConfiguration _configuration;
 
-    private bool OpenRedirectValidation(string? url) {
-      if (string.IsNullOrEmpty(url)) {
-        return false;
+    public AccountController(IConfiguration configuration) {
+      _configuration = configuration;
+    }
+
+    public string defaultRedirectUrl => Request.Host.ToString();
+
+    private bool OpenRedirectValidation(Uri uri) {
+      IConfigurationSection originsSection = _configuration.GetSection("CorsOrigins");
+      var origins = originsSection.GetChildren().Select(kv => kv.Value).ToHashSet();
+
+      if (Url.IsLocalUrl(uri.AbsoluteUri)) {
+        return true;
+      } else {
+        return origins.Contains(uri.Host);
       }
-
-      return Url.IsLocalUrl(url);
     }
 
     /// <summary>
     /// Starts the Google OAuth 2.0 flow for application sign in.
     /// </summary>
     [HttpGet("Login")]
-    public IActionResult GoogleOpenIdConnectChallenge([FromQuery] string? ReturnUrl) {
-      ReturnUrl ??= RETURN_URL_DEFAULT;
+    public IActionResult GoogleOpenIdConnectChallenge([FromQuery] string? redirectUrl) {
+      Uri uri = new Uri(redirectUrl ?? defaultRedirectUrl);
 
-      if (!OpenRedirectValidation(ReturnUrl)) {
-        return BadRequest($"\"{ReturnUrl}\" is not a local url");
+      if (!OpenRedirectValidation(uri)) {
+        return BadRequest($"\"{uri}\" is an invalid open redirect url");
       }
 
       AuthenticationProperties authenticationProperties = new AuthenticationProperties {
-        RedirectUri = ReturnUrl,
+        RedirectUri = uri.AbsoluteUri,
       };
 
       bool isAuthenticated = User.Identity?.IsAuthenticated ?? false;
@@ -44,15 +56,15 @@ namespace Zukte.Service {
     /// Creates an action result that on execution will sign out the user.
     /// </summary>
     [HttpDelete("Logout")]
-    public IActionResult HttpContextSignOut([FromQuery] string? ReturnUrl) {
-      ReturnUrl ??= RETURN_URL_DEFAULT;
+    public IActionResult HttpContextSignOut([FromQuery] string? redirectUrl) {
+      Uri uri = new Uri(redirectUrl ?? defaultRedirectUrl);
 
-      if (!OpenRedirectValidation(ReturnUrl)) {
-        return BadRequest($"\"{ReturnUrl}\" is not a local url");
+      if (!OpenRedirectValidation(uri)) {
+        return BadRequest($"\"{uri}\" is an invalid open redirect url");
       }
 
       AuthenticationProperties authenticationProperties = new AuthenticationProperties {
-        RedirectUri = ReturnUrl,
+        RedirectUri = uri.AbsoluteUri,
       };
 
       return SignOut(authenticationProperties, new string[] { CookieAuthenticationDefaults.AuthenticationScheme });
