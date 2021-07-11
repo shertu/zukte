@@ -25,7 +25,7 @@ if($url) {
 Set-Location $LocationT
 Remove-Item -Recurse -Force ./src/openapi-generator -ErrorAction SilentlyContinue
 npm run openapi
-npm run compile
+npm run build
 
 # clean up
 Set-Location $PSScriptRoot

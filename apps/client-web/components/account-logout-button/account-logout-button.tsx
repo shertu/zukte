@@ -29,7 +29,7 @@ export function AccountLogoutButton(props: {redirect?: string}) {
     const redirectUri: string = redirect || window.location.toString();
 
     const requestParameters: AccountHttpContextSignOutRequest = {
-      redirectUrl: redirectUri,
+      returnUrl: redirectUri,
     };
 
     client

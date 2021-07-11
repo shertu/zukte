@@ -18,7 +18,7 @@ export function AccountLoginButton(props: {redirect?: string}) {
     const redirectUri: string = redirect || window.location.toString();
 
     const requestParameters: AccountGoogleOpenIdConnectChallengeRequest = {
-      redirectUrl: redirectUri,
+      returnUrl: redirectUri,
     };
 
     const searchParams: URLSearchParams = new URLSearchParams(

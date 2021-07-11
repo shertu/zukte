@@ -67,7 +67,7 @@ export function AccountList(props: AccountListProps) {
   }
 
   // order elements with mine accounts first
-  let sorted: InfiniteScrollListValue<ApplicationUser> = {
+  const sorted: InfiniteScrollListValue<ApplicationUser> = {
     ...value,
   };
 

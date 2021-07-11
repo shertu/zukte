@@ -1,5 +1,4 @@
 packages:
   - 'apps/aspnetapp'
   - 'apps/client-web'
-  - 'apps/client-web-storybook'
   - 'libs/api-client'

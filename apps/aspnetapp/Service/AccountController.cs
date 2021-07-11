@@ -30,12 +30,12 @@ namespace Zukte.Service {
     /// Starts the Google OAuth 2.0 flow for application sign in.
     /// </summary>
     [HttpGet("Login")]
-    public IActionResult GoogleOpenIdConnectChallenge([FromQuery] string? redirectUrl) {
-      if (string.IsNullOrEmpty(redirectUrl)) {
-        return BadRequest($"{nameof(redirectUrl)} is null or empty");
+    public IActionResult GoogleOpenIdConnectChallenge([FromQuery] string? returnUrl) {
+      if (string.IsNullOrEmpty(returnUrl)) {
+        return BadRequest($"{nameof(returnUrl)} is null or empty");
       }
 
-      Uri uri = new Uri(redirectUrl);
+      Uri uri = new Uri(returnUrl);
 
       // if (!IsValidRedirectUrl(redirectUri)) {
       //   return BadRequest($"\"{redirectUri}\" is an invalid redirect url");
@@ -57,12 +57,12 @@ namespace Zukte.Service {
     /// Creates an action result that on execution will sign out the user.
     /// </summary>
     [HttpDelete("Logout")]
-    public IActionResult HttpContextSignOut([FromQuery] string? redirectUrl) {
-      if (string.IsNullOrEmpty(redirectUrl)) {
-        return BadRequest($"{nameof(redirectUrl)} is null or empty");
+    public IActionResult HttpContextSignOut([FromQuery] string? returnUrl) {
+      if (string.IsNullOrEmpty(returnUrl)) {
+        return BadRequest($"{nameof(returnUrl)} is null or empty");
       }
 
-      Uri uri = new Uri(redirectUrl);
+      Uri uri = new Uri(returnUrl);
 
       // if (!IsValidRedirectUrl(redirectUri)) {
       //   return BadRequest($"\"{redirectUri}\" is an invalid redirect url");

@@ -6,10 +6,6 @@
       "root": "apps/client-web",
       "projectType": "application"
     },
-    "client-web-storybook": {
-      "root": "apps/client-web-storybook",
-      "projectType": "application"
-    },
     "aspnetapp": {
       "root": "apps/aspnetapp",
       "projectType": "application"

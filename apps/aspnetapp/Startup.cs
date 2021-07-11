@@ -93,7 +93,8 @@ namespace Zukte {
       services.AddCors(options => {
         options.AddPolicy(name: MyAllowSpecificOrigins,
             builder => {
-              builder.WithOrigins(origins);
+              builder.WithOrigins(origins)
+                .AllowCredentials();
             });
       });
       #endregion

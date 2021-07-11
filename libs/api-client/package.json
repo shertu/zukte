@@ -7,7 +7,7 @@
   "scripts": {
     "eslint": "eslint . --ext .js,.jsx,.ts,.tsx --fix",
     "openapi": "openapi-generator-cli generate -i \"openapi.json\" -g typescript-fetch -o \"src/openapi-generator\"",
-    "compile": "tsc"
+    "build": "tsc"
   },
   "devDependencies": {
     "@openapitools/openapi-generator-cli": "^2.3.6"

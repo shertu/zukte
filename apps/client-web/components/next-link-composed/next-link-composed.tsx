@@ -17,7 +17,7 @@ interface NextLinkComposedProps
 export const NextLinkComposed = React.forwardRef<
   HTMLAnchorElement,
   NextLinkComposedProps
->(function NextLinkComposed(props, ref) {
+>((props, ref) => {
   const {
     to,
     linkAs,
@@ -57,10 +57,7 @@ export type LinkProps = {
 
 // A styled version of the Next.js Link component:
 // https://nextjs.org/docs/#with-link
-const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link(
-  props,
-  ref
-) {
+const Link = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
   const {
     activeClassName = 'active',
     as: linkAs,

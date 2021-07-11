@@ -1,4 +1,5 @@
 {
+  "npmScope": "zukte",
   "implicitDependencies": {
     "workspace.json": "*",
     "package.json": {
@@ -19,10 +20,6 @@
     "client-web": {
       "tags": [],
       "implicitDependencies": ["aspnetapp"]
-    },
-    "client-web-storybook": {
-      "tags": [],
-      "implicitDependencies": ["client-web"]
     },
     "aspnetapp": {
       "tags": []

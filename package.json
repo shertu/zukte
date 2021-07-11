@@ -3,11 +3,16 @@
   "private": true,
   "scripts": {
     "preinstall": "npx only-allow pnpm",
+    "postinstall": "npm run build:api-client",
     "prepare": "husky install",
     "graph": "nx dep-graph",
     "storybook": "nx run client-web-storybook:start",
     "eslint": "nx run-many --target=eslint --all",
-    "stylelint": "nx run-many --target=stylelint --all"
+    "stylelint": "nx run-many --target=stylelint --all",
+    "build:api-client": "pwsh ./openapi.ps1 https://localhost:5001/"
+  },
+  "resolutions": {
+    "@types/react": "^17.0.14"
   },
   "devDependencies": {
     "@nrwl/cli": "^12.5.7",
@@ -19,8 +24,5 @@
     "stylelint": "^13.13.1",
     "stylelint-config-standard": "^22.0.0",
     "typescript": "^4.3.5"
-  },
-  "resolutions": {
-    "@types/react": "^17.0.14"
   }
 }
