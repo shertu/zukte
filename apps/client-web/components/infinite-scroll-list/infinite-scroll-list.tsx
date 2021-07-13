@@ -2,6 +2,7 @@ import InfiniteScroll, {
   Props as InfiniteScrollProps,
 } from 'react-infinite-scroll-component';
 
+import {List} from '@material-ui/core';
 import React from 'react';
 
 // import {Rfc7807Alert} from '../rfc-7807-alert/rfc-7807-alert';
@@ -128,7 +129,7 @@ export function InfiniteScrollList<T>(props: InfiniteScrollListProps<T>) {
         hasMore={potential}
         loader={potential && should && !errorOccur}
       >
-        {value.items?.map(render)}
+        <List>{value.items?.map(render)}</List>
       </InfiniteScroll>
 
       {/* {!itemLength && value.state.hasMadeAtLeastOneFetch && (

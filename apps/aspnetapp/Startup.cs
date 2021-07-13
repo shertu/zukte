@@ -97,6 +97,7 @@ namespace Zukte {
         options.AddPolicy(name: MyAllowSpecificOrigins,
             builder => {
               builder.WithOrigins(origins)
+                .AllowAnyMethod() // GET, HEAD, or POST are defaults 
                 .AllowCredentials(); // required for CORS authentication
             });
       });
