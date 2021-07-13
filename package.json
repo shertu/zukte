@@ -6,7 +6,6 @@
     "postinstall": "npm run build:api-client",
     "prepare": "husky install",
     "graph": "nx dep-graph",
-    "storybook": "nx run client-web-storybook:start",
     "eslint": "nx run-many --target=eslint --all",
     "stylelint": "nx run-many --target=stylelint --all",
     "build:api-client": "pwsh ./openapi.ps1 https://localhost:5001/"
