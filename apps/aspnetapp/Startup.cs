@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -67,6 +68,8 @@ namespace Zukte {
             // After a user is signed in, auto create an account
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
           }).AddCookie(options => {
+            options.Cookie.SameSite = SameSiteMode.None; // required for CORS authentication
+
             // options.Cookie.Domain
             options.EventsType = typeof(CustomCookieAuthenticationEvents);
             options.LoginPath = "/api/Account/Login";
@@ -94,7 +97,7 @@ namespace Zukte {
         options.AddPolicy(name: MyAllowSpecificOrigins,
             builder => {
               builder.WithOrigins(origins)
-                .AllowCredentials();
+                .AllowCredentials(); // required for CORS authentication
             });
       });
       #endregion

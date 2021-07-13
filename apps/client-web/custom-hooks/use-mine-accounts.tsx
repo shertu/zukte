@@ -9,9 +9,10 @@ import {
 } from '../components/infinite-scroll-list/infinite-scroll-list';
 
 import React from 'react';
+import config from '../lib/zukte-api-client-configuration/zukte-api-client-configuration';
 
 export function useMineAccounts(): InfiniteScrollListValue<ApplicationUser> {
-  const client = new ApplicationUserServiceApi();
+  const client = new ApplicationUserServiceApi(config);
 
   const [mineAccounts, setMineAccounts] = React.useState<
     InfiniteScrollListValue<ApplicationUser>

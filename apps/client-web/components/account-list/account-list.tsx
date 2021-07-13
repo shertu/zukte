@@ -10,6 +10,7 @@ import {
 
 import {AccountListItem} from './list-item/list-item';
 import React from 'react';
+import config from '../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
 
 export interface AccountListProps {
   mineAccounts?: ApplicationUser[];
@@ -21,7 +22,7 @@ export interface AccountListProps {
 export function AccountList(props: AccountListProps) {
   const {mineAccounts} = props;
 
-  const client = new ApplicationUserServiceApi();
+  const client = new ApplicationUserServiceApi(config);
 
   const [value, onChange] = React.useState<
     InfiniteScrollListValue<ApplicationUser>

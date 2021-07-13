@@ -2,6 +2,7 @@ import {AccountApi, AccountHttpContextSignOutRequest} from '@zukte/api-client';
 import {Button, Snackbar} from '@material-ui/core';
 
 import React from 'react';
+import config from '../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
 
 // import {Button, message} from 'antd';
 
@@ -15,7 +16,7 @@ const errorMessage =
 export function AccountLogoutButton(props: {redirect?: string}) {
   const {redirect} = props;
 
-  const client = new AccountApi();
+  const client = new AccountApi(config);
 
   const [open, setOpen] = React.useState(false);
 

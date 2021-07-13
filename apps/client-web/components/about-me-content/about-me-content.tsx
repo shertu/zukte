@@ -1,7 +1,7 @@
 import {CardMedia, Link as MuiLink, Typography} from '@material-ui/core';
 
 import React from 'react';
-import {calculateAgeFromBirthdate} from '../../lib/utilities/age-calculator';
+import {calculateAgeFromBirthdate} from '../../lib/age-calculator/age-calculator';
 import {mail} from 'fluent-mailto';
 
 const jaredblackmanDOB = new Date('1996-06-10');

@@ -16,6 +16,7 @@ import {Button, IconButton} from '@material-ui/core';
 import {Delete} from '@material-ui/icons';
 import React from 'react';
 import {Rfc7807Alert} from '../../rfc-7807-alert/rfc-7807-alert';
+import config from '../../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
 
 /**
  * A list of the application users or accounts stored in the application.
@@ -27,7 +28,7 @@ export function AccountListItem(props: {
   const {mineAccounts = []} = props;
   const {id, name, picture} = props.user;
 
-  const client = new ApplicationUserServiceApi();
+  const client = new ApplicationUserServiceApi(config);
 
   const [errorOccur, setErrorOccur] = React.useState<boolean>(false);
 
