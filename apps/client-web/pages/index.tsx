@@ -10,7 +10,7 @@ import React from 'react';
  * The page the user scrolls down to after seeing the landing screen.
  */
 export function LandingPage() {
-  const pageid: string = 'about-me-page';
+  const pageid = 'about-me-page';
 
   return (
     <>

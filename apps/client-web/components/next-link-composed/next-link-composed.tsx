@@ -81,19 +81,14 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
   if (isExternal) {
     if (noLinkStyle) {
       return (
-        <a
-          className={className}
-          href={href as string}
-          ref={ref as any}
-          {...other}
-        />
+        <a className={className} href={href.toString()} ref={ref} {...other} />
       );
     }
 
     return (
       <MuiLink
         className={className}
-        href={href as string}
+        href={href.toString()}
         ref={ref}
         {...other}
       />
@@ -102,12 +97,7 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
 
   if (noLinkStyle) {
     return (
-      <NextLinkComposed
-        className={className}
-        ref={ref as any}
-        to={href}
-        {...other}
-      />
+      <NextLinkComposed className={className} ref={ref} to={href} {...other} />
     );
   }
 

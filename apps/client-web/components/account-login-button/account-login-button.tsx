@@ -21,12 +21,15 @@ export function AccountLoginButton(props: {redirect?: string}) {
       returnUrl: redirectUri,
     };
 
-    const searchParams: URLSearchParams = new URLSearchParams(
-      requestParameters as URLSearchParams
-    );
+    // const searchParams: URLSearchParams = new URLSearchParams(
+    //   requestParameters as URLSearchParams
+    // );
 
     const authorizationCodeRequestUrl: string =
-      BASE_PATH + '/api/Account/Login' + '?' + searchParams.toString();
+      BASE_PATH +
+      '/api/Account/Login' +
+      '?' +
+      `returnUrl=${requestParameters.returnUrl}`;
 
     window.location.assign(authorizationCodeRequestUrl);
   }

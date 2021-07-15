@@ -1,11 +1,9 @@
 import {AppHeader} from '../components/app-header/app-header';
 import {AppPage} from '../components/app-page/app-page';
 import {ImageShareList} from '../components/image-share-list/image-share-list';
-import {ImageStorageInsertResponse} from '@zukte/api-client';
 import {InfiniteScrollListValue} from '../components/infinite-scroll-list/infinite-scroll-list';
 import React from 'react';
 import {Typography} from '@material-ui/core';
-import {UploadImageForm} from '../components/upload-image-form/UploadImageForm';
 
 const MAX_FILE_SIZE = 5000000; // bytes = 5 MB
 
@@ -23,24 +21,24 @@ export function ImageShareMicroservice() {
   /**
    * A hook to prepend the uploaded image to the image item collection.
    */
-  function onSuccessfulUpload(responses: ImageStorageInsertResponse[]) {
-    const additionalUrls: string[] = [];
+  // function onSuccessfulUpload(responses: ImageStorageInsertResponse[]) {
+  //   const additionalUrls: string[] = [];
 
-    responses.forEach((element: ImageStorageInsertResponse) => {
-      const {insertedImageUrl} = element;
+  //   responses.forEach((element: ImageStorageInsertResponse) => {
+  //     const {insertedImageUrl} = element;
 
-      if (insertedImageUrl) {
-        additionalUrls.push(insertedImageUrl);
-      }
-    });
+  //     if (insertedImageUrl) {
+  //       additionalUrls.push(insertedImageUrl);
+  //     }
+  //   });
 
-    const nextValue: InfiniteScrollListValue<string> = {
-      ...images,
-      items: [...additionalUrls, ...(images.items ?? [])],
-    };
+  //   const nextValue: InfiniteScrollListValue<string> = {
+  //     ...images,
+  //     items: [...additionalUrls, ...(images.items ?? [])],
+  //   };
 
-    setImages(nextValue);
-  }
+  //   setImages(nextValue);
+  // }
 
   return (
     <>

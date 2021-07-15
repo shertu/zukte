@@ -11,11 +11,10 @@ import {
   ListItemText,
   Typography,
 } from '@material-ui/core';
-import {Button, IconButton} from '@material-ui/core';
 
 import {Delete} from '@material-ui/icons';
+import {IconButton} from '@material-ui/core';
 import React from 'react';
-import {Rfc7807Alert} from '../../rfc-7807-alert/rfc-7807-alert';
 import config from '../../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
 
 /**
@@ -30,7 +29,7 @@ export function AccountListItem(props: {
 
   const client = new ApplicationUserServiceApi(config);
 
-  const [errorOccur, setErrorOccur] = React.useState<boolean>(false);
+  // const [errorOccur, setErrorOccur] = React.useState<boolean>(false);
 
   const isMineApplicationUser = Boolean(
     mineAccounts.find(elem => elem.id && elem.id === id)
@@ -46,20 +45,9 @@ export function AccountListItem(props: {
 
     client
       .applicationUserServiceDelete(request)
-      .then(() => window.location.reload())
-      .catch(() => setErrorOccur(true));
+      .then(() => window.location.reload());
+    // .catch(() => setErrorOccur(true));
   }
-
-  let deleteApplicationUserAction: JSX.Element | undefined;
-  if (isMineApplicationUser) {
-    deleteApplicationUserAction = (
-      <Button variant="contained" startIcon={<Delete />}>
-        remove account
-      </Button>
-    );
-  }
-
-  // <List dense={dense}>
 
   return (
     <ListItem>

@@ -5,7 +5,6 @@ import {StylesProvider, ThemeProvider} from '@material-ui/core/styles';
 
 import {AppProps} from 'next/app';
 import DateFnsUtils from '@date-io/date-fns';
-import Head from 'next/head';
 import {MuiPickersUtilsProvider} from '@material-ui/pickers';
 import NProgress from 'nprogress';
 import NextLink from 'next/link';

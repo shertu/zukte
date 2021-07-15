@@ -4,8 +4,6 @@ import InfiniteScroll, {
 
 import React from 'react';
 
-// import {Rfc7807Alert} from '../rfc-7807-alert/rfc-7807-alert';
-
 export interface InfiniteScrollListValue<T> {
   items?: T[];
   nextPageToken?: string | null | undefined;
@@ -46,7 +44,6 @@ export interface InfiniteScrollListProps<T>
   value?: InfiniteScrollListValue<T>;
   onChange?: (value: InfiniteScrollListValue<T>) => void;
   paginationPageSize: number;
-  render?: (value: T, index: number) => React.ReactNode;
 }
 
 /**
@@ -58,16 +55,11 @@ export function InfiniteScrollList<T>(props: InfiniteScrollListProps<T>) {
     items: [],
   });
 
-  function render_(): React.ReactNode {
-    return null;
-  }
-
   const {
     onFetchNextPageAsync,
     value = value_, // use internal value as default
     onChange = setValue_,
     paginationPageSize,
-    render = render_,
     ...other
   } = props;
 
@@ -95,14 +87,15 @@ export function InfiniteScrollList<T>(props: InfiniteScrollListProps<T>) {
    * Called when the page number is changed, and it takes
    * the resulting page number and page size as its arguments.
    */
-  function onChangePagination(page: number, pageSize?: number) {
+  // function onChangePagination(page: number, pageSize?: number) {
+  function onChangePagination(page: number) {
     setPaginationCurrent(page);
   }
 
-  /** The event called when the retry button is clicked. */
-  function onClickRetry() {
-    setErrorOccur(false);
-  }
+  // /** The event called when the retry button is clicked. */
+  // function onClickRetry() {
+  //   setErrorOccur(false);
+  // }
 
   /** The event called to increment the page no. */
   function onNext() {

@@ -1,13 +1,8 @@
 import {AccountApi, AccountHttpContextSignOutRequest} from '@zukte/api-client';
-import {Button, Snackbar} from '@material-ui/core';
 
+import {Button} from '@material-ui/core';
 import React from 'react';
 import config from '../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
-
-// import {Button, message} from 'antd';
-
-const errorMessage =
-  'an unexpected error occurred while attempting to sign out';
 
 /**
  * A button component used to sign out of
@@ -18,12 +13,7 @@ export function AccountLogoutButton(props: {redirect?: string}) {
 
   const client = new AccountApi(config);
 
-  const [open, setOpen] = React.useState(false);
-
-  /**  */
-  function handleClose(event?: React.SyntheticEvent, reason?: string) {
-    setOpen(false);
-  }
+  // const [open, setOpen] = React.useState(false);
 
   /** The click event for this button. */
   function onClick() {
@@ -35,8 +25,8 @@ export function AccountLogoutButton(props: {redirect?: string}) {
 
     client
       .accountHttpContextSignOut(requestParameters)
-      .then(() => window.location.assign(redirectUri))
-      .catch(() => setOpen(true));
+      .then(() => window.location.assign(redirectUri));
+    // .catch(() => setOpen(true));
   }
 
   return (
@@ -45,7 +35,7 @@ export function AccountLogoutButton(props: {redirect?: string}) {
         Sign Out
       </Button>
       {/* <Snackbar open={open} autoHideDuration={6000} onClose={handleClose}>
-        {errorMessage}
+        an unexpected error occurred while attempting to sign out
       </Snackbar> */}
     </>
   );
