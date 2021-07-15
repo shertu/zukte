@@ -68,7 +68,8 @@ namespace Zukte {
             // After a user is signed in, auto create an account
             options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
           }).AddCookie(options => {
-            options.Cookie.SameSite = SameSiteMode.None; // required for CORS authentication
+            // This is required because the client is on a different domain to the server
+            options.Cookie.SameSite = SameSiteMode.None;
 
             // options.Cookie.Domain
             options.EventsType = typeof(CustomCookieAuthenticationEvents);
@@ -97,8 +98,8 @@ namespace Zukte {
         options.AddPolicy(name: MyAllowSpecificOrigins,
             builder => {
               builder.WithOrigins(origins)
-                .AllowAnyMethod() // GET, HEAD, or POST are defaults 
-                .AllowCredentials(); // required for CORS authentication
+                .AllowAnyMethod()     // GET, HEAD, or POST are defaults
+                .AllowCredentials();  // required for CORS authentication
             });
       });
       #endregion

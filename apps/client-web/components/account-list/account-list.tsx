@@ -9,6 +9,7 @@ import {
 } from '../infinite-scroll-list/infinite-scroll-list';
 
 import {AccountListItem} from './list-item/list-item';
+import {List} from '@material-ui/core';
 import React from 'react';
 import config from '../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
 
@@ -57,16 +58,6 @@ export function AccountList(props: AccountListProps) {
     return nextValue;
   }
 
-  /**
-   * A display name wrapper for the account list item component.
-   */
-  function renderListItem(
-    item: ApplicationUser,
-    index: number
-  ): React.ReactNode {
-    return <AccountListItem user={item} mineAccounts={mineAccounts} />;
-  }
-
   // order elements with mine accounts first
   const sorted: InfiniteScrollListValue<ApplicationUser> = {
     ...value,
@@ -94,7 +85,16 @@ export function AccountList(props: AccountListProps) {
       onChange={onChange}
       onFetchNextPageAsync={onFetchNextPageAsync}
       paginationPageSize={25}
-      render={renderListItem}
-    />
+    >
+      <List>
+        {value.items?.map(item => (
+          <AccountListItem
+            key={item.id}
+            user={item}
+            mineAccounts={mineAccounts}
+          />
+        ))}
+      </List>
+    </InfiniteScrollList>
   );
 }

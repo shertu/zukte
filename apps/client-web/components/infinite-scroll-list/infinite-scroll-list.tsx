@@ -2,7 +2,6 @@ import InfiniteScroll, {
   Props as InfiniteScrollProps,
 } from 'react-infinite-scroll-component';
 
-import {List} from '@material-ui/core';
 import React from 'react';
 
 // import {Rfc7807Alert} from '../rfc-7807-alert/rfc-7807-alert';
@@ -39,7 +38,7 @@ export function shouldFetchMore<T>(
 export interface InfiniteScrollListProps<T>
   extends Omit<
     InfiniteScrollProps,
-    'dataLength' | 'next' | 'hasMore' | 'loader' | 'children'
+    'dataLength' | 'next' | 'hasMore' | 'loader'
   > {
   onFetchNextPageAsync: (
     current: InfiniteScrollListValue<T>
@@ -114,35 +113,13 @@ export function InfiniteScrollList<T>(props: InfiniteScrollListProps<T>) {
     }
   }
 
-  // const warnMessage = `The request to fetch additional ${itemType}
-  //   was successful but no ${itemType} were found.`;
-
-  // const errorMessage = `The request to fetch additional ${itemType}
-  //   was unsuccessful.`;
-
   return (
-    <>
-      <InfiniteScroll
-        {...other}
-        dataLength={length}
-        next={onNext}
-        hasMore={potential}
-        loader={potential && should && !errorOccur}
-      >
-        <List>{value.items?.map(render)}</List>
-      </InfiniteScroll>
-
-      {/* {!itemLength && value.state.hasMadeAtLeastOneFetch && (
-        <Alert type="warning" message={warnMessage} />
-      )} */}
-
-      {/* {errorOccur && (
-        <Rfc7807Alert
-          title={errorMessage}
-          type="/error/infinite-scroll-page-list"
-          onClickRetry={onClickRetry}
-        />
-      )} */}
-    </>
+    <InfiniteScroll
+      {...other}
+      dataLength={length}
+      next={onNext}
+      hasMore={potential}
+      loader={potential && should && !errorOccur}
+    />
   );
 }

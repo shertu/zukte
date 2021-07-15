@@ -1,16 +1,11 @@
-import {
-  IPageableListState,
-  PageableListState,
-} from '../components/infinite-scroll-list/pageable-list-state';
-
+import {AppHeader} from '../components/app-header/app-header';
 import {AppPage} from '../components/app-page/app-page';
 import {ImageShareList} from '../components/image-share-list/image-share-list';
-import {ImageStorageInsertResponse} from '../../../openapi-generator';
+import {ImageStorageInsertResponse} from '@zukte/api-client';
+import {InfiniteScrollListValue} from '../components/infinite-scroll-list/infinite-scroll-list';
 import React from 'react';
-import {Typography} from 'antd';
+import {Typography} from '@material-ui/core';
 import {UploadImageForm} from '../components/upload-image-form/UploadImageForm';
-
-const {Paragraph, Text} = Typography;
 
 const MAX_FILE_SIZE = 5000000; // bytes = 5 MB
 
@@ -21,9 +16,9 @@ const MAX_FILE_SIZE = 5000000; // bytes = 5 MB
 export function ImageShareMicroservice() {
   const MAX_FILE_SIZE_MB: string = (MAX_FILE_SIZE / 1000000).toFixed(2);
 
-  const [images, setImages] = React.useState<PageableListState<string>>(
-    new PageableListState<string>()
-  );
+  const [images, setImages] = React.useState<InfiniteScrollListValue<string>>({
+    items: [],
+  });
 
   /**
    * A hook to prepend the uploaded image to the image item collection.
@@ -39,35 +34,37 @@ export function ImageShareMicroservice() {
       }
     });
 
-    const nextImages: IPageableListState<string> = {
-      ...images.state,
-      items: [...additionalUrls, ...images.state.items],
+    const nextValue: InfiniteScrollListValue<string> = {
+      ...images,
+      items: [...additionalUrls, ...(images.items ?? [])],
     };
 
-    const nextValue = new PageableListState<string>(nextImages);
     setImages(nextValue);
   }
 
   return (
-    <AppPage pageTitle="Image Share Demo">
-      <Typography>
-        <Paragraph>
+    <>
+      <AppHeader />
+      <AppPage pageTitle="Image Share Demo">
+        <Typography>
           To use this demo service please click or drag images into the upload
           area; each image is required to be smaller than {MAX_FILE_SIZE_MB} MB.
-          You <Text strong>cannot</Text> delete an image once it is uploaded.
-        </Paragraph>
-      </Typography>
+          You <strong>cannot</strong> delete an image once it is uploaded.
+        </Typography>
 
-      <div style={{padding: '2em 24px'}}>
-        <UploadImageForm
+        <div style={{padding: '2em 24px'}}>
+          {/* <UploadImageForm
           maximumFileSize={MAX_FILE_SIZE}
           onSuccessfulUpload={onSuccessfulUpload}
-        />
-      </div>
+        /> */}
+        </div>
 
-      <AppPage pageTitle="Uploaded Images">
-        <ImageShareList value={images} onChange={setImages} />
+        <AppPage pageTitle="Uploaded Images">
+          <ImageShareList value={images} onChange={setImages} />
+        </AppPage>
       </AppPage>
-    </AppPage>
+    </>
   );
 }
+
+export default ImageShareMicroservice;

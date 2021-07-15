@@ -13,7 +13,7 @@ const mailto = mail.to('djared.xeknau@outlook.com').build();
  */
 export function AboutMeContent() {
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full flex flex-col items-center space-y-16">
       <div className="flex flex-row items-center space-x-10 text-6xl h-16">
         <span>{calculateAgeFromBirthdate(jaredblackmanDOB)}</span>
         <span style={{color: '#00a8ff'}}>♂</span>

@@ -1,24 +1,21 @@
-import './style.less';
-
-import {
-  IPageableListState,
-  PageableListState,
-} from '../infinite-scroll-list/pageable-list-state';
+import {ImageList, ImageListItem} from '@material-ui/core';
 import {
   ImageStorageServiceApi,
   ImageStorageServiceGetListRequest,
-} from '../../../../openapi-generator';
+} from '@zukte/api-client';
+import {
+  InfiniteScrollList,
+  InfiniteScrollListValue,
+} from '../infinite-scroll-list/infinite-scroll-list';
 
-import {InfiniteScrollList} from '../infinite-scroll-list/infinite-scroll-list';
-import {List} from 'antd';
 import React from 'react';
 
 /**
  * A list of the application users or accounts stored in the application.
  */
 export function ImageShareList(props: {
-  value?: PageableListState<string>;
-  onChange?: (value: PageableListState<string>) => void;
+  value?: InfiniteScrollListValue<string>;
+  onChange?: (value: InfiniteScrollListValue<string>) => void;
 }) {
   const {value, onChange} = props;
 
@@ -29,42 +26,31 @@ export function ImageShareList(props: {
   /**
    * Tigger to load the next page of data.
    */
-  async function onFetchNextPageAsync(current: PageableListState<string>) {
+  async function onFetchNextPageAsync(
+    current: InfiniteScrollListValue<string>
+  ) {
     const request: ImageStorageServiceGetListRequest = {
       maxResults: paginationPageSize,
     };
 
-    const nextPageToken = current.state.nextPageToken;
+    const nextPageToken = current.nextPageToken;
     if (nextPageToken) {
       request.pageToken = nextPageToken;
     }
 
     const response = await client.imageStorageServiceGetList(request);
 
-    const currentItems: string[] = current.state.items || [];
+    const currentItems: string[] = current.items || [];
     const additionalItems: string[] = response.items || [];
 
-    const nextValue: IPageableListState<string> = {
+    const nextValue: InfiniteScrollListValue<string> = {
       items: currentItems.concat(additionalItems),
       nextPageToken: response.nextPageToken,
       hasMadeAtLeastOneFetch: true,
     };
 
-    return new PageableListState<string>(nextValue);
+    return nextValue;
   }
-
-  /**
-   * A display name wrapper for the account list item component.
-   */
-  function renderListItem(item: string, index: number) {
-    return (
-      <List.Item key={index}>
-        <img className="max-cell-xs imageshare-list-image" src={item} />
-      </List.Item>
-    );
-  }
-
-  const spacing: number | undefined = 16;
 
   return (
     <InfiniteScrollList
@@ -72,16 +58,22 @@ export function ImageShareList(props: {
       onChange={onChange}
       value={value}
       paginationPageSize={paginationPageSize}
-      list={{
-        renderItem: renderListItem,
-        grid: {
-          gutter: spacing,
-          xs: 1,
-          md: 2,
-          xl: 3,
-        },
-        style: {padding: spacing},
-      }}
-    />
+    >
+      <ImageList
+        // variant="quilted"
+        cols={4}
+        rowHeight={121}
+      >
+        {value?.items?.map(imageUrl => (
+          <ImageListItem
+            key={imageUrl}
+            // cols={item.cols || 1}
+            // rows={item.rows || 1}
+          >
+            <img src={imageUrl} loading="lazy" />
+          </ImageListItem>
+        ))}
+      </ImageList>
+    </InfiniteScrollList>
   );
 }

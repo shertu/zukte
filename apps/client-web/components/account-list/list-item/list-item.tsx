@@ -74,7 +74,11 @@ export function AccountListItem(props: {
       />
       {isMineApplicationUser && (
         <ListItemSecondaryAction>
-          <IconButton edge="end" aria-label="delete">
+          <IconButton
+            edge="end"
+            aria-label="delete"
+            onClick={() => onDeleteApplicationUser(id)}
+          >
             <Delete />
           </IconButton>
         </ListItemSecondaryAction>

@@ -50,7 +50,7 @@ const portfolioNavItemArr: PortfolioNavItemProps[] = [
  */
 export function PortfolioNav() {
   return (
-    <nav>
+    <nav className="flex flex-wrap">
       {portfolioNavItemArr.map(item => (
         <Card key={item.to}>
           <Link href={item.to}>

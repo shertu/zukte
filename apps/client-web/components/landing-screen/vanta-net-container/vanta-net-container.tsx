@@ -1,7 +1,3 @@
-/* eslint-disable */
-
-import * as ThreeJs from 'three';
-
 // @ts-ignore
 import NET from 'vanta/dist/vanta.net.min.js';
 import React from 'react';
@@ -24,7 +20,6 @@ export function VantaNetContainer(
       setVantaEffect(
         NET({
           el: vantaRef.current,
-          THREE: ThreeJs, // use a custom THREE when initializing
           color: 0xacacde,
           backgroundColor: 0xe5fcff,
         })
