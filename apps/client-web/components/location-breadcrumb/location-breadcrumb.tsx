@@ -1,4 +1,5 @@
-import {Breadcrumbs} from '@material-ui/core';
+import {Breadcrumbs, BreadcrumbsProps} from '@material-ui/core';
+
 import {Home} from '@material-ui/icons';
 import Link from '../next-link-composed/next-link-composed';
 import React from 'react';
@@ -7,7 +8,7 @@ import {useRouter} from 'next/router';
 /**
  * A breadcrumb component for the window's location.
  */
-export function LocationBreadcrumb() {
+export function LocationBreadcrumb(props: BreadcrumbsProps) {
   const router = useRouter();
   const pathSnippets = router.pathname.split('/').filter(i => i);
 
@@ -26,9 +27,7 @@ export function LocationBreadcrumb() {
     </Link>,
   ].concat(extraBreadcrumbItems);
 
-  return (
-    <Breadcrumbs className="flex items-center h-16" aria-label="breadcrumb">
-      {breadcrumbItems}
-    </Breadcrumbs>
-  );
+  return <Breadcrumbs {...props}>{breadcrumbItems}</Breadcrumbs>;
 }
+
+export default LocationBreadcrumb;

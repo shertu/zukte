@@ -1,4 +1,4 @@
-import {CardMedia, Link as MuiLink, Typography} from '@material-ui/core';
+import {CardMedia, Grid, Link as MuiLink, Typography} from '@material-ui/core';
 
 import React from 'react';
 import {calculateAgeFromBirthdate} from '../../lib/age-calculator/age-calculator';
@@ -8,20 +8,39 @@ const jaredblackmanDOB = new Date('1996-06-10');
 
 const mailto = mail.to('djared.xeknau@outlook.com').build();
 
+export type AboutMeContentProps = React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLDivElement>,
+  HTMLDivElement
+>;
+
 /**
  * A page of information about me, Jared Michael Blackman.
  */
 export function AboutMeContent() {
   return (
-    <div className="w-full flex flex-col items-center space-y-16">
-      <div className="flex flex-row items-center space-x-10 text-6xl h-16">
-        <span>{calculateAgeFromBirthdate(jaredblackmanDOB)}</span>
-        <span style={{color: '#00a8ff'}}>♂</span>
-        <img className="h-12" src="https://i.imgur.com/4Ae8JgG.png" />
-      </div>
+    <>
+      <Grid
+        container
+        alignItems="center"
+        justifyContent="center"
+        className="text-6xl"
+        spacing={5}
+      >
+        <Grid item>
+          <span>{calculateAgeFromBirthdate(jaredblackmanDOB)}</span>
+        </Grid>
 
-      <div className="w-full flex flex-row items-center justify-center flex-wrap">
-        <div className="w-full max-w-sm m-4">
+        <Grid item>
+          <span style={{color: '#00a8ff'}}>♂</span>
+        </Grid>
+
+        <Grid item>
+          <img className="h-12" src="https://i.imgur.com/4Ae8JgG.png" />
+        </Grid>
+      </Grid>
+
+      <Grid container alignItems="center" justifyContent="center" spacing={5}>
+        <Grid item className="w-full max-w-sm">
           <Typography>
             Hello and welcome to my personal website. For those who wish to know
             more about me, please&nbsp;
@@ -31,13 +50,16 @@ export function AboutMeContent() {
               read my LinkedIn profile.
             </MuiLink>
           </Typography>
-        </div>
-        <CardMedia
-          className="w-full max-w-sm m-4 rounded h-52"
-          image="https://i.imgur.com/gcWo3ZE.jpg"
-        />
-      </div>
-    </div>
+        </Grid>
+
+        <Grid item className="w-full max-w-sm">
+          <CardMedia
+            className="rounded h-52"
+            image="https://i.imgur.com/gcWo3ZE.jpg"
+          />
+        </Grid>
+      </Grid>
+    </>
   );
 }
 

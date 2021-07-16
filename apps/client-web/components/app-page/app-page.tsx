@@ -25,3 +25,5 @@ export function AppPage(props: PageProps) {
     </Container>
   );
 }
+
+export default AppPage;

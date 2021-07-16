@@ -17,19 +17,19 @@ import {IconButton} from '@material-ui/core';
 import React from 'react';
 import config from '../../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
 
+export interface AccountListItemProps {
+  account: ApplicationUser;
+  mineAccounts?: ApplicationUser[];
+}
+
 /**
  * A list of the application users or accounts stored in the application.
  */
-export function AccountListItem(props: {
-  user: ApplicationUser;
-  mineAccounts?: ApplicationUser[];
-}) {
+export function AccountListItem(props: AccountListItemProps) {
   const {mineAccounts = []} = props;
-  const {id, name, picture} = props.user;
+  const {id, name, picture} = props.account;
 
   const client = new ApplicationUserServiceApi(config);
-
-  // const [errorOccur, setErrorOccur] = React.useState<boolean>(false);
 
   const isMineApplicationUser = Boolean(
     mineAccounts.find(elem => elem.id && elem.id === id)
@@ -46,7 +46,6 @@ export function AccountListItem(props: {
     client
       .applicationUserServiceDelete(request)
       .then(() => window.location.reload());
-    // .catch(() => setErrorOccur(true));
   }
 
   return (
@@ -72,10 +71,7 @@ export function AccountListItem(props: {
         </ListItemSecondaryAction>
       )}
     </ListItem>
-
-    //   {errorOccur && (
-    //     <Rfc7807Alert title="The request to delete your account was unsuccessful." />
-    //   )}
-    // </div>
   );
 }
+
+export default AccountListItem;

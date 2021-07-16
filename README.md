@@ -32,3 +32,5 @@ To generate a trusted self-signed SSL certificate for local development:
 ```
 dotnet dev-certs https -ep ./certificate.crt -np --trust --format PEM
 ```
+
+A error message component which implements the https://tools.ietf.org/html/rfc7807 standard.

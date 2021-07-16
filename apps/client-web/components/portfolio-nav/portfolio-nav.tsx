@@ -3,6 +3,7 @@ import {
   CardActionArea,
   CardContent,
   CardMedia,
+  Grid,
   Typography,
 } from '@material-ui/core';
 
@@ -50,24 +51,36 @@ const portfolioNavItemArr: PortfolioNavItemProps[] = [
  */
 export function PortfolioNav() {
   return (
-    <nav className="flex flex-wrap">
+    <Grid container component="nav" spacing={1} justifyContent="center">
       {portfolioNavItemArr.map(item => (
-        <Card key={item.to}>
-          <Link href={item.to}>
-            <CardActionArea>
-              <CardMedia image={item.src} title={item.title} className="h-48" />
-              <CardContent>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {item.title}
-                </Typography>
-                <Typography variant="body2" color="textSecondary" component="p">
-                  {item.description}
-                </Typography>
-              </CardContent>
-            </CardActionArea>
-          </Link>
-        </Card>
+        <Grid item>
+          <Card key={item.to}>
+            <Link href={item.to}>
+              <CardActionArea>
+                <CardMedia
+                  image={item.src}
+                  title={item.title}
+                  className="h-48"
+                />
+                <CardContent>
+                  <Typography gutterBottom variant="h5" component="h2">
+                    {item.title}
+                  </Typography>
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="p"
+                  >
+                    {item.description}
+                  </Typography>
+                </CardContent>
+              </CardActionArea>
+            </Link>
+          </Card>
+        </Grid>
       ))}
-    </nav>
+    </Grid>
   );
 }
+
+export default PortfolioNav;

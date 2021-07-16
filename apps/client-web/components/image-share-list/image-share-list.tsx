@@ -10,13 +10,15 @@ import {
 
 import React from 'react';
 
+export interface ImageShareListProps {
+  value?: InfiniteScrollListValue<string>;
+  onChange?: (value: InfiniteScrollListValue<string>) => void;
+}
+
 /**
  * A list of the application users or accounts stored in the application.
  */
-export function ImageShareList(props: {
-  value?: InfiniteScrollListValue<string>;
-  onChange?: (value: InfiniteScrollListValue<string>) => void;
-}) {
+export function ImageShareList(props: ImageShareListProps) {
   const {value, onChange} = props;
 
   const client = new ImageStorageServiceApi();
@@ -58,18 +60,11 @@ export function ImageShareList(props: {
       onChange={onChange}
       value={value}
       paginationPageSize={paginationPageSize}
+      className="p-1"
     >
-      <ImageList
-        // variant="quilted"
-        cols={4}
-        rowHeight={121}
-      >
+      <ImageList>
         {value?.items?.map(imageUrl => (
-          <ImageListItem
-            key={imageUrl}
-            // cols={item.cols || 1}
-            // rows={item.rows || 1}
-          >
+          <ImageListItem key={imageUrl}>
             <img src={imageUrl} loading="lazy" />
           </ImageListItem>
         ))}

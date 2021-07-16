@@ -90,7 +90,7 @@ export function AccountList(props: AccountListProps) {
         {value.items?.map(item => (
           <AccountListItem
             key={item.id}
-            user={item}
+            account={item}
             mineAccounts={mineAccounts}
           />
         ))}
@@ -98,3 +98,5 @@ export function AccountList(props: AccountListProps) {
     </InfiniteScrollList>
   );
 }
+
+export default AccountList;

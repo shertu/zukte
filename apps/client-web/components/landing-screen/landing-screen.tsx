@@ -5,19 +5,17 @@ import {Link as ScrollLink} from 'react-scroll';
 import {VantaNetContainer} from './vanta-net-container/vanta-net-container';
 
 export interface LandingScreenProps {
-  readMoreLinkFragment: string;
+  scrollTo?: string;
 }
 
 /**
  * The first screen of content which the user will see.
  */
 export function LandingScreen(props: LandingScreenProps) {
-  const {readMoreLinkFragment} = props;
+  const {scrollTo} = props;
 
   return (
     <VantaNetContainer className="h-screen">
-      {/* <Space className="intro-container" direction="vertical" align="end"> */}
-
       <div
         className="absolute space-y-4"
         style={{top: '5.06cm', padding: '0 7.66%'}}
@@ -34,11 +32,13 @@ export function LandingScreen(props: LandingScreenProps) {
         </Card>
 
         <div className="flex justify-end">
-          <ScrollLink to={readMoreLinkFragment} smooth={true} duration={500}>
-            <Button variant="contained" color="primary">
-              read more
-            </Button>
-          </ScrollLink>
+          {scrollTo && (
+            <ScrollLink to={scrollTo} smooth={true} duration={500}>
+              <Button variant="contained" color="primary">
+                read more
+              </Button>
+            </ScrollLink>
+          )}
         </div>
       </div>
     </VantaNetContainer>

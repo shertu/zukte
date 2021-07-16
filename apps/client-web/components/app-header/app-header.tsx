@@ -7,7 +7,7 @@ import React from 'react';
 export function AppHeader() {
   return (
     <AppBar position="sticky" color="transparent" elevation={0}>
-      <Container fixed>
+      <Container fixed className="flex items-center h-12">
         <LocationBreadcrumb />
       </Container>
     </AppBar>

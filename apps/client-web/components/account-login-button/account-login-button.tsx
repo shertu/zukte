@@ -6,33 +6,33 @@ import {
 import GoogleButton from 'react-google-button';
 import React from 'react';
 
+export interface AccountLoginButtonProps {
+  redirectUri?: string;
+}
+
 /**
  * A button component used to sign in to
  * the application via the Google Auth API.
  */
-export function AccountLoginButton(props: {redirect?: string}) {
-  const {redirect} = props;
+export function AccountLoginButton(props: AccountLoginButtonProps) {
+  const {redirectUri = window.location.href} = props;
 
   /** The click event for this button. */
   function onClick() {
-    const redirectUri: string = redirect || window.location.toString();
-
     const requestParameters: AccountGoogleOpenIdConnectChallengeRequest = {
       returnUrl: redirectUri,
     };
 
-    // const searchParams: URLSearchParams = new URLSearchParams(
-    //   requestParameters as URLSearchParams
-    // );
+    const url = new URL('/api/Account/Login', BASE_PATH);
 
-    const authorizationCodeRequestUrl: string =
-      BASE_PATH +
-      '/api/Account/Login' +
-      '?' +
-      `returnUrl=${requestParameters.returnUrl}`;
+    if (requestParameters.returnUrl) {
+      url.searchParams.append('returnUrl', requestParameters.returnUrl);
+    }
 
-    window.location.assign(authorizationCodeRequestUrl);
+    window.location.assign(url.href);
   }
 
   return <GoogleButton type="light" onClick={onClick} />;
 }
+
+export default AccountLoginButton;
