@@ -16,6 +16,7 @@ import {Delete} from '@material-ui/icons';
 import {IconButton} from '@material-ui/core';
 import React from 'react';
 import config from '../../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
+import {useRouter} from 'next/router';
 
 export interface AccountListItemProps {
   account: ApplicationUser;
@@ -31,6 +32,8 @@ export function AccountListItem(props: AccountListItemProps) {
 
   const client = new ApplicationUserServiceApi(config);
 
+  const router = useRouter();
+
   const isMineApplicationUser = Boolean(
     mineAccounts.find(elem => elem.id && elem.id === id)
   );
@@ -43,9 +46,7 @@ export function AccountListItem(props: AccountListItemProps) {
       id: id,
     };
 
-    client
-      .applicationUserServiceDelete(request)
-      .then(() => window.location.reload());
+    client.applicationUserServiceDelete(request).then(() => router.reload());
   }
 
   return (

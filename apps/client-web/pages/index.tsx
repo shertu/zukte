@@ -10,7 +10,7 @@ import React from 'react';
  * The page the user scrolls down to after seeing the landing screen.
  */
 export function LandingPage() {
-  const pageid = 'about-me-page';
+  const landingScreenScrollToId = 'about-me-content';
 
   return (
     <>
@@ -19,13 +19,15 @@ export function LandingPage() {
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js" />
       </Head>
       <Paper square elevation={3}>
-        <LandingScreen readMoreLinkFragment={pageid} />
+        <LandingScreen scrollTo={landingScreenScrollToId} />
       </Paper>
       <AppPage
-        id={pageid}
-        className="min-h-screen flex flex-col items-center pt-16"
+        className="min-h-screen flex flex-col items-center"
+        id={landingScreenScrollToId}
       >
-        <AboutMeContent />
+        <div className="w-full mb-12">
+          <AboutMeContent />
+        </div>
         <PortfolioNav />
       </AppPage>
     </>

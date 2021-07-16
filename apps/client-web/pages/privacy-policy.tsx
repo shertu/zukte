@@ -2,6 +2,7 @@ import {AppHeader} from '../components/app-header/app-header';
 import {AppPage} from '../components/app-page/app-page';
 import React from 'react';
 import {Typography} from '@material-ui/core';
+import {useWindow} from '../custom-hooks/use-window';
 
 /**
  * This page outlines the rights of the user in
@@ -10,12 +11,9 @@ import {Typography} from '@material-ui/core';
  */
 export function PrivacyPolicy() {
   const [hostname, setHostname] = React.useState<string>();
-
-  function onFirstMount() {
-    setHostname(window.location.hostname.toUpperCase());
-  }
-
-  React.useEffect(onFirstMount, []);
+  useWindow(w => {
+    setHostname(w.location.hostname.toUpperCase());
+  });
 
   return (
     <>

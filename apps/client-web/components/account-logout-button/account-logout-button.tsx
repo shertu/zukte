@@ -3,6 +3,7 @@ import {AccountApi, AccountHttpContextSignOutRequest} from '@zukte/api-client';
 import {Button} from '@material-ui/core';
 import React from 'react';
 import config from '../../lib/zukte-api-client-configuration/zukte-api-client-configuration';
+import {useWindow} from '../../custom-hooks/use-window';
 
 export interface AccountLogoutButtonProps {
   redirectUri?: string;
@@ -13,7 +14,12 @@ export interface AccountLogoutButtonProps {
  * the application.
  */
 export function AccountLogoutButton(props: AccountLogoutButtonProps) {
-  const {redirectUri = window.location.href} = props;
+  const [href, setHref] = React.useState<string>();
+  useWindow(w => {
+    setHref(w.location.href);
+  });
+
+  const {redirectUri = href} = props;
 
   const client = new AccountApi(config);
 
@@ -23,9 +29,11 @@ export function AccountLogoutButton(props: AccountLogoutButtonProps) {
       returnUrl: redirectUri,
     };
 
-    client
-      .accountHttpContextSignOut(requestParameters)
-      .then(() => window.location.assign(redirectUri));
+    client.accountHttpContextSignOut(requestParameters).then(() => {
+      if (requestParameters.returnUrl) {
+        window.location.assign(requestParameters.returnUrl);
+      }
+    });
   }
 
   return (

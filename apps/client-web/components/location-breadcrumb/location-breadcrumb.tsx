@@ -6,7 +6,7 @@ import React from 'react';
 import {useRouter} from 'next/router';
 
 /**
- * A breadcrumb component for the window's location.
+ * A breadcrumb component for the router's location.
  */
 export function LocationBreadcrumb(props: BreadcrumbsProps) {
   const router = useRouter();

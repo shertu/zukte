@@ -23,7 +23,7 @@ export function AboutMeContent() {
         container
         alignItems="center"
         justifyContent="center"
-        className="text-6xl"
+        className="text-6xl p-8"
         spacing={5}
       >
         <Grid item>

@@ -23,8 +23,6 @@ const microservices: string[] = [
   '/map-microservice',
 ];
 
-export default microservices;
-
 const portfolioNavItemArr: PortfolioNavItemProps[] = [
   {
     to: microservices[0],

@@ -6,6 +6,8 @@ import NextLink, {LinkProps as NextLinkProps} from 'next/link';
 import clsx from 'clsx';
 import {useRouter} from 'next/router';
 
+// https://github.com/mui-org/material-ui/tree/HEAD/examples/nextjs-with-typescript/src/Link.tsx
+
 interface NextLinkComposedProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,
     Omit<NextLinkProps, 'href' | 'as'> {
@@ -14,10 +16,8 @@ interface NextLinkComposedProps
   href?: NextLinkProps['href'];
 }
 
-export const NextLinkComposed = React.forwardRef<
-  HTMLAnchorElement,
-  NextLinkComposedProps
->((props, ref) => {
+export function NextLinkComposed(props: NextLinkComposedProps) {
+  const ref = React.useRef<HTMLAnchorElement>();
   const {
     to,
     linkAs,
@@ -30,6 +30,10 @@ export const NextLinkComposed = React.forwardRef<
     locale,
     ...other
   } = props;
+
+  if (!ref.current) {
+    return null;
+  }
 
   return (
     <NextLink
@@ -45,7 +49,7 @@ export const NextLinkComposed = React.forwardRef<
       <a ref={ref} {...other} />
     </NextLink>
   );
-});
+}
 
 export type LinkProps = {
   activeClassName?: string;
@@ -57,7 +61,10 @@ export type LinkProps = {
 
 // A styled version of the Next.js Link component:
 // https://nextjs.org/docs/#with-link
-const Link = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
+
+export function Link(props: LinkProps) {
+  const ref = React.useRef<HTMLAnchorElement>();
+
   const {
     activeClassName = 'active',
     as: linkAs,
@@ -111,6 +118,6 @@ const Link = React.forwardRef<HTMLAnchorElement, LinkProps>((props, ref) => {
       {...other}
     />
   );
-});
+}
 
 export default Link;

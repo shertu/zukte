@@ -33,7 +33,7 @@ function CustomApp({Component, pageProps}: AppProps) {
             <footer style={{backgroundColor: '#E1F8DC'}}>
               <Container fixed className="py-4">
                 <NextLink href="/privacy-policy">
-                  <Button variant="outlined">Privacy Policy</Button>
+                  <Button variant="text">Privacy Policy</Button>
                 </NextLink>
               </Container>
             </footer>
