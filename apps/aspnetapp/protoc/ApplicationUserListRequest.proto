@@ -1,0 +1,9 @@
+syntax = "proto3";
+package zukte;
+
+message ApplicationUserListRequest {
+  string continuationToken = 1;
+  int32 pageSizeHint = 2;
+  bool mine = 3;
+  repeated string id = 4;
+}

@@ -1,0 +1,9 @@
+syntax = "proto3";
+package zukte;
+
+import "ImageStorageElement.proto";
+
+message ImageStorageListResponse {
+  string continuationToken = 1;
+  repeated ImageStorageElement items = 2;
+}

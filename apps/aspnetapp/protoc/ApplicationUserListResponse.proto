@@ -1,0 +1,9 @@
+syntax = "proto3";
+package zukte;
+
+import "ApplicationUser.proto";
+
+message ApplicationUserListResponse {
+  string continuationToken = 1;
+  repeated ApplicationUser items = 2;
+}

@@ -1,0 +1,14 @@
+version: '3.9'
+services:
+  database:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+      MYSQL_DATABASE: aspnetapp
+    ports:
+      - '3306:3306/tcp'
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    command: azurite-blob --blobHost 0.0.0.0
+    ports:
+      - '10000:10000/tcp'

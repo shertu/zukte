@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "baseUrl": ".", // this must be specified if "paths" is specified.
+    "paths": {
+      "components": ["src/components/index.tsx"],
+      "styles*": ["src/styles*"],
+      "business": ["src/business/index.ts"],
+      "icons": ["src/icons/index.tsx"],
+      "hooks": ["src/custom-hooks/index.ts"]
+    },
+    "allowJs": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "incremental": true,
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}

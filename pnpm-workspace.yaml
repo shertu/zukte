@@ -1,0 +1,5 @@
+packages:
+  - 'apps/aspnetapp'
+  - 'apps/client-web'
+  - 'libs/api-client'
+  - 'libs/node-selection-game'
