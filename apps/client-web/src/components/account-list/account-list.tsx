@@ -10,6 +10,9 @@ import {useAsyncIterator} from 'hooks';
 import {ZUKTE_CONFIGURATION} from 'business';
 
 export interface AccountListP {
+  /**
+   * The accounts which are authenticated with the user.
+   */
   mine?: ApplicationUser[];
 }
 
@@ -18,9 +21,13 @@ export interface AccountListP {
  */
 export function AccountList(props: AccountListP) {
   const {mine = []} = props;
-  const mineidset = new Set(mine.map(v => v.id));
 
-  const [generator] = React.useState(
+  /**
+   * We use an optimised set to store the ids the accounts which are authenticated with the user.
+   */
+  const mineKs = new Set(mine.map(m => m.id));
+
+  const [paginationV, paginationD, paginationN] = useAsyncIterator(
     applicationUserServiceGetListGenerator(
       {
         pageSizeHint: 30,
@@ -29,30 +36,34 @@ export function AccountList(props: AccountListP) {
     )
   );
 
-  const [pages, done, next] = useAsyncIterator(generator);
+  /**
+   * The accounts fetched from the server.
+   */
+  const accounts = paginationV.flatMap<ApplicationUser>(page => page.values);
 
-  const items = React.useMemo<ApplicationUser[]>(() => {
-    const pValues = pages.flatMap(p => p.values);
-    const filtered = pValues.filter(v => !mineidset.has(v.id));
+  const sorted = React.useMemo<ApplicationUser[]>(() => {
+    const filtered = accounts.filter(account => !mineKs.has(account.id));
     return [...mine, ...filtered];
-  }, [pages, mine, mineidset]);
+  }, [paginationV, mine, mineKs]);
 
   function isItemLoaded(index: number): boolean {
-    return done || index < items.length;
+    return paginationD || index < sorted.length;
   }
 
-  const itemData: AccountListItemP[] = items.map<AccountListItemP>(v => ({
-    account: v,
-    deleteSecondaryAction: mineidset.has(v.id),
-  }));
+  const itemData: AccountListItemP[] = sorted.map<AccountListItemP>(
+    account => ({
+      account: account,
+      deleteSecondaryAction: mineKs.has(account.id),
+    })
+  );
 
-  const itemCount: number = done ? items.length : items.length + 1;
+  const itemCount: number = paginationD ? sorted.length : sorted.length + 1;
 
   return (
     <InfiniteLoader
       isItemLoaded={isItemLoaded}
       itemCount={itemCount}
-      loadMoreItems={next}
+      loadMoreItems={paginationN}
     >
       {({onItemsRendered, ref}) => (
         <List<AccountListItemP[]>

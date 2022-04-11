@@ -8,25 +8,26 @@ import {List, ListItem} from '@mui/material';
 
 import {CreatePaymentRequest} from '@zukte/api-client';
 import {PaymentForm} from './payment-form/payment-form';
-import {PaymentFormValues} from './payment-form/values';
+import {PaymentFormV} from './payment-form/values';
 import React from 'react';
-import {SQUARE_LOCATION_ID} from 'logic/configuration/square';
-import {asyncnoop} from 'logic/noop';
 
 import {Chance} from 'chance';
-import {TokenStatus} from 'logic/token-status';
+import {asyncnoop, TokenStatus} from 'business';
 
 const ERROR_MESSAGE_REQUIRED = 'required';
 
-export interface PaymentFormikProps {
-  handleCreatePaymentRequest?: (request: CreatePaymentRequest) => Promise<void>;
+export interface PaymentFormikP {
+  /**
+   * The hook called after the form is succesfully submitted and the server receives the responses.
+   */
+  onSuccessHook?: (request: CreatePaymentRequest) => Promise<void>;
 }
 
 /**
  * A {@link Formik} form used to submit a payment via the application's payment gateway service.
  */
-export function PaymentFormik(props: PaymentFormikProps) {
-  const {handleCreatePaymentRequest = asyncnoop} = props;
+export function PaymentFormik(props: PaymentFormikP) {
+  const {onSuccessHook: handleCreatePaymentRequest = asyncnoop} = props;
 
   const [tokenizationError, setTokenizationError] = React.useState<
     TokenizationError | null | undefined
@@ -36,10 +37,10 @@ export function PaymentFormik(props: PaymentFormikProps) {
 
   return (
     <Formik
-      validate={async (values: PaymentFormValues) => {
+      validate={async (values: PaymentFormV) => {
         const {card, paymentAmount, paymentCurrencyCode} = values;
 
-        const errors: FormikErrors<PaymentFormValues> = {};
+        const errors: FormikErrors<PaymentFormV> = {};
 
         if (!card) {
           errors.card = ERROR_MESSAGE_REQUIRED;
@@ -55,7 +56,7 @@ export function PaymentFormik(props: PaymentFormikProps) {
 
         return errors;
       }}
-      onSubmit={async (values: PaymentFormValues, formikHelpers) => {
+      onSubmit={async (values: PaymentFormV, formikHelpers) => {
         const {card, paymentAmount, paymentCurrencyCode} = values;
 
         // part 1 - tokenize the card
@@ -72,7 +73,7 @@ export function PaymentFormik(props: PaymentFormikProps) {
         if (newTokenResult?.status === TokenStatus.OK) {
           // part 2 - handle successful token result
           const request: CreatePaymentRequest = {
-            locationId: SQUARE_LOCATION_ID,
+            locationId: process.env.SQUARE_LOCATION_ID,
             sourceId: newTokenResult.token,
             idempotencyKey: chance.guid(),
             amountMoney: {

@@ -1,10 +1,10 @@
 import {AppPage, ImageShareList, ImageShareUploadFormik} from 'components';
 import {Divider, Typography} from '@mui/material';
 
-import {ImageStorageInsertResponse} from '@zukte/api-client';
 import React from 'react';
+import {ImageStorageElement} from '@zukte/api-client';
 
-export interface ImageShareMicroservicePageProps {
+export interface ImageShareMicroservicePageP {
   maxFileSize?: number;
 }
 
@@ -12,23 +12,15 @@ export interface ImageShareMicroservicePageProps {
  * An {@link AppPage} where the user can sign in to the application
  * and view accounts in the application.
  */
-export function ImageShareMicroservicePage(
-  props: ImageShareMicroservicePageProps
-) {
+export function ImageShareMicroservicePage(props: ImageShareMicroservicePageP) {
   const {maxFileSize = 5242880} = props; // bytes = 5 MB
-  const [uploaded, setUploaded] = React.useState<string[]>([]);
+  const [uploaded, setUploaded] = React.useState<ImageStorageElement[]>([]);
 
   /**
-   * A hook to prepend the uploaded image to the image item collection.
+   * A hook to prepend the uploaded images to the image item collection.
    */
-  function onSuccessfulUpload(responses: ImageStorageInsertResponse[]) {
-    const additionalUrls: string[] = [];
-    responses.forEach((r: ImageStorageInsertResponse) => {
-      if (r.url) {
-        additionalUrls.push(r.url);
-      }
-    });
-    setUploaded([...additionalUrls, ...uploaded]);
+  function onSuccessfulUpload(responses: ImageStorageElement[]) {
+    setUploaded([...responses, ...uploaded]);
   }
 
   return (
@@ -43,7 +35,7 @@ export function ImageShareMicroservicePage(
       <div className="p-5">
         <ImageShareUploadFormik
           maxFileSize={maxFileSize}
-          onSuccessfulUpload={onSuccessfulUpload}
+          onSuccessHook={onSuccessfulUpload}
         />
       </div>
 

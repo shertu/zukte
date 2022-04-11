@@ -6,7 +6,7 @@ import {
   TextField,
 } from '@mui/material';
 import {
-  PaymentFormValues,
+  PaymentFormV,
   fnCard,
   fnPaymentAmount,
   fnPaymentCurrencyCode,
@@ -19,7 +19,7 @@ import React from 'react';
 const PAYMENT_CURRENCY_CODE_LABEL = 'Payment Currency';
 
 /** The underlying form component. */
-export function PaymentForm(props: FormikProps<PaymentFormValues>) {
+export function PaymentForm(props: FormikProps<PaymentFormV>) {
   const {
     values,
     errors,

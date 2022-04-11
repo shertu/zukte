@@ -14,6 +14,10 @@ public class ApplicationDbContext : DbContext
   {
     modelBuilder.Entity<ApplicationUser>()
         .HasKey(model => model.Id);
+
+
+    modelBuilder.Entity<ImageStorageElement>()
+        .HasKey(model => model.Url);
   }
 }
 

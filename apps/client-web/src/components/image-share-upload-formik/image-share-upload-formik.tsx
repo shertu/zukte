@@ -1,35 +1,40 @@
-import {
-  ImageStorageInsertResponse,
-  ImageStorageServiceApi,
-} from '@zukte/api-client';
+import {ImageStorageElement, ImageStorageServiceApi} from '@zukte/api-client';
 
 import {Formik} from 'formik';
-import {ImageShareFormValues} from './image-share-upload-form/values';
-import {ImageShareUploadForm} from './image-share-upload-form/image-share-upload-form';
+import {ImageShareFormV} from './image-share-upload-form/values';
+import {
+  ImageShareUploadForm,
+  ImageShareUploadFormP,
+} from './image-share-upload-form/image-share-upload-form';
 import React from 'react';
-import {noop} from 'logic/noop';
-import {ZUKTE_CONFIGURATION} from 'logic/configuration/zukte';
+import {noop, ZUKTE_CONFIGURATION} from 'business';
 
-export interface ImageShareUploadFormikProps {
-  maxFileSize?: number;
-  onSuccessfulUpload?: (response: ImageStorageInsertResponse[]) => void;
-  className?: string;
+export interface ImageShareUploadFormikP {
+  /**
+   * Maximum file size (in bytes) that the form will accept.
+   */
+  maxFileSize?: ImageShareUploadFormP['maxFileSize'];
+
+  /**
+   * The hook called after the form is succesfully submitted and the server receives the responses.
+   */
+  onSuccessHook?: (response: ImageStorageElement[]) => void;
 }
 
 /**
  * A {@link Formik} form used to upload an image to the application's image storage.
  */
-export function ImageShareUploadFormik(props: ImageShareUploadFormikProps) {
-  const {maxFileSize = 5242880, onSuccessfulUpload = noop} = props;
+export function ImageShareUploadFormik(props: ImageShareUploadFormikP) {
+  const {maxFileSize = 5242880, onSuccessHook = noop} = props;
   const api = new ImageStorageServiceApi(ZUKTE_CONFIGURATION);
 
   return (
     <Formik
-      onSubmit={(values: ImageShareFormValues, formikHelpers) => {
+      onSubmit={(values: ImageShareFormV, formikHelpers) => {
         const {files} = values;
 
         // for each file construct a promise
-        const promises: Promise<ImageStorageInsertResponse>[] = [];
+        const promises: Promise<ImageStorageElement>[] = [];
         for (let i = 0; i < files.length; i++) {
           const file = files[i];
 
@@ -47,9 +52,9 @@ export function ImageShareUploadFormik(props: ImageShareUploadFormikProps) {
         }
 
         Promise.all(promises)
-          .then((responses: ImageStorageInsertResponse[]) => {
+          .then((responses: ImageStorageElement[]) => {
             // call hook method
-            onSuccessfulUpload(responses);
+            onSuccessHook(responses);
           })
           .finally(() => formikHelpers.setSubmitting(false));
       }}

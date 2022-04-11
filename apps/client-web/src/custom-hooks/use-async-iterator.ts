@@ -1,19 +1,21 @@
 import React from 'react';
 
+type AsyncFn = () => Promise<void>;
+
 export function useAsyncIterator<T, TReturn = any, TNext = undefined>(
   iterator: AsyncIterator<T, TReturn, TNext>
-): [T[], boolean, () => Promise<void>] {
-  const [vs, setVs] = React.useState<T[]>([]);
-  const [done, setDone] = React.useState<boolean>(false);
-
-  async function next() {
+): [T[], boolean, AsyncFn] {
+  const next = React.useCallback<AsyncFn>(async () => {
     const ir = await iterator.next();
     if (ir.done) {
-      setDone(ir.done);
+      setD(ir.done);
     } else {
-      setVs([...vs, ir.value]);
+      setV([...v, ir.value]);
     }
-  }
+  }, [iterator]);
 
-  return [vs, done, next];
+  const [v, setV] = React.useState<T[]>([]);
+  const [d, setD] = React.useState<boolean>(false);
+
+  return [v, d, next];
 }

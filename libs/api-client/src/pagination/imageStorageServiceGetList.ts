@@ -1,11 +1,12 @@
 import {
   Configuration,
+  ImageStorageElement,
   ImageStorageServiceApi,
   ImageStorageServiceGetListRequest,
 } from '../openapi-generator';
 import {Page} from './page';
 
-type P = Page<string>;
+type P = Page<ImageStorageElement>;
 
 export async function* imageStorageServiceGetListGenerator(
   request: ImageStorageServiceGetListRequest,
@@ -27,7 +28,7 @@ export async function* imageStorageServiceGetListGenerator(
     });
 
     current = {
-      values: response.urls ?? [],
+      values: response.items ?? [],
       continuationToken: response.continuationToken,
     };
 

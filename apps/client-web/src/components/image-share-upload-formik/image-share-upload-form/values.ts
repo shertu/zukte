@@ -1,5 +1,5 @@
-export interface ImageShareFormValues {
+export interface ImageShareFormV {
   files: File[];
 }
 
-export const fnFiles: keyof ImageShareFormValues = 'files';
+export const fnFiles: keyof ImageShareFormV = 'files';

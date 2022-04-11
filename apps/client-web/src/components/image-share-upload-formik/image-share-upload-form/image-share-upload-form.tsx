@@ -1,17 +1,16 @@
 import {Button, FormControl, FormHelperText} from '@mui/material';
-import {ImageShareFormValues, fnFiles} from './values';
+import {ImageShareFormV, fnFiles} from './values';
 
-import {DropzoneArea} from 'mui-file-dropzone';
+import {DropzoneArea, DropzoneAreaBaseProps} from 'mui-file-dropzone';
 import {FormikProps} from 'formik';
 import React from 'react';
 
-export interface ImageShareUploadFormProps
-  extends FormikProps<ImageShareFormValues> {
-  maxFileSize?: number;
+export interface ImageShareUploadFormP extends FormikProps<ImageShareFormV> {
+  maxFileSize?: DropzoneAreaBaseProps['maxFileSize'];
 }
 
 /** The underlying form component. */
-export function ImageShareUploadForm(props: ImageShareUploadFormProps) {
+export function ImageShareUploadForm(props: ImageShareUploadFormP) {
   const {
     values,
     errors,
@@ -20,7 +19,7 @@ export function ImageShareUploadForm(props: ImageShareUploadFormProps) {
     handleSubmit,
     isSubmitting,
     setFieldValue,
-    maxFileSize = 5242880,
+    maxFileSize,
   } = props;
 
   /** Handle the event of files being added or removed. */

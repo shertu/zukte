@@ -4,7 +4,7 @@
 import NET from 'vanta/dist/vanta.net.min.js';
 import React from 'react';
 
-export type VantaNetContainerProps = React.DetailedHTMLProps<
+export type VantaNetContainerP = React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLDivElement>,
   HTMLDivElement
 >;
@@ -12,7 +12,7 @@ export type VantaNetContainerProps = React.DetailedHTMLProps<
 /**
  * A component which renders a Vanta NET 3D visual effect.
  */
-export function VantaNetContainer(props: VantaNetContainerProps) {
+export function VantaNetContainer(props: VantaNetContainerP) {
   const [vantaEffect, setVantaEffect] = React.useState<any>(0);
   const vantaRef = React.useRef<HTMLDivElement>(null);
 

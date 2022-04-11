@@ -10,7 +10,7 @@ import {
 import Link from 'next/link';
 import React from 'react';
 
-interface PortfolioNavItemProps {
+interface PortfolioNavItemP {
   to: string;
   src: string;
   title: string;
@@ -20,7 +20,7 @@ interface PortfolioNavItemProps {
 /**
  * A {@link Grid} item view which links to an example of my work.
  */
-export function PortfolioNavItem(props: PortfolioNavItemProps) {
+export function PortfolioNavItem(props: PortfolioNavItemP) {
   const {to, src, title, description} = props;
   return (
     <Grid item key={to} className="w-full max-w-sm">

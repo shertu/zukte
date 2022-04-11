@@ -4,14 +4,17 @@ import React from 'react';
 import {Link as ScrollLink} from 'react-scroll';
 import {VantaNetContainer} from './vanta-net-container/vanta-net-container';
 
-export interface LandingScreenProps {
+export interface LandingScreenP {
+  /**
+   * The id of the HtmlElement to which the read more button will scroll to.
+   */
   scrollTo?: string;
 }
 
 /**
  * The first screen of content which the user will see.
  */
-export function LandingScreen(props: LandingScreenProps) {
+export function LandingScreen(props: LandingScreenP) {
   return (
     <VantaNetContainer className="h-screen">
       <div className="absolute inset-0 px-6 py-office-word">

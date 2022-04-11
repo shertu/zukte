@@ -1,23 +1,33 @@
+import {
+  ImageStorageElement,
+  imageStorageServiceGetListGenerator,
+} from '@zukte/api-client';
 import React from 'react';
 import InfiniteLoader from 'react-window-infinite-loader';
 import {VariableSizeList as List} from 'react-window';
-import {imageStorageServiceGetListGenerator} from '@zukte/api-client';
 import {useAsyncIterator} from 'hooks';
 import {ZUKTE_CONFIGURATION} from 'business';
 import ImageShareListItem, {ImageShareListItemP} from './image-share-list-item';
 
 export interface ImageShareListP {
-  uploaded?: string[];
+  /**
+   * The images upload by the user.
+   */
+  uploaded?: ImageStorageElement[];
 }
 
 /**
- * A {@link ImageList} view used in the image share microservice.
+ * A {@link List} view of the images stored in the application.
  */
 export function ImageShareList(props: ImageShareListP) {
   const {uploaded = []} = props;
-  const uploadedset = new Set(uploaded);
 
-  const [generator] = React.useState(
+  /**
+   * We use an optimised set to store the ids the images upload by the user.
+   */
+  const uploadedKs = new Set(uploaded.map(u => u.url));
+
+  const [paginationV, paginationD, paginationN] = useAsyncIterator(
     imageStorageServiceGetListGenerator(
       {
         pageSizeHint: 10,
@@ -26,34 +36,31 @@ export function ImageShareList(props: ImageShareListP) {
     )
   );
 
-  const [pages, done, next] = useAsyncIterator(generator);
+  /**
+   * The images fetched from the server.
+   */
+  const images = paginationV.flatMap<ImageStorageElement>(page => page.values);
 
-  const items = React.useMemo<string[]>(() => {
-    const _items = pages.flatMap(p => p.values);
-    const filtered = _items.filter(v => !uploadedset.has(v));
+  const sorted = React.useMemo<ImageStorageElement[]>(() => {
+    const filtered = images.filter(image => !uploadedKs.has(image.url));
     return [...uploaded, ...filtered];
-  }, [pages, uploaded]);
+  }, [paginationV, uploaded, uploadedKs]);
 
   function isItemLoaded(index: number): boolean {
-    return done || index < items.length;
+    return paginationD || index < sorted.length;
   }
 
-  const itemData: ImageShareListItemP[] = items.map<ImageShareListItemP>(v => ({
-    url: v,
-  }));
+  const itemCount: number = paginationD ? sorted.length : sorted.length + 1;
 
-  const itemCount: number = done ? items.length : items.length + 1;
-
-  function itemSize(): number {
-    // console.log('itemSize', index);
-    return 800;
+  function itemSize(index: number): number {
+    return sorted[index].height ?? 0;
   }
 
   return (
     <InfiniteLoader
       isItemLoaded={isItemLoaded}
       itemCount={itemCount}
-      loadMoreItems={next}
+      loadMoreItems={paginationN}
     >
       {({onItemsRendered, ref}) => (
         <List<ImageShareListItemP[]>
@@ -63,7 +70,7 @@ export function ImageShareList(props: ImageShareListP) {
           height={800}
           width="100%"
           itemSize={itemSize}
-          itemData={itemData}
+          itemData={sorted}
         >
           {ImageShareListItem}
         </List>

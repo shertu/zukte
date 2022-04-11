@@ -4,12 +4,10 @@ import {CreatePaymentRequest, SquareServiceApi} from '@zukte/api-client';
 
 import React from 'react';
 import dynamic from 'next/dynamic';
-import {ZUKTE_CONFIGURATION} from 'logic/configuration/zukte';
 import Link from '../next-link-composed/next-link-composed';
+import {ZUKTE_CONFIGURATION} from 'business';
 
 const DynamicReactJson = dynamic(import('react-json-view'), {ssr: false});
-
-const SLATE_CARD_CLASSNAME = 'p-4 bg-slate-100';
 
 /**
  * An {@link AppPage} where the user can process a payment online using a third party payment provider and gateway.
@@ -64,14 +62,12 @@ export function PaymentMicroservicePage() {
         gateway, i.e. no payments will actually be processed.
       </Typography>
 
-      <Card className={SLATE_CARD_CLASSNAME}>
-        <PaymentFormik
-          handleCreatePaymentRequest={handleCreatePaymentRequest}
-        />
+      <Card className="p-4 bg-slate-100">
+        <PaymentFormik onSuccessHook={handleCreatePaymentRequest} />
       </Card>
 
       {(createPaymentResponse || createPaymentError) && (
-        <Card className={SLATE_CARD_CLASSNAME}>
+        <Card className="p-4 bg-slate-100">
           {createPaymentResponse && (
             <DynamicReactJson src={createPaymentResponse} />
           )}

@@ -1,12 +1,11 @@
 import {Card} from '@square/web-sdk';
 
-export interface PaymentFormValues {
+export interface PaymentFormV {
   card?: Card;
   paymentAmount?: number;
   paymentCurrencyCode?: string;
 }
 
-export const fnCard: keyof PaymentFormValues = 'card';
-export const fnPaymentAmount: keyof PaymentFormValues = 'paymentAmount';
-export const fnPaymentCurrencyCode: keyof PaymentFormValues =
-  'paymentCurrencyCode';
+export const fnCard: keyof PaymentFormV = 'card';
+export const fnPaymentAmount: keyof PaymentFormV = 'paymentAmount';
+export const fnPaymentCurrencyCode: keyof PaymentFormV = 'paymentCurrencyCode';
