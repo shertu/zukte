@@ -27,14 +27,19 @@ export interface AccountListItemP extends ListItemProps {
 export function AccountListItem(
   lccp: ListChildComponentProps<AccountListItemP[]>
 ) {
-  const {index, style, data} = lccp;
-  const props = data[index];
-  const {account = {}, deleteSecondaryAction = false, ...other} = props;
-
   /**
    * @see https://nextjs.org/docs/api-reference/next/router
    */
   const router = useRouter();
+
+  const {index, style, data} = lccp;
+
+  if (data.length === 0) {
+    return null;
+  }
+
+  const props = data[index];
+  const {account = {}, deleteSecondaryAction = false, ...other} = props;
 
   /**
    * Deletes the {@link ApplicationUser} and then reloads the page.

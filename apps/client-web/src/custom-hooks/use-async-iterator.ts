@@ -8,20 +8,18 @@ type AsyncFn = () => Promise<void>;
 export function useAsyncIterator<T, TReturn, TNext = undefined>(
   iterator: AsyncIterator<T, TReturn, TNext>
 ): [T[], boolean, AsyncFn] {
-  // const [_iterator] = React.useState(iterator);
+  const [_iterator] = React.useState(iterator);
   const [v, setV] = React.useState<T[]>([]);
   const [d, setD] = React.useState<boolean>(false);
 
-  React.useEffect(() => {}, [iterator]);
-
   const next = React.useCallback<AsyncFn>(async () => {
-    const ir = await iterator.next();
+    const ir = await _iterator.next();
     if (ir.done) {
       setD(ir.done);
     } else {
       setV([...v, ir.value]);
     }
-  }, [iterator, v]);
+  }, [_iterator, v]);
 
   return [v, d, next];
 }

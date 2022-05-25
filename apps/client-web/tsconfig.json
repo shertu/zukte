@@ -1,7 +1,7 @@
 {
   "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "baseUrl": ".", // this must be specified if "paths" is specified.
     "paths": {
       "components": ["src/components/index.tsx"],

@@ -16,6 +16,11 @@ export function ImageShareListItem(
   lccp: ListChildComponentProps<ImageShareListItemP[]>
 ) {
   const {index, style, data} = lccp;
+
+  if (data.length === 0) {
+    return null;
+  }
+
   const props = data[index];
   const {url, width, height, ...other} = props;
 
