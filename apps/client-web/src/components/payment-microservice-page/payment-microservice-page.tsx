@@ -2,10 +2,10 @@ import {AppPage, PaymentFormik} from 'components';
 import {Card, Typography} from '@mui/material';
 import {CreatePaymentRequest, SquareServiceApi} from '@zukte/api-client';
 
-import React from 'react';
-import dynamic from 'next/dynamic';
 import Link from '../next-link-composed/next-link-composed';
+import React from 'react';
 import {ZUKTE_CONFIGURATION} from 'business';
+import dynamic from 'next/dynamic';
 
 const DynamicReactJson = dynamic(import('react-json-view'), {ssr: false});
 

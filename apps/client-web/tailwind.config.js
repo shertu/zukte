@@ -2,18 +2,13 @@
 const defaultTheme = require('tailwindcss/defaultTheme');
 
 module.exports = {
-  mode: 'jit',
   content: ['./src/**/*.{js,jsx,ts,tsx}'],
+  mode: 'jit',
   theme: {
     ...defaultTheme,
-    fontFamily: {
-      sans: ['Inter var', ...defaultTheme.fontFamily.sans],
-    },
     extend: {
-      spacing: {
-        'office-word': '2.54cm',
-      },
       colors: {
+        darker: 'rgba(0, 0, 0, 0.04)',
         primary: {
           100: '#f7d9d5',
           200: '#efb3ac',
@@ -36,8 +31,13 @@ module.exports = {
           800: '#62513d',
           900: '#31281f',
         },
-        darker: 'rgba(0, 0, 0, 0.04)',
       },
+      spacing: {
+        'office-word': '2.54cm',
+      },
+    },
+    fontFamily: {
+      sans: ['Inter var', ...defaultTheme.fontFamily.sans],
     },
   },
 };

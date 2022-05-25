@@ -1,10 +1,10 @@
-import React from 'react';
-
 import {
   ApplicationUser,
   Page,
   applicationUserServiceGetListGenerator,
 } from '@zukte/api-client';
+
+import React from 'react';
 
 type P = Page<ApplicationUser>;
 

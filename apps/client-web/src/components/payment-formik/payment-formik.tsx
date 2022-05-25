@@ -5,14 +5,13 @@ import {
 } from '@square/web-sdk';
 import {Formik, FormikErrors} from 'formik';
 import {List, ListItem} from '@mui/material';
+import {TokenStatus, asyncnoop} from 'business';
 
+import {Chance} from 'chance';
 import {CreatePaymentRequest} from '@zukte/api-client';
 import {PaymentForm} from './payment-form/payment-form';
 import {PaymentFormV} from './payment-form/values';
 import React from 'react';
-
-import {Chance} from 'chance';
-import {asyncnoop, TokenStatus} from 'business';
 
 const ERROR_MESSAGE_REQUIRED = 'required';
 
@@ -73,13 +72,13 @@ export function PaymentFormik(props: PaymentFormikP) {
         if (newTokenResult?.status === TokenStatus.OK) {
           // part 2 - handle successful token result
           const request: CreatePaymentRequest = {
-            locationId: process.env.SQUARE_LOCATION_ID,
-            sourceId: newTokenResult.token,
-            idempotencyKey: chance.guid(),
             amountMoney: {
               amount: paymentAmount,
               currency: paymentCurrencyCode,
             },
+            idempotencyKey: chance.guid(),
+            locationId: process.env.SQUARE_LOCATION_ID,
+            sourceId: newTokenResult.token,
           };
 
           try {

@@ -1,9 +1,9 @@
 import {ListItem, ListItemProps} from '@mui/material';
-import {ImageStorageElement} from '@zukte/api-client';
-import Image from 'next/image';
 
-import React from 'react';
+import Image from 'next/image';
+import {ImageStorageElement} from '@zukte/api-client';
 import {ListChildComponentProps} from 'react-window';
+import React from 'react';
 
 export interface ImageShareListItemP
   extends ListItemProps,
@@ -21,7 +21,15 @@ export function ImageShareListItem(
 
   return (
     <ListItem style={style} disablePadding {...other}>
-      {url && <Image width={width} height={height} src={url} layout="fill" />}
+      {url && (
+        <Image
+          width={width}
+          height={height}
+          src={url}
+          layout="fill"
+          alt="an uploaded image"
+        />
+      )}
     </ListItem>
   );
 }

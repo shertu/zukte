@@ -1,7 +1,6 @@
 import {Grid} from '@mui/material';
-
-import React from 'react';
 import PortfolioNavItem from './portfolio-nav-item';
+import React from 'react';
 
 /**
  * A navigiation element which links to various examples of my work.

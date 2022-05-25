@@ -1,24 +1,24 @@
-import {NodeAttributes, GraphA} from './graph';
-
-import React from 'react';
+import {GraphExtension, NodeAttributes} from './graph';
 import {NounPaperHandIcon, NounRockHandIcon, NounScissorsHandIcon} from 'icons';
 
+import React from 'react';
+
 const data: {[node: string]: NodeAttributes} = {
-  rock: {
-    createElement: p => <NounRockHandIcon {...p} />,
-  },
   paper: {
     createElement: p => <NounPaperHandIcon {...p} />,
+  },
+  rock: {
+    createElement: p => <NounRockHandIcon {...p} />,
   },
   scissors: {
     createElement: p => <NounScissorsHandIcon {...p} />,
   },
 };
 
-const graph = new GraphA();
+const RockPaperScissorsGraph = new GraphExtension();
 
 for (const [node, attr] of Object.entries(data)) {
-  graph.addNode(node, attr);
+  RockPaperScissorsGraph.addNode(node, attr);
 }
 
 const nodeArr: string[] = ['rock', 'scissors', 'paper'];
@@ -26,7 +26,7 @@ for (let i = 0; i < nodeArr.length; i++) {
   const nodeSource = nodeArr[i];
   const nodeTarget = nodeArr[(i + 1) % nodeArr.length];
   const edgeWeight = 1;
-  graph.addEdge(nodeSource, nodeTarget, {weight: edgeWeight});
+  RockPaperScissorsGraph.addEdge(nodeSource, nodeTarget, {weight: edgeWeight});
 }
 
-export default graph;
+export {RockPaperScissorsGraph};

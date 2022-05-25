@@ -1,3 +1,5 @@
 export * from './tournament';
 export * from './scored-node-selection';
-export * from './graph';
+export * from './weighted-graph';
+export * from './prediction';
+export * from './simulation';

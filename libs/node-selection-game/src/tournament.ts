@@ -1,10 +1,10 @@
 import {ScoredNodeSelection} from './scored-node-selection';
-import {G} from './graph';
+import {WeightedGraph} from './weighted-graph';
 
 /**
  * Calculate the score of one node selection versus another.
  */
-function duel(graph: G, source: unknown, target: unknown): number {
+function duel(graph: WeightedGraph, source: unknown, target: unknown): number {
   return graph.reduceOutEdges<number>(
     source,
     target,
@@ -16,20 +16,23 @@ function duel(graph: G, source: unknown, target: unknown): number {
 /**
  * Calculates the scores for each node in a round-robin tournament.
  */
-function nodeTournamentScore(graph: G, ...selections: string[]): number[] {
-  return selections.map<number>(source => {
-    return selections.reduce<number>(
+function nodeTournamentScore(
+  graph: WeightedGraph,
+  ...selections: string[]
+): number[] {
+  return selections.map<number>(source =>
+    selections.reduce<number>(
       (accumulator, target) => accumulator + duel(graph, source, target),
       0
-    );
-  });
+    )
+  );
 }
 
 /**
  * Calculates the scores and normalized scores for each selected node in a round-robin tournament.
  */
 export function nodeTournament(
-  graph: G,
+  graph: WeightedGraph,
   ...selections: string[]
 ): ScoredNodeSelection[] {
   const scores = nodeTournamentScore(graph, ...selections);
@@ -39,14 +42,10 @@ export function nodeTournament(
   const max: number = Math.max(...scores);
   const diff: number = max - min;
 
-  return selections.map<ScoredNodeSelection>((node, i) => {
-    const n = diff ? (scores[i] - min) / diff : 0;
-
-    return {
-      value: node,
-      score: scores[i],
-      normalized: n,
-      diff: !!diff,
-    };
-  });
+  return selections.map<ScoredNodeSelection>((node, i) => ({
+    diff: !!diff,
+    normalized: diff ? (scores[i] - min) / diff : 0,
+    score: scores[i],
+    value: node,
+  }));
 }

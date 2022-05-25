@@ -1,19 +1,18 @@
-import {Typography} from '@mui/material';
-import {GraphExtension} from 'logic/node-selection-game/graph';
+import {GraphAlpha, NodeSelectionExtension} from 'business';
 
 import React from 'react';
+import {Typography} from '@mui/material';
 import clsx from 'clsx';
-import {ScoredNodeSelectionExtension} from 'logic/node-selection-game/scored-node-selection';
 
-export interface ScoreboardScoredItemProps {
-  graph: GraphExtension;
-  scored: ScoredNodeSelectionExtension;
+export interface ScoreboardScoredItemP {
+  graph: GraphAlpha;
+  scored: NodeSelectionExtension;
 }
 
 /**
  * A grid element which shows information about characters and characters' node selections.
  */
-export function ScoreboardScoredItem(props: ScoreboardScoredItemProps) {
+export function ScoreboardScoredItem(props: ScoreboardScoredItemP) {
   const {scored, graph} = props;
   const attr = graph.getNodeAttributes(scored.value);
 

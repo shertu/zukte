@@ -5,11 +5,11 @@ import {
   RadioProps,
 } from '@mui/material';
 
-import {NodeAttributes} from 'logic/node-selection-game/graph';
+import {NodeAttributes} from 'business';
 import React from 'react';
 import clsx from 'clsx';
 
-export interface AddRoundFormControlLabelProps
+export interface AddRoundFormControlLabelP
   extends Omit<FormControlLabelProps, 'control' | 'label'> {
   attributes: NodeAttributes;
   checked?: RadioProps['checked'];
@@ -18,7 +18,7 @@ export interface AddRoundFormControlLabelProps
 /**
  * A radio form control with a {@link NodeSelectionGameImage} for the label.
  */
-export function AddRoundFormControlLabel(props: AddRoundFormControlLabelProps) {
+export function AddRoundFormControlLabel(props: AddRoundFormControlLabelP) {
   const {attributes, checked} = props;
 
   return (
@@ -30,8 +30,8 @@ export function AddRoundFormControlLabel(props: AddRoundFormControlLabelProps) {
         className: clsx(
           'text-[5rem] md:text-[10rem] xl:text-[15rem] border border-solid border-secondary-500',
           {
-            'hover:bg-darker': !checked,
             'bg-secondary-200': checked,
+            'hover:bg-darker': !checked,
           }
         ),
       })}

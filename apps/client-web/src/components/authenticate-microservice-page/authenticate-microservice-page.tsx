@@ -6,8 +6,8 @@ import {
 } from 'components';
 import {Divider, Typography} from '@mui/material';
 
-import React from 'react';
 import {ApplicationUser} from '@zukte/api-client';
+import React from 'react';
 import {useMineAccounts} from 'hooks';
 
 /**

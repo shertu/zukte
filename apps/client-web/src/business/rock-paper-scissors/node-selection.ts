@@ -1,11 +1,11 @@
+import {RockPaperScissorsPlayer} from './player';
 import {ScoredNodeSelection} from '@zukte/node-selection-game';
-import {NodeSelectionGamePlayer} from './player';
 
-export interface ScoredNodeSelectionExtension extends ScoredNodeSelection {
+export interface NodeSelectionExtension extends ScoredNodeSelection {
   /**
    * The agent who made the selection.
    */
-  readonly selcux: NodeSelectionGamePlayer['id'];
+  readonly selcux: RockPaperScissorsPlayer['id'];
 
   /**
    * The toggle between selection modes.

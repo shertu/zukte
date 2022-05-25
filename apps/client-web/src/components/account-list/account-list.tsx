@@ -1,13 +1,14 @@
+import {AccountListItem, AccountListItemP} from './account-list-item';
 import {
   ApplicationUser,
   applicationUserServiceGetListGenerator,
 } from '@zukte/api-client';
-import React from 'react';
+
 import InfiniteLoader from 'react-window-infinite-loader';
 import {FixedSizeList as List} from 'react-window';
-import {AccountListItem, AccountListItemP} from './account-list-item';
-import {useAsyncIterator} from 'hooks';
+import React from 'react';
 import {ZUKTE_CONFIGURATION} from 'business';
+import {useAsyncIterator} from 'hooks';
 
 export interface AccountListP {
   /**
@@ -22,10 +23,15 @@ export interface AccountListP {
 export function AccountList(props: AccountListP) {
   const {mine = []} = props;
 
-  /**
-   * We use an optimised set to store the ids the accounts which are authenticated with the user.
-   */
-  const mineKs = new Set(mine.map(m => m.id));
+  const mineKs = React.useMemo<Set<string>>(() => {
+    const set = new Set<string>();
+    mine.forEach(({id}) => {
+      if (id) {
+        set.add(id);
+      }
+    });
+    return set;
+  }, [mine]);
 
   const [paginationV, paginationD, paginationN] = useAsyncIterator(
     applicationUserServiceGetListGenerator(
@@ -42,10 +48,13 @@ export function AccountList(props: AccountListP) {
   const accounts = paginationV.flatMap<ApplicationUser>(page => page.values);
 
   const sorted = React.useMemo<ApplicationUser[]>(() => {
-    const filtered = accounts.filter(account => !mineKs.has(account.id));
+    const filtered = accounts.filter(({id}) => id && !mineKs.has(id));
     return [...mine, ...filtered];
-  }, [paginationV, mine, mineKs]);
+  }, [accounts, mine, mineKs]);
 
+  /**
+   * Has the item at the specified index been fetched?
+   */
   function isItemLoaded(index: number): boolean {
     return paginationD || index < sorted.length;
   }
@@ -53,7 +62,7 @@ export function AccountList(props: AccountListP) {
   const itemData: AccountListItemP[] = sorted.map<AccountListItemP>(
     account => ({
       account: account,
-      deleteSecondaryAction: mineKs.has(account.id),
+      deleteSecondaryAction: account.id ? mineKs.has(account.id) : false,
     })
   );
 

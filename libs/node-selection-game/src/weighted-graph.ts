@@ -4,4 +4,4 @@ export interface WeightedEdgeAttributes extends Attributes {
   weight: number;
 }
 
-export type G = AbstractGraph<Attributes, WeightedEdgeAttributes>;
+export type WeightedGraph = AbstractGraph<Attributes, WeightedEdgeAttributes>;

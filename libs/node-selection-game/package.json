@@ -5,12 +5,13 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "scripts": {
-    "build": "tsc"
+    "build": "tsc",
+    "lint": "eslint src/** --fix"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "^3.14.0",
+    "@tensorflow/tfjs": "^3.18.0",
     "graphology": "^0.24.1",
-    "graphology-types": "^0.24.3",
+    "graphology-types": "^0.24.4",
     "seedrandom": "~2.4.3"
   }
 }

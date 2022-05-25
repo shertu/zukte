@@ -33,30 +33,30 @@ export function PaymentForm(props: FormikProps<PaymentFormV>) {
 
   const cardContainerRef = React.useRef<HTMLDivElement>(null);
 
-  /**
-   * Initializes the Web Payments SDK by calling Square.payments().
-   * Initializes the Card payment method by calling the Payments .card() method and
-   * attaching the payment method to the page DOM by calling the Card .attach() method.
-   */
-  async function configureSquarePayments(
-    element: HTMLElement,
-    applicationId: string,
-    locationId?: string
-  ) {
-    const payments = (await import('@square/web-sdk')).payments;
+  React.useEffect(() => {
+    /**
+     * Initializes the Web Payments SDK by calling Square.payments().
+     * Initializes the Card payment method by calling the Payments .card() method and
+     * attaching the payment method to the page DOM by calling the Card .attach() method.
+     */
+    async function configureSquarePayments(
+      element: HTMLElement,
+      applicationId: string,
+      locationId?: string
+    ) {
+      const payments = (await import('@square/web-sdk')).payments;
 
-    if (element.childElementCount === 0) {
-      const value = await payments(applicationId, locationId);
+      if (element.childElementCount === 0) {
+        const value = await payments(applicationId, locationId);
 
-      if (value) {
-        const card = await value.card();
-        card.attach(element);
-        setFieldValue(fnCard, card);
+        if (value) {
+          const card = await value.card();
+          card.attach(element);
+          setFieldValue(fnCard, card);
+        }
       }
     }
-  }
 
-  React.useEffect(() => {
     const SQUARE_APP_ID = process.env.SQUARE_APP_ID;
     const SQUARE_LOCATION_ID = process.env.SQUARE_LOCATION_ID;
 
@@ -67,7 +67,7 @@ export function PaymentForm(props: FormikProps<PaymentFormV>) {
         SQUARE_LOCATION_ID
       );
     }
-  }, [cardContainerRef]);
+  }, [setFieldValue]);
 
   return (
     <form noValidate onSubmit={handleSubmit} className="p-4 space-y-4">

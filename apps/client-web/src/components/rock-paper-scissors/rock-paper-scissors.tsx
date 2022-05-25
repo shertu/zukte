@@ -1,22 +1,25 @@
-import {Scoreboard} from './scoreboard/scoreboard';
-
-import {AddRoundFormValues} from './add-round-formik/add-round-form/values';
 import AddRoundFormik, {
   PDistribution,
 } from './add-round-formik/add-round-formik';
-import {GraphExtension} from 'logic/node-selection-game/graph';
-import {NodeSelectionGamePlayer} from 'logic/node-selection-game/player';
-import React from 'react';
-import RockPaperScissorsGraph from 'logic/node-selection-game/rock-paper-scissors';
-import {ScoredNodeSelectionExtension} from 'logic/node-selection-game/scored-node-selection';
-import {Typography} from '@mui/material';
+import {
+  GraphAlpha,
+  NodeSelectionExtension,
+  RockPaperScissorsGraph,
+  RockPaperScissorsPlayer,
+} from 'business';
+
+import {AddRoundFormV} from './add-round-formik/add-round-form/values';
 import {Chance} from 'chance';
-import {predictNext} from '@zukte/node-selection-game';
+import {NodeSelectionGameAi} from '@zukte/node-selection-game';
+import React from 'react';
+import {Scoreboard} from './scoreboard/scoreboard';
+import {Typography} from '@mui/material';
 
 export interface RockPaperScissorsProps {
-  graph?: GraphExtension;
+  graph?: GraphAlpha;
   pNames?: string[];
   chance?: Chance.Chance;
+  k?: number;
 }
 
 /**
@@ -27,25 +30,24 @@ export function RockPaperScissors(props: RockPaperScissorsProps) {
     pNames = [],
     graph = RockPaperScissorsGraph,
     chance = new Chance(),
+    k = 5,
   } = props;
 
-  const [scored, setScored] = React.useState<ScoredNodeSelectionExtension[][]>(
-    []
-  );
+  const [scored, setScored] = React.useState<NodeSelectionExtension[][]>([]);
 
   /**
    * Finds all scores attributed to the specified player.
    */
   function filterOnSelcux(
-    selcux: ScoredNodeSelectionExtension['selcux']
-  ): ScoredNodeSelectionExtension[] {
+    selcux: NodeSelectionExtension['selcux']
+  ): NodeSelectionExtension[] {
     return scored.flat().filter(selection => selection.selcux === selcux);
   }
 
-  const _pA: NodeSelectionGamePlayer[] = React.useMemo<
-    NodeSelectionGamePlayer[]
+  const _pA: RockPaperScissorsPlayer[] = React.useMemo<
+    RockPaperScissorsPlayer[]
   >(() => {
-    return pNames.map<NodeSelectionGamePlayer>(name => {
+    return pNames.map<RockPaperScissorsPlayer>(name => {
       return {
         id: chance.guid(),
         name: name,
@@ -59,33 +61,44 @@ export function RockPaperScissors(props: RockPaperScissorsProps) {
    * - All characters can make a selection
    * - All characters except the first one are AI controlled
    */
-  const _initialValues: AddRoundFormValues =
-    React.useMemo<AddRoundFormValues>(() => {
-      const _items = _pA.map<ScoredNodeSelectionExtension>((p, i) => {
-        return {
-          selcux: p.id,
-          useAiSelection: i >= 1,
-          value: '',
-          score: 0,
-          normalized: 0,
-        };
-      });
+  const _initialValues: AddRoundFormV = React.useMemo<AddRoundFormV>(() => {
+    const _items = _pA.map<NodeSelectionExtension>((p, i) => {
+      return {
+        selcux: p.id,
+        useAiSelection: i >= 1,
+        value: '',
+        score: 0,
+        normalized: 0,
+        diff: false,
+      };
+    });
 
-      return {items: _items};
-    }, [_pA]);
+    return {items: _items};
+  }, [_pA]);
 
-  const pB: NodeSelectionGamePlayer[] = React.useMemo<
-    NodeSelectionGamePlayer[]
+  const pB: RockPaperScissorsPlayer[] = React.useMemo<
+    RockPaperScissorsPlayer[]
   >(() => {
-    return _pA.map<NodeSelectionGamePlayer>(p => ({
+    return _pA.map<RockPaperScissorsPlayer>(p => ({
       ...p,
       scores: filterOnSelcux(p.id),
     }));
   }, [_pA, scored]);
 
   const pDistributions = React.useMemo<PDistribution[]>(() => {
-    return pB.map<PDistribution>(v => [v.id, predictNext(graph, v.scores)]);
+    ai.predict();
+
+    return pB.map<PDistribution>((v, i) => {
+      return {
+        selcux: v.id,
+        pFn: i > 0 ? uniform : uniform,
+      };
+    });
   }, [pB]);
+
+  function uniform(): number {
+    return 1;
+  }
 
   return (
     <div className="space-y-8">
@@ -93,7 +106,7 @@ export function RockPaperScissors(props: RockPaperScissorsProps) {
         // useAdvancedView
         graph={graph}
         initialValues={_initialValues}
-        onSubmit={vs => {
+        onSuccessHook={vs => {
           setScored([...scored, vs]);
         }}
         chance={chance}
@@ -113,4 +126,4 @@ export function RockPaperScissors(props: RockPaperScissorsProps) {
   );
 }
 
-export default RockPaperScissorsGraph;
+export default RockPaperScissors;

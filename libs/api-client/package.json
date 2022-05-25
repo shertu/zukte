@@ -7,9 +7,10 @@
   "scripts": {
     "build": "npm run openapi -- -i https://localhost:5001/swagger/v1/swagger.json && tsc",
     "build:production": "npm run openapi -- -i https://zukte-aspnetapp-q3z23.ondigitalocean.app/swagger/v1/swagger.json && tsc",
-    "openapi": "openapi-generator-cli generate -g typescript-fetch -o src/openapi-generator"
+    "openapi": "openapi-generator-cli generate -g typescript-fetch -o src/openapi-generator",
+    "lint": "eslint src/** --fix"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.4.26"
+    "@openapitools/openapi-generator-cli": "^2.5.1"
   }
 }

@@ -1,13 +1,12 @@
+import {GraphAlpha, RockPaperScissorsPlayer} from 'business';
 import {Grid, List, ListItem, ListProps, Typography} from '@mui/material';
-import {GraphExtension} from 'logic/node-selection-game/graph';
 
-import {NodeSelectionGamePlayer} from 'logic/node-selection-game/player';
 import React from 'react';
 import ScoreboardScoredItem from './scoreboard-scored-item';
 
 export interface ScoreboardProps extends ListProps {
-  graph: GraphExtension;
-  information?: NodeSelectionGamePlayer[];
+  graph: GraphAlpha;
+  information?: RockPaperScissorsPlayer[];
 }
 
 function mean(...values: number[]): number {
@@ -27,16 +26,16 @@ function getNumberWithOrdinal(n: number) {
 export function Scoreboard(props: ScoreboardProps) {
   const {graph, information = [], ...other} = props;
 
-  const sorted: NodeSelectionGamePlayer[] = information.sort((a, b) => {
-    const aMean: number = mean(...a.scores.map(e => e.normalized));
-    const bMean: number = mean(...b.scores.map(e => e.normalized));
+  const sorted: RockPaperScissorsPlayer[] = information.sort((a, b) => {
+    const aMean: number = mean(...a.scores?.map(e => e.normalized));
+    const bMean: number = mean(...b.scores?.map(e => e.normalized));
     return bMean - aMean;
   });
 
   return (
     <List {...other}>
-      {sorted.map<React.ReactNode>((p, rank) => {
-        const {scores, name} = p;
+      {/* {sorted.map<React.ReactNode>((p, rank) => {
+        const {scores?: scores, name} = p;
         const aMean: number = mean(...scores.map(e => e.normalized));
         const last = scores.at(-1);
 
@@ -71,7 +70,7 @@ export function Scoreboard(props: ScoreboardProps) {
             </Grid>
           </ListItem>
         );
-      })}
+      })} */}
     </List>
   );
 }

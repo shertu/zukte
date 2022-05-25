@@ -1,65 +1,69 @@
-import {AddRoundForm, AddRoundFormProps} from './add-round-form/add-round-form';
+import {AddRoundForm, AddRoundFormP} from './add-round-form/add-round-form';
 import {Formik, FormikErrors} from 'formik';
-import {
-  nodeselection_optimal,
-  nodeTournament,
-  NodeValueMap,
-} from '@zukte/node-selection-game';
+import {GraphExtension, NodeSelectionExtension, noop, sample} from 'business';
+import {nodeTournament, simulate} from '@zukte/node-selection-game';
 
-import {AddRoundFormValues} from './add-round-form/values';
-import {GraphExtension} from 'logic/node-selection-game/graph';
-import React from 'react';
-import {ScoredNodeSelectionExtension} from 'logic/node-selection-game/scored-node-selection';
-import {noop} from 'logic/noop';
+import {AddRoundFormV} from './add-round-form/values';
 import {Chance} from 'chance';
-import {randomiseNodeSelection} from 'logic/node-selection-game/randomise-node-selection';
+import React from 'react';
 
-export type PDistribution = [
-  selcux: ScoredNodeSelectionExtension['selcux'],
-  distribution: NodeValueMap
-];
-
-export interface AddRoundFormikProps {
+export interface AddRoundFormikP {
   graph: GraphExtension;
-  initialValues: AddRoundFormProps['initialValues'];
+  initialValues: AddRoundFormP['initialValues'];
   useAdvancedView?: boolean;
-  onSubmit?: (values: ScoredNodeSelectionExtension[]) => void;
+  onSuccessHook?: (values: NodeSelectionExtension[]) => void;
   chance?: Chance.Chance;
-  predicitions?: PDistribution[];
+  predictor?: (value: string) => number;
 }
 
 /**
  * A component which enables the user to add a round to the node war.
  */
-export function AddRoundFormik(props: AddRoundFormikProps) {
+export function AddRoundFormik(props: AddRoundFormikP) {
+  /**
+   * The default predictor assumes a uniform random distribution.
+   */
+  function predictor_(): number {
+    return 1 / count;
+  }
+
   const {
     graph,
     initialValues,
     useAdvancedView = false,
-    onSubmit = noop,
+    onSuccessHook = noop,
     chance = new Chance(),
-    predicitions = [],
+    predictor = predictor_,
   } = props;
+
+  const nodes = graph.nodes();
+  const count = nodes.length;
 
   /**
    * Make a node selection as per an item's instructions.
    */
-  function makeSelection(item: ScoredNodeSelectionExtension): string {
+  function makeSelection(item: NodeSelectionExtension): string {
     let selection: string | undefined = item.value;
+    const scores = simulate(graph, predictor);
+
+    /**
+     * The probability function which states that the
+     * probability of a selection is proportional to the
+     * predicted score for said selection.
+     */
+    function pFn(x: string): number {
+      const index = nodes.indexOf(x);
+      return scores[index];
+    }
 
     if (item.useAiSelection) {
-      const dA: NodeValueMap[] = predicitions
-        .filter(([selcux]) => selcux !== item.selcux)
-        .map<NodeValueMap>(([, d]) => d);
-
-      const sD: NodeValueMap = nodeselection_optimal(graph, ...dA);
-      selection = randomiseNodeSelection(sD, chance);
+      selection = sample(nodes, pFn, chance);
     }
 
     if (selection) {
       return selection;
     } else {
-      throw new Error('The node selection was invalid.');
+      throw new Error('No node selection was made.');
     }
   }
 
@@ -75,41 +79,36 @@ export function AddRoundFormik(props: AddRoundFormikProps) {
         const sA = nodeTournament(graph, ...selections);
 
         // 3. output
-        const res = values.items.map<ScoredNodeSelectionExtension>((v, i) => {
-          const s = sA[i];
-
-          return {
-            selcux: v.selcux,
-            useAiSelection: v.useAiSelection,
-            value: s.value,
-            score: s.score,
-            normalized: s.normalized,
-          };
-        });
+        const res = values.items.map<NodeSelectionExtension>((v, i) => ({
+          selcux: v.selcux,
+          useAiSelection: v.useAiSelection,
+          ...sA[i],
+        }));
 
         // 4. additional processes
         try {
-          onSubmit(res);
+          onSuccessHook(res);
         } finally {
           helpers.setSubmitting(false);
         }
       }}
       initialValues={initialValues}
-      validate={(values: AddRoundFormValues) => {
-        const errors: FormikErrors<AddRoundFormValues> = {};
+      validate={(values: AddRoundFormV) => {
+        const errors: FormikErrors<AddRoundFormV> = {};
 
         let ieC = 0;
-        const ieA: FormikErrors<ScoredNodeSelectionExtension>[] =
-          values.items.map<FormikErrors<ScoredNodeSelectionExtension>>(item => {
-            if (!item.useAiSelection && !item.value) {
-              ieC++;
-              return {
-                value: 'must make a selection',
-              };
-            }
+        const ieA: FormikErrors<NodeSelectionExtension>[] = values.items.map<
+          FormikErrors<NodeSelectionExtension>
+        >(item => {
+          if (!item.useAiSelection && !item.value) {
+            ieC++;
+            return {
+              value: 'must make a selection',
+            };
+          }
 
-            return {};
-          });
+          return {};
+        });
 
         if (ieC > 0) {
           errors.items = ieA;

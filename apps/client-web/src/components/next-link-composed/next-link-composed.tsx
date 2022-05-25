@@ -1,18 +1,20 @@
 // https://github.com/mui-org/material-ui/blob/HEAD/examples/nextjs-with-typescript/src/Link.tsx
 /* eslint-disable */
 import * as React from 'react';
-import clsx from 'clsx';
-import {useRouter} from 'next/router';
-import NextLink, {LinkProps as NextLinkProps} from 'next/link';
+
 import MuiLink, {LinkProps as MuiLinkProps} from '@mui/material/Link';
+import NextLink, {LinkProps as NextLinkProps} from 'next/link';
+
+import clsx from 'clsx';
 import {styled} from '@mui/material/styles';
+import {useRouter} from 'next/router';
 
 // Add support for the sx prop for consistency with the other branches.
 const Anchor = styled('a')({});
 
 interface NextLinkComposedProps
   extends Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, 'href'>,
-    Omit<NextLinkProps, 'href' | 'as'> {
+    Omit<NextLinkProps, 'href' | 'as' | 'onClick' | 'onMouseEnter'> {
   to: NextLinkProps['href'];
   linkAs?: NextLinkProps['as'];
 }

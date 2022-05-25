@@ -1,8 +1,8 @@
 import {Grid, GridProps} from '@mui/material';
 
+import Image from 'next/image';
 import React from 'react';
 import {differenceInYears} from 'date-fns';
-import Image from 'next/image';
 
 /**
  * Calculates the current age for the specified birth date.
@@ -31,6 +31,7 @@ export function AgeSexLocation(props: GridProps) {
       <Grid item>
         <Image
           src="https://i.imgur.com/4Ae8JgG.png"
+          alt="Australia"
           width={51.48}
           height={48}
         />

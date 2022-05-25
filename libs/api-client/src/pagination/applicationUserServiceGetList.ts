@@ -4,10 +4,14 @@ import {
   ApplicationUserServiceGetListRequest,
   Configuration,
 } from '../openapi-generator';
+
 import {Page} from './page';
 
 type P = Page<ApplicationUser>;
 
+/**
+ * An async generator for applicaton user pages.
+ */
 export async function* applicationUserServiceGetListGenerator(
   request: ApplicationUserServiceGetListRequest,
   configuration?: Configuration
@@ -16,20 +20,20 @@ export async function* applicationUserServiceGetListGenerator(
   const api = new ApplicationUserServiceApi(configuration);
 
   let current: P = {
-    values: [],
     continuationToken: continuationToken,
+    values: [],
   };
 
   do {
     const response = await api.applicationUserServiceGetList({
       ...request,
-      pageSizeHint: pageSizeHint,
       continuationToken: current.continuationToken,
+      pageSizeHint: pageSizeHint,
     });
 
     current = {
-      values: response.items ?? [],
       continuationToken: response.continuationToken,
+      values: response.items ?? [],
     };
 
     if (current.values.length > 0) {

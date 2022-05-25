@@ -1,13 +1,12 @@
 import {Button, FormControl, List, ListItem} from '@mui/material';
+import {GraphExtension, NodeSelectionExtension} from 'business';
 
 import {AddRoundFormItem} from './add-round-form-item';
-import {AddRoundFormValues} from './values';
+import {AddRoundFormV} from './values';
 import {FormikProps} from 'formik';
-import {GraphExtension} from 'logic/node-selection-game/graph';
 import React from 'react';
-import {ScoredNodeSelectionExtension} from 'logic/node-selection-game/scored-node-selection';
 
-export interface AddRoundFormProps extends FormikProps<AddRoundFormValues> {
+export interface AddRoundFormP extends FormikProps<AddRoundFormV> {
   graph: GraphExtension;
   useAdvancedView?: boolean;
 }
@@ -15,7 +14,7 @@ export interface AddRoundFormProps extends FormikProps<AddRoundFormValues> {
 /**
  * The underlying form component.
  */
-export function AddRoundForm(props: AddRoundFormProps) {
+export function AddRoundForm(props: AddRoundFormP) {
   const {
     values,
     isSubmitting,
@@ -25,7 +24,7 @@ export function AddRoundForm(props: AddRoundFormProps) {
   } = props;
 
   // hide AI selections in advanced view mode
-  let items: ScoredNodeSelectionExtension[] = values.items;
+  let items: NodeSelectionExtension[] = values.items;
   if (!useAdvancedView) {
     items = values.items.filter(({useAiSelection = false}) => !useAiSelection);
   }

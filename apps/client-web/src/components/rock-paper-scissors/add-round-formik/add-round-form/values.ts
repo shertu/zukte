@@ -1,9 +1,9 @@
-import {ScoredNodeSelectionExtension} from 'logic/node-selection-game/scored-node-selection';
+import {NodeSelectionExtension} from 'business';
 
-export interface AddRoundFormValues {
-  items: ScoredNodeSelectionExtension[];
+export interface AddRoundFormV {
+  items: NodeSelectionExtension[];
 }
 
-export const fn_items: keyof AddRoundFormValues = 'items';
-export const fn_selection: keyof ScoredNodeSelectionExtension = 'value';
-export const fn_ai: keyof ScoredNodeSelectionExtension = 'useAiSelection';
+export const fn_items: keyof AddRoundFormV = 'items';
+export const fn_selection: keyof NodeSelectionExtension = 'value';
+export const fn_ai: keyof NodeSelectionExtension = 'useAiSelection';

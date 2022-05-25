@@ -1,13 +1,14 @@
+import ImageShareListItem, {ImageShareListItemP} from './image-share-list-item';
 import {
   ImageStorageElement,
   imageStorageServiceGetListGenerator,
 } from '@zukte/api-client';
-import React from 'react';
+
 import InfiniteLoader from 'react-window-infinite-loader';
 import {VariableSizeList as List} from 'react-window';
-import {useAsyncIterator} from 'hooks';
+import React from 'react';
 import {ZUKTE_CONFIGURATION} from 'business';
-import ImageShareListItem, {ImageShareListItemP} from './image-share-list-item';
+import {useAsyncIterator} from 'hooks';
 
 export interface ImageShareListP {
   /**
@@ -25,7 +26,15 @@ export function ImageShareList(props: ImageShareListP) {
   /**
    * We use an optimised set to store the ids the images upload by the user.
    */
-  const uploadedKs = new Set(uploaded.map(u => u.url));
+  const uploadedKs = React.useMemo<Set<string>>(() => {
+    const set = new Set<string>();
+    uploaded.forEach(({url}) => {
+      if (url) {
+        set.add(url);
+      }
+    });
+    return set;
+  }, [uploaded]);
 
   const [paginationV, paginationD, paginationN] = useAsyncIterator(
     imageStorageServiceGetListGenerator(
@@ -42,16 +51,22 @@ export function ImageShareList(props: ImageShareListP) {
   const images = paginationV.flatMap<ImageStorageElement>(page => page.values);
 
   const sorted = React.useMemo<ImageStorageElement[]>(() => {
-    const filtered = images.filter(image => !uploadedKs.has(image.url));
+    const filtered = images.filter(({url}) => url && !uploadedKs.has(url));
     return [...uploaded, ...filtered];
-  }, [paginationV, uploaded, uploadedKs]);
+  }, [images, uploaded, uploadedKs]);
 
+  /**
+   * Has the item at the specified index been fetched?
+   */
   function isItemLoaded(index: number): boolean {
     return paginationD || index < sorted.length;
   }
 
   const itemCount: number = paginationD ? sorted.length : sorted.length + 1;
 
+  /**
+   * What is the vertical height of the element at the specified index?
+   */
   function itemSize(index: number): number {
     return sorted[index].height ?? 0;
   }

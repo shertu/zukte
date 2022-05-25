@@ -1,7 +1,7 @@
 import {Button, FormControl, FormHelperText} from '@mui/material';
+import {DropzoneArea, DropzoneAreaBaseProps} from 'mui-file-dropzone';
 import {ImageShareFormV, fnFiles} from './values';
 
-import {DropzoneArea, DropzoneAreaBaseProps} from 'mui-file-dropzone';
 import {FormikProps} from 'formik';
 import React from 'react';
 
@@ -46,7 +46,9 @@ export function ImageShareUploadForm(props: ImageShareUploadFormP) {
           fileObjects={null}
         />
 
-        <FormHelperText>{touched.files && errors.files}</FormHelperText>
+        <FormHelperText>
+          {touched.files && (errors.files as string | undefined)}
+        </FormHelperText>
       </FormControl>
 
       <FormControl fullWidth className="items-end">

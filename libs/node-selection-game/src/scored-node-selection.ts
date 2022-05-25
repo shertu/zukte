@@ -1,5 +1,5 @@
 /**
- * The score and value of a node selection after a fight.
+ * The score and value of a node selection after a tournament.
  */
 export interface ScoredNodeSelection {
   /**

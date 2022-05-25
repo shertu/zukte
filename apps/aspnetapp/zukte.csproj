@@ -6,14 +6,14 @@
 		<UserSecretsId>fb705ad1-df25-4173-8ce9-ff9fedaba64d</UserSecretsId>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Azure.Storage.Blobs" Version="12.10.0" />
+		<PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
 		<PackageReference Include="Chance.NET" Version="2.2.0" />
-		<PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.55.0" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.12" />
-		<PackageReference Include="MySql.EntityFrameworkCore" Version="5.0.8" />
-		<PackageReference Include="NSwag.AspNetCore" Version="13.14.7" />
-		<PackageReference Include="SkiaSharp" Version="2.80.3" />
-		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.80.3" />
-		<PackageReference Include="Square" Version="16.0.0" />
+		<PackageReference Include="Google.Apis.Auth.AspNetCore3" Version="1.57.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
+		<PackageReference Include="MySql.EntityFrameworkCore" Version="6.0.1+MySQL8.0.29" />
+		<PackageReference Include="NSwag.AspNetCore" Version="13.16.0" />
+		<PackageReference Include="SkiaSharp" Version="2.88.0" />
+		<PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.0" />
+		<PackageReference Include="Square" Version="19.0.0" />
 	</ItemGroup>
 </Project>

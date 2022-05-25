@@ -4,10 +4,14 @@ import {
   ImageStorageServiceApi,
   ImageStorageServiceGetListRequest,
 } from '../openapi-generator';
+
 import {Page} from './page';
 
 type P = Page<ImageStorageElement>;
 
+/**
+ * An async generator for image storage pages.
+ */
 export async function* imageStorageServiceGetListGenerator(
   request: ImageStorageServiceGetListRequest,
   configuration?: Configuration
@@ -16,20 +20,20 @@ export async function* imageStorageServiceGetListGenerator(
   const api = new ImageStorageServiceApi(configuration);
 
   let current: P = {
-    values: [],
     continuationToken: continuationToken,
+    values: [],
   };
 
   do {
     const response = await api.imageStorageServiceGetList({
       ...request,
-      pageSizeHint: pageSizeHint,
       continuationToken: current.continuationToken,
+      pageSizeHint: pageSizeHint,
     });
 
     current = {
-      values: response.items ?? [],
       continuationToken: response.continuationToken,
+      values: response.items ?? [],
     };
 
     if (current.values.length > 0) {
