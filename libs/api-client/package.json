@@ -11,6 +11,6 @@
     "lint": "eslint src/** --fix"
   },
   "devDependencies": {
-    "@openapitools/openapi-generator-cli": "^2.5.1"
+    "@openapitools/openapi-generator-cli": "2.5.1"
   }
 }
