@@ -13,16 +13,14 @@ public class SuperuserAuthorizationHandler : IAuthorizationHandler
 
   public Task HandleAsync(AuthorizationHandlerContext context)
   {
-    IEnumerable<Claim> claims = context.User.FindAll(e => e.Type == ClaimTypes.NameIdentifier);
-
-    if (claims.Any(claim => superusers.Contains(claim.Value)))
+    var nameIdentifierClaims = context.User.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier);
+    if (nameIdentifierClaims.Any(claim => superusers.Contains(claim.Value)))
     {
-      foreach (IAuthorizationRequirement req in context.Requirements)
+      foreach (IAuthorizationRequirement requirement in context.Requirements)
       {
-        context.Succeed(req);
+        context.Succeed(requirement);
       }
     }
-
     return Task.CompletedTask;
   }
 }

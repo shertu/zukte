@@ -50,28 +50,19 @@ public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
     // create an account in the system if possible
     if (accountCreationService != null)
     {
-      var principal = context.Principal!;
-      var applicationUser = principal.CreateApplicationUser();
+      var applicationUser = context.Principal!.CreateApplicationUser();
       var createAccountTask = accountCreationService.PostApplicationUser(applicationUser);
 
       // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
       try
       {
-        createAccountTask.Wait();
+        createAccountTask.RunSynchronously();
       }
       catch (AggregateException ae)
       {
-        // Call the Handle method to handle the custom exception,
-        // otherwise rethrow the exception.
         ae.Handle(ex =>
         {
-          if (ex is PostApplicationUserConflictException)
-          {
-            Console.WriteLine(ex.Message);
-            return true;
-          }
-
-          return false;
+          return (ex is PostApplicationUserConflictException);
         });
       }
     }

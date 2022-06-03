@@ -12,7 +12,7 @@ namespace Zukte.Service;
 [ApiController]
 [Route("api/blob-storage/[controller]")]
 [Produces("application/json")]
-public class ImageStorageService : ControllerBase
+public class ImageStorageController : ControllerBase, IPaginationService<int>
 {
   public const int PAGE_SIZE_HINT_MAXIMUM = 30;
 
@@ -20,7 +20,7 @@ public class ImageStorageService : ControllerBase
 
   private readonly ApplicationDbContext db;
 
-  public ImageStorageService(BlobServiceClient blobServiceClient, ApplicationDbContext db)
+  public ImageStorageController(BlobServiceClient blobServiceClient, ApplicationDbContext db)
   {
     blobContainerClient = blobServiceClient.GetBlobContainerClient("image-service");
     _ = blobContainerClient.CreateIfNotExists();
@@ -32,7 +32,7 @@ public class ImageStorageService : ControllerBase
   [HttpGet]
   public async Task<ActionResult<ImageStorageListResponse>> GetList([FromQuery] ImageStorageListRequest request)
   {
-    #region input validation
+    #region model validation
     if (request.PageSizeHint <= 0)
     {
       ModelState.AddModelError("PSH-001", "page size hint should be greater than zero");
@@ -44,21 +44,26 @@ public class ImageStorageService : ControllerBase
     }
     #endregion
 
-    var q = db.ImageStorageElements!.AsQueryable();
-    q = q.OrderBy(e => e.Url);
-    q = q.Where(e => string.Compare(e.Url, request.ContinuationToken) > 0);
-    q = q.ApplyPageHintSize(request.PageSizeHint, PAGE_SIZE_HINT_MAXIMUM);
+    #region build queryable
+    var queryable = db.ImageStorageElements.AsQueryable();
+    queryable = queryable.OrderByDescending(e => e.Id);
+    if (TryParseContinuationToken(request.ContinuationToken, out int continuationToken))
+    {
+      queryable = queryable.Where(e => e.Id < continuationToken);
+    }
+    queryable = queryable.ApplyPageHintSize(request.PageSizeHint, PAGE_SIZE_HINT_MAXIMUM);
+    #endregion
 
-    ImageStorageElement[] items = await q.ToArrayAsync();
+    #region build response
+    ImageStorageElement[] items = await queryable.ToArrayAsync();
     var response = new ImageStorageListResponse();
     response.Items.Add(items);
-
-    // set the next continuation token
     if (items.Length > 0)
     {
       var item = items[items.Length - 1];
-      response.ContinuationToken = item.Url;
+      response.ContinuationToken = EncodeContinuationToken(item.Id);
     }
+    #endregion
 
     return response;
   }
@@ -83,19 +88,35 @@ public class ImageStorageService : ControllerBase
       {
         var response = new ImageStorageElement();
         response.Url = (await ZukteFile.Upload.UploadFileToBlobContainer(ModelState, blobContainerClient, filepath, ms)).AbsoluteUri;
+
+        if (!ModelState.IsValid)
+        {
+          return BadRequest(ModelState);
+        }
+
         response.Width = imageInfo.Width;
         response.Height = imageInfo.Height;
 
-        #region Database
         db.ImageStorageElements.Add(response);
         await db.SaveChangesAsync();
-        #endregion
 
         return response;
       }
     }
 
     return BadRequest(ModelState);
+  }
+
+  [NonAction]
+  public bool TryParseContinuationToken(string continuationToken, out int v)
+  {
+    return int.TryParse(continuationToken, out v);
+  }
+
+  [NonAction]
+  public string EncodeContinuationToken(int v)
+  {
+    return v.ToString();
   }
 }
 

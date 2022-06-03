@@ -24,13 +24,14 @@ namespace Zukte {
     static ImageStorageElementReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
-            "ChlJbWFnZVN0b3JhZ2VFbGVtZW50LnByb3RvEgV6dWt0ZSJBChNJbWFnZVN0",
-            "b3JhZ2VFbGVtZW50EgsKA3VybBgBIAEoCRINCgV3aWR0aBgCIAEoBRIOCgZo",
-            "ZWlnaHQYAyABKAViBnByb3RvMw=="));
+            "ChlJbWFnZVN0b3JhZ2VFbGVtZW50LnByb3RvEgV6dWt0ZRofZ29vZ2xlL3By",
+            "b3RvYnVmL3RpbWVzdGFtcC5wcm90byJNChNJbWFnZVN0b3JhZ2VFbGVtZW50",
+            "EgsKA3VybBgBIAEoCRINCgV3aWR0aBgCIAEoBRIOCgZoZWlnaHQYAyABKAUS",
+            "CgoCaWQYBCABKAViBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
-          new pbr::FileDescriptor[] { },
+          new pbr::FileDescriptor[] { global::Google.Protobuf.WellKnownTypes.TimestampReflection.Descriptor, },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
-            new pbr::GeneratedClrTypeInfo(typeof(global::Zukte.ImageStorageElement), global::Zukte.ImageStorageElement.Parser, new[]{ "Url", "Width", "Height" }, null, null, null, null)
+            new pbr::GeneratedClrTypeInfo(typeof(global::Zukte.ImageStorageElement), global::Zukte.ImageStorageElement.Parser, new[]{ "Url", "Width", "Height", "Id" }, null, null, null, null)
           }));
     }
     #endregion
@@ -69,6 +70,7 @@ namespace Zukte {
       url_ = other.url_;
       width_ = other.width_;
       height_ = other.height_;
+      id_ = other.id_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -110,6 +112,17 @@ namespace Zukte {
       }
     }
 
+    /// <summary>Field number for the "id" field.</summary>
+    public const int IdFieldNumber = 4;
+    private int id_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Id {
+      get { return id_; }
+      set {
+        id_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as ImageStorageElement);
@@ -126,6 +139,7 @@ namespace Zukte {
       if (Url != other.Url) return false;
       if (Width != other.Width) return false;
       if (Height != other.Height) return false;
+      if (Id != other.Id) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -135,6 +149,7 @@ namespace Zukte {
       if (Url.Length != 0) hash ^= Url.GetHashCode();
       if (Width != 0) hash ^= Width.GetHashCode();
       if (Height != 0) hash ^= Height.GetHashCode();
+      if (Id != 0) hash ^= Id.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -163,6 +178,10 @@ namespace Zukte {
         output.WriteRawTag(24);
         output.WriteInt32(Height);
       }
+      if (Id != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(Id);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -184,6 +203,10 @@ namespace Zukte {
         output.WriteRawTag(24);
         output.WriteInt32(Height);
       }
+      if (Id != 0) {
+        output.WriteRawTag(32);
+        output.WriteInt32(Id);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -201,6 +224,9 @@ namespace Zukte {
       }
       if (Height != 0) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Height);
+      }
+      if (Id != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Id);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -221,6 +247,9 @@ namespace Zukte {
       }
       if (other.Height != 0) {
         Height = other.Height;
+      }
+      if (other.Id != 0) {
+        Id = other.Id;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -248,6 +277,10 @@ namespace Zukte {
             Height = input.ReadInt32();
             break;
           }
+          case 32: {
+            Id = input.ReadInt32();
+            break;
+          }
         }
       }
     #endif
@@ -272,6 +305,10 @@ namespace Zukte {
           }
           case 24: {
             Height = input.ReadInt32();
+            break;
+          }
+          case 32: {
+            Id = input.ReadInt32();
             break;
           }
         }

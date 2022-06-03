@@ -10,11 +10,11 @@ namespace Zukte.Service;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
-public class SquareService : ControllerBase
+public class SquareController : ControllerBase
 {
   private readonly SquareClient squareClient;
 
-  public SquareService(SquareClient squareClient)
+  public SquareController(SquareClient squareClient)
   {
     this.squareClient = squareClient;
   }

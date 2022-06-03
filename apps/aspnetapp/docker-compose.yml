@@ -12,3 +12,9 @@ services:
     command: azurite-blob --blobHost 0.0.0.0
     ports:
       - '10000:10000/tcp'
+  aspnetapp:
+    build: .
+    image: registry.digitalocean.com/shertu/aspnetapp_aspnetapp
+    ports:
+      - '5001:443/tcp'
+      - '5000:80/tcp'

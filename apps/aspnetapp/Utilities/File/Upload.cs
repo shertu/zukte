@@ -1,6 +1,5 @@
 using Azure.Storage.Blobs;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using SkiaSharp;
 
 namespace Zukte.Utilities.File;
 public static class Upload

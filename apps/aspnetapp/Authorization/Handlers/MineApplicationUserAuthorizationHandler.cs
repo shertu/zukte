@@ -9,8 +9,8 @@ public class MineApplicationUserAuthorizationHandler : AuthorizationHandler<IAut
 {
   protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, IAuthorizationRequirement requirement, ApplicationUser resource)
   {
-    IEnumerable<Claim> claims = context.User.FindAll(e => e.Type == ClaimTypes.NameIdentifier);
-    if (claims.Any(claim => claim.Value == resource.Id))
+    var nameIdentifierClaims = context.User.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier);
+    if (nameIdentifierClaims.Any(claim => claim.Value == resource.Id))
     {
       context.Succeed(requirement);
     }

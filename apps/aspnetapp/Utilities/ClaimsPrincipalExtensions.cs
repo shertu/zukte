@@ -37,6 +37,6 @@ public static class ClaimsPrincipalExtensions
   /// </summary>
   public static bool HasAuthenticatedIdentity(this ClaimsPrincipal principal)
   {
-    return principal.Identity?.IsAuthenticated ?? false;
+    return principal.Identity!.IsAuthenticated;
   }
 }
