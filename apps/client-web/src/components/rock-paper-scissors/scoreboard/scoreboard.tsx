@@ -1,19 +1,25 @@
-import {GraphAlpha, RockPaperScissorsPlayer} from 'business';
+import {GraphExtension, NodeSelectionPlayer} from 'business';
 import {Grid, List, ListItem, ListProps, Typography} from '@mui/material';
 
 import React from 'react';
-import ScoreboardScoredItem from './scoreboard-scored-item';
+import {ScoreboardScoredItem} from './scoreboard-scored-item';
 
 export interface ScoreboardProps extends ListProps {
-  graph: GraphAlpha;
-  information?: RockPaperScissorsPlayer[];
+  graph: GraphExtension;
+  information?: NodeSelectionPlayer[];
 }
 
+/**
+ * A utility function to calculate the mean of some numbers.
+ */
 function mean(...values: number[]): number {
   const n = values.length;
   return n ? values.reduce((a, b) => a + b, 0) / n : 0;
 }
 
+/**
+ * A utility function to calculate the ordinal string of an index.
+ */
 function getNumberWithOrdinal(n: number) {
   const s = ['th', 'st', 'nd', 'rd'],
     v = n % 100;
@@ -26,21 +32,22 @@ function getNumberWithOrdinal(n: number) {
 export function Scoreboard(props: ScoreboardProps) {
   const {graph, information = [], ...other} = props;
 
-  const sorted: RockPaperScissorsPlayer[] = information.sort((a, b) => {
-    const aMean: number = mean(...a.scores?.map(e => e.normalized));
-    const bMean: number = mean(...b.scores?.map(e => e.normalized));
-    return bMean - aMean;
-  });
+  const sorted: NodeSelectionPlayer[] = information.sort(
+    ({scores: aScores = []}, {scores: bScores = []}) => {
+      const aMean: number = mean(...aScores.map(e => e.normalized));
+      const bMean: number = mean(...bScores.map(e => e.normalized));
+      return bMean - aMean;
+    }
+  );
 
   return (
     <List {...other}>
-      {/* {sorted.map<React.ReactNode>((p, rank) => {
-        const {scores?: scores, name} = p;
+      {sorted.map(({id, scores = [], name = id}, rank) => {
         const aMean: number = mean(...scores.map(e => e.normalized));
         const last = scores.at(-1);
 
         return (
-          <ListItem key={p.id} className="lowercase p-[8px]">
+          <ListItem key={id} className="lowercase p-[8px]">
             <Grid
               container
               spacing={2}
@@ -59,7 +66,9 @@ export function Scoreboard(props: ScoreboardProps) {
               </Grid>
 
               <Grid item xs={4}>
-                <Typography component="p">{name}</Typography>
+                <Typography component="p" className="capitalize">
+                  {name}
+                </Typography>
               </Grid>
 
               {last && (
@@ -70,7 +79,7 @@ export function Scoreboard(props: ScoreboardProps) {
             </Grid>
           </ListItem>
         );
-      })} */}
+      })}
     </List>
   );
 }

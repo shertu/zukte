@@ -57,14 +57,15 @@ export function PaymentForm(props: FormikProps<PaymentFormV>) {
       }
     }
 
-    const SQUARE_APP_ID = process.env.SQUARE_APP_ID;
-    const SQUARE_LOCATION_ID = process.env.SQUARE_LOCATION_ID;
+    const NEXT_PUBLIC_SQUARE_APP_ID = process.env.NEXT_PUBLIC_SQUARE_APP_ID;
+    const NEXT_PUBLIC_SQUARE_LOCATION_ID =
+      process.env.NEXT_PUBLIC_SQUARE_LOCATION_ID;
 
-    if (cardContainerRef.current && SQUARE_APP_ID) {
+    if (cardContainerRef.current && NEXT_PUBLIC_SQUARE_APP_ID) {
       configureSquarePayments(
         cardContainerRef.current,
-        SQUARE_APP_ID,
-        SQUARE_LOCATION_ID
+        NEXT_PUBLIC_SQUARE_APP_ID,
+        NEXT_PUBLIC_SQUARE_LOCATION_ID
       );
     }
   }, [setFieldValue]);

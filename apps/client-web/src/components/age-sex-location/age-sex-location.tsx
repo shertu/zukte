@@ -19,7 +19,7 @@ export function AgeSexLocation(props: GridProps) {
   const dob = new Date('1996-06-10');
 
   return (
-    <Grid {...props} container>
+    <Grid container {...props}>
       <Grid item className="text-6xl">
         {calculateAgeFromBirthdate(dob)}
       </Grid>

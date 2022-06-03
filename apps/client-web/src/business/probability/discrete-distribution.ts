@@ -5,15 +5,15 @@ export type ProbabilityFunction<T> = (x: T) => number;
 /**
  * https://www.comsol.com/blogs/sampling-random-numbers-from-probability-distribution-functions/
  */
-export function sample<T>(
+export function sampleDiscreteDistribution<T>(
   interval: T[],
-  pFn: ProbabilityFunction<T>,
-  chance: Chance.Chance = new Chance()
+  pFn: ProbabilityFunction<T>
 ): T {
   if (interval.length === 0) {
     throw new Error('The discrete interval contains no elements.');
   }
 
+  const chance = new Chance();
   const pThreshold: number = Math.random();
   const shuffled = chance.shuffle(interval);
 
@@ -31,7 +31,7 @@ export function sample<T>(
 /**
  * https://www.comsol.com/blogs/sampling-random-numbers-from-probability-distribution-functions/
  */
-export function normalize<T>(
+export function normalizeDiscreteDistribution<T>(
   interval: T[],
   pFn: ProbabilityFunction<T>
 ): ProbabilityFunction<T> {

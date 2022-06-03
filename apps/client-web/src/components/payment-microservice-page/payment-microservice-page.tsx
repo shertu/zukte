@@ -1,6 +1,6 @@
 import {AppPage, PaymentFormik} from 'components';
 import {Card, Typography} from '@mui/material';
-import {CreatePaymentRequest, SquareServiceApi} from '@zukte/api-client';
+import {CreatePaymentRequest, SquareApi} from '@zukte/api-client';
 
 import Link from '../next-link-composed/next-link-composed';
 import React from 'react';
@@ -13,7 +13,7 @@ const DynamicReactJson = dynamic(import('react-json-view'), {ssr: false});
  * An {@link AppPage} where the user can process a payment online using a third party payment provider and gateway.
  */
 export function PaymentMicroservicePage() {
-  const api = new SquareServiceApi(ZUKTE_CONFIGURATION);
+  const api = new SquareApi(ZUKTE_CONFIGURATION);
 
   const [createPaymentResponse, setCreatePaymentResponse] = React.useState<
     object | null | undefined
@@ -30,7 +30,7 @@ export function PaymentMicroservicePage() {
       let raw: Response;
 
       try {
-        const response = await api.squareServiceCreatePaymentRaw({
+        const response = await api.squareCreatePaymentRaw({
           createPaymentRequest: request,
         });
 

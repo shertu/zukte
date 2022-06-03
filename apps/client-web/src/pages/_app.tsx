@@ -1,20 +1,19 @@
 import 'tailwindcss/utilities.css';
 
 import {Button, Container, CssBaseline} from '@mui/material';
-import {ThemeProvider, StyledEngineProvider} from '@mui/material/styles';
+import {StyledEngineProvider, ThemeProvider} from '@mui/material/styles';
 
 import AppMuiTheme from 'styles/default-mui-theme';
 import {AppProps} from 'next/app';
 import Head from 'next/head';
-import NProgress from 'nprogress';
 import NextLink from 'next/link';
 import React from 'react';
-import Router from 'next/router';
+// import Router from 'next/router';
 import {useRouter} from 'next/router';
 
-Router.events.on('routeChangeStart', () => NProgress.start());
-Router.events.on('routeChangeComplete', () => NProgress.done());
-Router.events.on('routeChangeError', () => NProgress.done());
+// Router.events.on('routeChangeStart', () => NProgress.start());
+// Router.events.on('routeChangeComplete', () => NProgress.done());
+// Router.events.on('routeChangeError', () => NProgress.done());
 
 const PRIVACY_POLICY_PATH = '/privacy-policy/';
 

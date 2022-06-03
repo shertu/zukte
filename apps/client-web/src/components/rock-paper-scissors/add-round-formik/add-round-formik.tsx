@@ -1,120 +1,128 @@
+import {AI_NODE_VALUE, AddRoundFormV} from './add-round-form/values';
 import {AddRoundForm, AddRoundFormP} from './add-round-form/add-round-form';
 import {Formik, FormikErrors} from 'formik';
-import {GraphExtension, NodeSelectionExtension, noop, sample} from 'business';
+import {
+  GraphExtension,
+  NodeSelectionExtension,
+  noop,
+  predictConstant,
+  sampleDiscreteDistribution,
+} from 'business';
 import {nodeTournament, simulate} from '@zukte/node-selection-game';
 
-import {AddRoundFormV} from './add-round-form/values';
-import {Chance} from 'chance';
 import React from 'react';
 
 export interface AddRoundFormikP {
   graph: GraphExtension;
+  nodes: string[];
   initialValues: AddRoundFormP['initialValues'];
   useAdvancedView?: boolean;
   onSuccessHook?: (values: NodeSelectionExtension[]) => void;
-  chance?: Chance.Chance;
-  predictor?: (value: string) => number;
+  predict?: (
+    value: NodeSelectionExtension,
+    selections: NodeSelectionExtension[]
+  ) => Promise<number[]>;
 }
 
 /**
  * A component which enables the user to add a round to the node war.
  */
 export function AddRoundFormik(props: AddRoundFormikP) {
-  /**
-   * The default predictor assumes a uniform random distribution.
-   */
-  function predictor_(): number {
-    return 1 / count;
-  }
-
   const {
     graph,
+    nodes,
     initialValues,
     useAdvancedView = false,
     onSuccessHook = noop,
-    chance = new Chance(),
-    predictor = predictor_,
+    predict = () => predictConstant(nodes),
   } = props;
 
-  const nodes = graph.nodes();
-  const count = nodes.length;
-
   /**
-   * Make a node selection as per an item's instructions.
+   *
+   * @param selection
+   * @param index
+   * @param selections
    */
-  function makeSelection(item: NodeSelectionExtension): string {
-    let selection: string | undefined = item.value;
-    const scores = simulate(graph, predictor);
+  async function mapToSelectionValue(
+    selection: NodeSelectionExtension,
+    index: number,
+    selections: NodeSelectionExtension[]
+  ) {
+    // non-AI selection
+    if (!selection.useAiSelection) {
+      return selection.value;
+    }
+
+    // AI selection
+    const probabilities = await predict(selection, selections);
+    const simulationScores = simulate(graph, nodes, probabilities);
 
     /**
      * The probability function which states that the
      * probability of a selection is proportional to the
-     * predicted score for said selection.
+     * expected score for said selection.
      */
     function pFn(x: string): number {
-      const index = nodes.indexOf(x);
-      return scores[index];
+      return simulationScores[nodes.indexOf(x)];
     }
 
-    if (item.useAiSelection) {
-      selection = sample(nodes, pFn, chance);
-    }
-
-    if (selection) {
-      return selection;
-    } else {
-      throw new Error('No node selection was made.');
-    }
+    const sample = sampleDiscreteDistribution(nodes, pFn);
+    return sample;
   }
 
   return (
     <Formik
-      onSubmit={(values, helpers) => {
+      onSubmit={async (values, helpers) => {
         // 1. selections
-        const selections: string[] = values.items.map<string>(item =>
-          makeSelection(item)
+        const selections = values.selections.map<NodeSelectionExtension>(
+          selection => ({
+            ...selection,
+            useAiSelection: selection.value === AI_NODE_VALUE,
+          })
         );
 
-        // 2. score
-        const sA = nodeTournament(graph, ...selections);
+        const selectionsValues: string[] = [];
+        for (let i = 0; i < selections.length; i++) {
+          const selection = selections[i];
+          selectionsValues.push(
+            await mapToSelectionValue(selection, i, selections)
+          );
+        }
 
-        // 3. output
-        const res = values.items.map<NodeSelectionExtension>((v, i) => ({
-          selcux: v.selcux,
-          useAiSelection: v.useAiSelection,
-          ...sA[i],
-        }));
+        // 2. scores
+        const scores = nodeTournament(graph, ...selectionsValues);
+
+        // 3. combine
+        const selectionsWithScores = selections.map<NodeSelectionExtension>(
+          (v, i) => ({
+            ...v,
+            ...scores[i],
+          })
+        );
 
         // 4. additional processes
-        try {
-          onSuccessHook(res);
-        } finally {
-          helpers.setSubmitting(false);
-        }
+        onSuccessHook(selectionsWithScores);
+        helpers.setSubmitting(false);
       }}
       initialValues={initialValues}
       validate={(values: AddRoundFormV) => {
         const errors: FormikErrors<AddRoundFormV> = {};
+        const errors_selections: FormikErrors<NodeSelectionExtension>[] = [];
 
-        let ieC = 0;
-        const ieA: FormikErrors<NodeSelectionExtension>[] = values.items.map<
-          FormikErrors<NodeSelectionExtension>
-        >(item => {
+        values.selections.forEach(item => {
           if (!item.useAiSelection && !item.value) {
-            ieC++;
-            return {
-              value: 'must make a selection',
-            };
-          }
+            const errors_selections_element: FormikErrors<NodeSelectionExtension> =
+              {
+                value: 'must select an option',
+              };
 
-          return {};
+            errors_selections.push(errors_selections_element);
+          }
         });
 
-        if (ieC > 0) {
-          errors.items = ieA;
+        if (errors_selections.length > 0) {
+          errors.selections = errors_selections;
         }
-
-        console.log('validation', values.items, errors);
 
         return errors;
       }}

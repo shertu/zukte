@@ -1,7 +1,7 @@
 import ImageShareListItem, {ImageShareListItemP} from './image-share-list-item';
 import {
   ImageStorageElement,
-  imageStorageServiceGetListGenerator,
+  ImageStorageGetListGenerator,
 } from '@zukte/api-client';
 
 import InfiniteLoader from 'react-window-infinite-loader';
@@ -37,7 +37,7 @@ export function ImageShareList(props: ImageShareListP) {
   }, [uploaded]);
 
   const [paginationV, paginationD, paginationN] = useAsyncIterator(
-    imageStorageServiceGetListGenerator(
+    ImageStorageGetListGenerator(
       {
         pageSizeHint: 10,
       },
@@ -52,7 +52,8 @@ export function ImageShareList(props: ImageShareListP) {
 
   const sorted = React.useMemo<ImageStorageElement[]>(() => {
     const filtered = images.filter(({url}) => url && !uploadedKs.has(url));
-    return [...uploaded, ...filtered];
+    const combined = [...uploaded, ...filtered];
+    return combined.sort(({id: a = 0}, {id: b = 0}) => b - a);
   }, [images, uploaded, uploadedKs]);
 
   /**
@@ -64,15 +65,34 @@ export function ImageShareList(props: ImageShareListP) {
 
   const itemCount: number = paginationD ? sorted.length : sorted.length + 1;
 
-  /**
-   * What is the vertical height of the element at the specified index?
-   */
-  function itemSize(index: number): number {
-    return sorted[index].height ?? 0;
-  }
+  const itemSize = React.useCallback(
+    (index: number) => {
+      const element = sorted[index];
+
+      if (element) {
+        const {width = 0, height = 0} = element;
+
+        if (width) {
+          const scalarX: number = 960 / width;
+          const scalar: number = Math.min(scalarX, 1);
+          return height * scalar;
+        }
+      }
+
+      return 32;
+    },
+    [sorted]
+  );
+
+  const itemData: ImageShareListItemP[] = sorted.map<ImageShareListItemP>(
+    element => ({
+      imageStorageElement: element,
+    })
+  );
 
   return (
     <InfiniteLoader
+      key={sorted.length}
       isItemLoaded={isItemLoaded}
       itemCount={itemCount}
       loadMoreItems={paginationN}
@@ -85,7 +105,7 @@ export function ImageShareList(props: ImageShareListP) {
           height={800}
           width="100%"
           itemSize={itemSize}
-          itemData={sorted}
+          itemData={itemData}
         >
           {ImageShareListItem}
         </List>

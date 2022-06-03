@@ -20,7 +20,7 @@ export function sampleDiscreteDistribution<T>(
   /**
    * The probability threshold the accumulator needs to equal or exceed.
    */
-  const pThreshold: number = chance.floating({min: 0, max: pSum});
+  const pThreshold: number = chance.floating({max: pSum, min: 0});
 
   /**
    * The probability accumulator.

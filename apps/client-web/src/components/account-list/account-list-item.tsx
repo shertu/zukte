@@ -1,4 +1,4 @@
-import {ApplicationUser, ApplicationUserServiceApi} from '@zukte/api-client';
+import {ApplicationUser, ApplicationUserApi} from '@zukte/api-client';
 import {
   Avatar,
   ListItem,
@@ -34,7 +34,7 @@ export function AccountListItem(
 
   const {index, style, data} = lccp;
 
-  if (data.length === 0) {
+  if (index < 0 || index >= data.length) {
     return null;
   }
 
@@ -45,8 +45,8 @@ export function AccountListItem(
    * Deletes the {@link ApplicationUser} and then reloads the page.
    */
   function onClickDeleteIcon() {
-    new ApplicationUserServiceApi(ZUKTE_CONFIGURATION)
-      .applicationUserServiceDelete({
+    new ApplicationUserApi(ZUKTE_CONFIGURATION)
+      .applicationUserDelete({
         id: account.id,
       })
       .then(() => router.reload());

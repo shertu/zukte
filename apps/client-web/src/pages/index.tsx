@@ -21,8 +21,8 @@ export function LandingPage() {
       <Head>
         <title>Jared Michael Blackman</title>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js" />
-        {/* <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js" /> */}
       </Head>
+      {/* <Script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js" /> */}
       <Paper square elevation={3}>
         <LandingScreen scrollTo={landingScreenScrollToId} />
       </Paper>

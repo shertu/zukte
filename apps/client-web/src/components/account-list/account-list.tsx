@@ -1,7 +1,7 @@
 import {AccountListItem, AccountListItemP} from './account-list-item';
 import {
   ApplicationUser,
-  applicationUserServiceGetListGenerator,
+  ApplicationUserGetListGenerator,
 } from '@zukte/api-client';
 
 import InfiniteLoader from 'react-window-infinite-loader';
@@ -34,7 +34,7 @@ export function AccountList(props: AccountListP) {
   }, [mine]);
 
   const [paginationV, paginationD, paginationN] = useAsyncIterator(
-    applicationUserServiceGetListGenerator(
+    ApplicationUserGetListGenerator(
       {
         pageSizeHint: 30,
       },
@@ -70,6 +70,7 @@ export function AccountList(props: AccountListP) {
 
   return (
     <InfiniteLoader
+      key={sorted.length}
       isItemLoaded={isItemLoaded}
       itemCount={itemCount}
       loadMoreItems={paginationN}

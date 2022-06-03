@@ -2,6 +2,9 @@ import {SvgIcon, SvgIconProps} from '@mui/material';
 
 import React from 'react';
 
+/**
+ * An {@link SvgIcon} of artifical intelligence.
+ */
 export function NounAiIcon(props: SvgIconProps) {
   return (
     <SvgIcon {...props} viewBox="0 0 700 700">

@@ -98,9 +98,9 @@ export function PaymentFormik(props: PaymentFormikP) {
         paymentCurrencyCode: 'AUD',
       }}
     >
-      {props => (
+      {formikProps => (
         <div className="space-y-4">
-          <PaymentForm {...props} />
+          <PaymentForm {...formikProps} />
 
           {tokenizationError && (
             <List>

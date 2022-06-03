@@ -1,4 +1,10 @@
-import {AddRoundFormV, fn_ai, fn_items, fn_selection} from './values';
+import {
+  AI_NODE_ATTR,
+  AI_NODE_VALUE,
+  AddRoundFormV,
+  fnSelections,
+} from './values';
+import {ErrorMessage, FormikProps} from 'formik';
 import {
   FormControl,
   FormHelperText,
@@ -6,72 +12,32 @@ import {
   RadioGroup,
   Typography,
 } from '@mui/material';
-import {FormikErrors, FormikProps} from 'formik';
-import {GraphExtension, NodeAttributes, NodeSelectionExtension} from 'business';
 
 import {AddRoundFormControlLabel} from './add-round-form-control-label/add-round-form-control-label';
-import {NounAiIcon} from 'icons';
+import {GraphExtension} from 'business';
 import React from 'react';
 
 export interface AddRoundFormItemP {
   formik: FormikProps<AddRoundFormV>;
   graph: GraphExtension;
   useAdvancedView?: boolean;
-  selection: NodeSelectionExtension;
   index: number;
 }
 
 /**
-/**
- * The main content of each list element in the form.
+ * The content of a singular selection.
  */
 export function AddRoundFormItem(props: AddRoundFormItemP) {
-  const {formik, graph, useAdvancedView = false, selection, index} = props;
-
-  const [aiNodeValue] = React.useState<string>(
-    'c632c78d-3d46-4e54-aa85-1c81c57a27d0'
-  );
-
-  const aiNodeAttributes: NodeAttributes = {
-    createElement: p => <NounAiIcon {...p} />,
-  };
-
-  const rgValue: string = selection.useAiSelection
-    ? aiNodeValue
-    : selection.value;
-
-  /**
-   * Used to hook a {@link ScoredNodeSelection.useAiSelection} setter into the default handler.
-   */
-  function onChangeRadioGroup(
-    event: React.ChangeEvent<HTMLInputElement>,
-    value: string
-  ): void {
-    // default event handler
-    formik.handleChange(event);
-
-    // hook
-    formik.setFieldValue(
-      `${fn_items}.${index}.${fn_ai}`,
-      value === aiNodeValue
-    );
-  }
-
-  const vTouched = formik.touched.items?.at(index);
-  const vErrors = formik.errors.items?.at(index) as
-    | FormikErrors<NodeSelectionExtension>
-    | undefined;
-
-  const valueError: string | undefined = vErrors?.value;
-  // console.log(formik.errors, vErrors, valueError);
+  const {formik, graph, useAdvancedView = false, index} = props;
+  const radioGroupValue: string = formik.values.selections[index].value;
 
   return (
     <FormControl component="fieldset" fullWidth>
       <RadioGroup
         row
-        name={`${fn_items}.${index}.${fn_selection}`}
-        value={rgValue}
-        onChange={onChangeRadioGroup}
+        name={`${fnSelections}.${index}.value`}
+        value={radioGroupValue}
+        onChange={formik.handleChange}
         onBlur={formik.handleBlur}
         className="p-[6px]"
       >
@@ -80,9 +46,9 @@ export function AddRoundFormItem(props: AddRoundFormItemP) {
             <>
               <Grid item xs={4} className="text-center">
                 <AddRoundFormControlLabel
-                  value={aiNodeValue}
-                  attributes={aiNodeAttributes}
-                  checked={rgValue === aiNodeValue}
+                  value={AI_NODE_VALUE}
+                  attributes={AI_NODE_ATTR}
+                  checked={radioGroupValue === AI_NODE_VALUE}
                 />
               </Grid>
 
@@ -97,15 +63,15 @@ export function AddRoundFormItem(props: AddRoundFormItemP) {
               <AddRoundFormControlLabel
                 value={node}
                 attributes={attr}
-                checked={rgValue === node}
+                checked={radioGroupValue === node}
               />
             </Grid>
           ))}
         </Grid>
       </RadioGroup>
 
-      <FormHelperText error={!!vTouched && !!valueError}>
-        {!!vTouched && valueError}
+      <FormHelperText error={true}>
+        <ErrorMessage name={`${fnSelections}.${index}.value`} />
       </FormHelperText>
     </FormControl>
   );

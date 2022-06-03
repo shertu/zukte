@@ -2,7 +2,7 @@ import {
   ImageShareUploadForm,
   ImageShareUploadFormP,
 } from './image-share-upload-form/image-share-upload-form';
-import {ImageStorageElement, ImageStorageServiceApi} from '@zukte/api-client';
+import {ImageStorageApi, ImageStorageElement} from '@zukte/api-client';
 import {ZUKTE_CONFIGURATION, noop} from 'business';
 
 import {Formik} from 'formik';
@@ -26,7 +26,7 @@ export interface ImageShareUploadFormikP {
  */
 export function ImageShareUploadFormik(props: ImageShareUploadFormikP) {
   const {maxFileSize = 5242880, onSuccessHook = noop} = props;
-  const api = new ImageStorageServiceApi(ZUKTE_CONFIGURATION);
+  const api = new ImageStorageApi(ZUKTE_CONFIGURATION);
 
   return (
     <Formik
@@ -39,7 +39,7 @@ export function ImageShareUploadFormik(props: ImageShareUploadFormikP) {
           const file = files[i];
 
           const promise = api
-            .imageStorageServiceInsert({
+            .imageStorageInsert({
               file: file,
             })
             .catch(reason => {
@@ -62,7 +62,9 @@ export function ImageShareUploadFormik(props: ImageShareUploadFormikP) {
         files: [],
       }}
     >
-      {props => <ImageShareUploadForm {...props} maxFileSize={maxFileSize} />}
+      {formikProps => (
+        <ImageShareUploadForm {...formikProps} maxFileSize={maxFileSize} />
+      )}
     </Formik>
   );
 }

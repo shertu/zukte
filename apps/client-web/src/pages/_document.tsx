@@ -1,6 +1,10 @@
-import {Html, Head, Main, NextScript} from 'next/document';
+import {Head, Html, Main, NextScript} from 'next/document';
+
 import React from 'react';
 
+/**
+ * https://nextjs.org/docs/advanced-features/custom-document
+ */
 export default function Document() {
   return (
     <Html>

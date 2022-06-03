@@ -4,6 +4,9 @@ import Link from '../components/next-link-composed/next-link-composed';
 import React from 'react';
 import {Typography} from '@mui/material';
 
+/**
+ * The page which demonstrates a machine learn model.
+ */
 export function MachineLearnMicroservice() {
   return (
     <>
@@ -17,7 +20,7 @@ export function MachineLearnMicroservice() {
           </Link>
           &nbsp;to learn more.
         </Typography>
-        <RockPaperScissors pNames={['You', 'computer']} />
+        <RockPaperScissors />
       </AppPage>
     </>
   );

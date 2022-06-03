@@ -5,9 +5,9 @@ import {ImageStorageElement} from '@zukte/api-client';
 import {ListChildComponentProps} from 'react-window';
 import React from 'react';
 
-export interface ImageShareListItemP
-  extends ListItemProps,
-    ImageStorageElement {}
+export interface ImageShareListItemP extends ListItemProps {
+  imageStorageElement: ImageStorageElement;
+}
 
 /**
  * A {@link ImageListItem} view of an uploaded image.
@@ -17,12 +17,13 @@ export function ImageShareListItem(
 ) {
   const {index, style, data} = lccp;
 
-  if (data.length === 0) {
+  if (index < 0 || index >= data.length) {
     return null;
   }
 
   const props = data[index];
-  const {url, width, height, ...other} = props;
+  const {imageStorageElement, ...other} = props;
+  const {url, width, height} = imageStorageElement;
 
   return (
     <ListItem style={style} disablePadding {...other}>
@@ -31,7 +32,7 @@ export function ImageShareListItem(
           width={width}
           height={height}
           src={url}
-          layout="fill"
+          // layout="fill"
           alt="an uploaded image"
         />
       )}

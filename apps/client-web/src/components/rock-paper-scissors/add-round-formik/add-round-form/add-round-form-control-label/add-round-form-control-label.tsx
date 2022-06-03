@@ -16,25 +16,27 @@ export interface AddRoundFormControlLabelP
 }
 
 /**
- * A radio form control with a {@link NodeSelectionGameImage} for the label.
+ * A radio form control with an icon for the label.
  */
 export function AddRoundFormControlLabel(props: AddRoundFormControlLabelP) {
-  const {attributes, checked} = props;
+  const {attributes, checked, ...other} = props;
+
+  const label = attributes.createElement({
+    className: clsx(
+      'text-[5rem] md:text-[10rem] xl:text-[15rem] border border-solid border-secondary-500',
+      {
+        'bg-secondary-200': checked,
+        'hover:bg-darker': !checked,
+      }
+    ),
+  });
 
   return (
     <FormControlLabel
-      {...props}
-      className={clsx(props.className, 'mx-0')}
+      className={clsx('mx-0', props.className)}
       control={<Radio className="hidden" checked={checked} />}
-      label={attributes.createElement({
-        className: clsx(
-          'text-[5rem] md:text-[10rem] xl:text-[15rem] border border-solid border-secondary-500',
-          {
-            'bg-secondary-200': checked,
-            'hover:bg-darker': !checked,
-          }
-        ),
-      })}
+      label={label}
+      {...other}
     />
   );
 }

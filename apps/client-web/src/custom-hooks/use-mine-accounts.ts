@@ -1,10 +1,11 @@
 import {
   ApplicationUser,
+  ApplicationUserGetListGenerator,
   Page,
-  applicationUserServiceGetListGenerator,
 } from '@zukte/api-client';
 
 import React from 'react';
+import {ZUKTE_CONFIGURATION} from 'business';
 
 type P = Page<ApplicationUser>;
 
@@ -12,10 +13,13 @@ type P = Page<ApplicationUser>;
  * Uses an {@link applicationUserServiceGetListGenerator} to fetch all of the user's accounts.
  */
 async function _h() {
-  const generator = applicationUserServiceGetListGenerator({
-    mine: true,
-    pageSizeHint: 5,
-  });
+  const generator = ApplicationUserGetListGenerator(
+    {
+      mine: true,
+      pageSizeHint: 5,
+    },
+    ZUKTE_CONFIGURATION
+  );
   const pages: P[] = [];
   for await (const page of generator) {
     pages.push(page);

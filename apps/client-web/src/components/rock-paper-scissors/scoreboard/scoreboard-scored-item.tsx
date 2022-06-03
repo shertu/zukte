@@ -1,11 +1,11 @@
-import {GraphAlpha, NodeSelectionExtension} from 'business';
+import {GraphExtension, NodeSelectionExtension} from 'business';
 
 import React from 'react';
 import {Typography} from '@mui/material';
 import clsx from 'clsx';
 
 export interface ScoreboardScoredItemP {
-  graph: GraphAlpha;
+  graph: GraphExtension;
   scored: NodeSelectionExtension;
 }
 
