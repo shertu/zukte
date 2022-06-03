@@ -6,12 +6,20 @@
   "types": "./dist/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint src/** --fix"
+    "lint": "eslint src/** --fix",
+    "test": "jest --silent"
   },
   "dependencies": {
     "@tensorflow/tfjs": "3.18.0",
     "graphology": "0.24.1",
-    "graphology-types": "0.24.4",
     "seedrandom": "2.4.3"
+  },
+  "devDependencies": {
+    "@types/jest": "27.5.1",
+    "@types/node": "17.0.35",
+    "graphology-types": "0.24.4",
+    "jest": "28.1.0",
+    "ts-jest": "^28.0.3",
+    "typescript": "4.7.2"
   }
 }

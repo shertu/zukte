@@ -9,36 +9,30 @@ import {
   tensor1d,
   tidy,
   train,
+  tensor2d,
+  Tensor3D,
 } from '@tensorflow/tfjs';
+import {convertToFeature} from './prediction-io';
 
 import {ScoredNodeSelection} from './scored-node-selection';
-
-const ADDITIONAL_FEATURE_COUNT = 2;
 
 /**
  * Create NodeSelectionGame node selection model.
  */
-function createNodeSelectionGameModel(nodes: string[], k: number) {
+function createNodeSelectionGameModel<T>(nodes: T[], k: number) {
   const model = sequential();
 
-  // Define the input layer.
-  // The features are stored in a two-dimensional [one_hot(node), score, diff]... array.
-  model.add(
-    layers.flatten({
-      inputShape: [nodes.length + ADDITIONAL_FEATURE_COUNT, k],
-    })
-  );
+  /** [one_hot(value), score, diff] */
+  const featureCount = nodes.length + 2;
 
-  // Define the first hidden layer.
+  model.add(layers.inputLayer({inputShape: [k, featureCount]}));
+  model.add(layers.reshape({targetShape: [1, featureCount * k]}));
   model.add(layers.dense({activation: 'relu', units: 32}));
-
-  // Define a dropout regularization layer.
   model.add(layers.dropout({rate: 0.2}));
-
-  // Define the output layer. The no. of units represents no. of classes.
   model.add(
     layers.dense({
       activation: 'softmax',
+      kernelInitializer: 'ones',
       units: nodes.length,
     })
   );
@@ -46,7 +40,6 @@ function createNodeSelectionGameModel(nodes: string[], k: number) {
   // # Construct the layers into a model that TensorFlow can execute.
   // # Notice that the loss function for multi-class classification
   // # is different than the loss function for binary classification.
-
   model.compile({
     loss: losses.softmaxCrossEntropy, //'sparse_categorical_crossentropy'
     optimizer: train.adam(),
@@ -58,17 +51,17 @@ function createNodeSelectionGameModel(nodes: string[], k: number) {
 /**
  * A TensorFlow model for predicting the next move.
  */
-export class NodeSelectionGameAi {
+export class NodeSelectionGameAi<T> {
   public model: Sequential;
-  private nodes: string[];
+  private nodes: T[];
   private k: number;
 
   /**
    * Creates an instance of {@link NodeSelectionGameAi}.
-   * @param nodes
-   * @param k
+   * @param nodes The nodes in the associated graph.
+   * @param k The number of
    */
-  constructor(nodes: string[], k = 32) {
+  constructor(nodes: T[], k = 32) {
     this.nodes = nodes;
     this.k = k;
     this.model = createNodeSelectionGameModel(nodes, k);
@@ -78,25 +71,33 @@ export class NodeSelectionGameAi {
    * Convert the input data to tensors that we can use for machine
    * learning.
    */
-  private convertToInputTensor(data: ScoredNodeSelection[]) {
-    const map = new Map(
-      this.nodes.map<[string, number]>((node, i) => [node, i])
-    );
-
-    const encodeX = data.map(v => ({
-      diff: v.diff ? 1 : 0,
-      normalized: v.normalized,
-      value: map.get(v.value) ?? -1,
-    }));
-
+  private convertToInputTensor(data: ScoredNodeSelection<T>[]) {
     return tidy(() => {
-      const xValues = encodeX.map(v => v.value);
-      const inputs = oneHot(xValues, this.nodes.length).concat(
-        encodeX.map(v => [v.normalized, v.diff]),
+      const features = convertToFeature<T>(this.nodes, data);
+      const indicies = features.map<number>(feature => feature.vindex);
+
+      const vIndexTensor: Tensor2D = oneHot(
+        indicies,
+        this.nodes.length
+      ) as Tensor2D;
+
+      const scoreTensor: Tensor1D = tensor1d(
+        features.map(feature => feature.normalized),
+        'float32'
+      );
+
+      const diffTensor: Tensor1D = tensor1d(
+        features.map(feature => feature.diff),
+        'bool'
+      );
+
+      const otherTensor: Tensor2D = scoreTensor.stack(
+        diffTensor.cast('float32'),
         1
       );
 
-      return inputs as Tensor2D;
+      const inputs: Tensor2D = vIndexTensor.concat(otherTensor, 1);
+      return inputs;
     });
   }
 
@@ -104,40 +105,57 @@ export class NodeSelectionGameAi {
    * Convert the label data to tensors that we can use for machine
    * learning.
    */
-  private convertToLabelTensor(data: ScoredNodeSelection) {
+  private convertToLabelTensor(data: ScoredNodeSelection<T>) {
     return tidy(() => {
       const labels = this.nodes.map<boolean>(node => node === data.value);
-      return tensor1d(labels, 'bool');
+      return tensor2d(labels, [1, labels.length], 'bool');
     });
   }
 
   /**
    * Runs a single gradient update on a single batch of data.
    */
-  public async train(x: ScoredNodeSelection[], y: ScoredNodeSelection) {
+  public async train(x: ScoredNodeSelection<T>[], y: ScoredNodeSelection<T>) {
     if (x.length === this.k) {
       const xTensor = this.convertToInputTensor(x);
       const yTensor = this.convertToLabelTensor(y);
-      this.model.trainOnBatch(xTensor, yTensor);
+      this.model.trainOnBatch(xTensor.expandDims(0), yTensor.expandDims(0));
     } else {
-      throw new Error(
-        `The model requires ${this.k} inputs to train and predict on.`
-      );
+      throw new Error(`The model requires ${this.k} inputs to train on.`);
     }
   }
 
   /**
    * Generates output predictions for the input samples.
    */
-  public async predict(x: ScoredNodeSelection[]): Promise<number[]> {
+  public async predict(x: ScoredNodeSelection<T>[]): Promise<number[]> {
     if (x.length === this.k) {
       const xTensor = this.convertToInputTensor(x);
-      const yTensor = this.model.predict(xTensor) as Tensor1D;
-      return await yTensor.array();
+      const prediction = this.model.predict(xTensor.expandDims(0));
+      return (prediction as Tensor3D).flatten().array();
     } else {
-      throw new Error(
-        `The model requires ${this.k} inputs to train and predict on.`
-      );
+      throw new Error(`The model requires ${this.k} inputs to train on.`);
     }
   }
+}
+
+/**
+ * Gets the index of the largest no. in an array.
+ */
+export function indexOfMax(arr: number[]): number {
+  if (arr.length === 0) {
+    return -1;
+  }
+
+  let max = arr[0];
+  let maxIndex = 0;
+
+  for (let i = 1; i < arr.length; i++) {
+    if (arr[i] > max) {
+      maxIndex = i;
+      max = arr[i];
+    }
+  }
+
+  return maxIndex;
 }

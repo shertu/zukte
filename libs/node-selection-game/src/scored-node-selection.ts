@@ -1,11 +1,11 @@
 /**
  * The score and value of a node selection after a tournament.
  */
-export interface ScoredNodeSelection {
+export interface ScoredNodeSelection<T> {
   /**
    * The value of the selection.
    */
-  readonly value: string;
+  readonly value: T;
 
   /**
    * The score for the selection.

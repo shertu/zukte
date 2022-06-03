@@ -1,7 +1,7 @@
 import {
   ApplicationUser,
-  ApplicationUserServiceApi,
-  ApplicationUserServiceGetListRequest,
+  ApplicationUserApi,
+  ApplicationUserGetListRequest,
   Configuration,
 } from '../openapi-generator';
 
@@ -12,12 +12,12 @@ type P = Page<ApplicationUser>;
 /**
  * An async generator for applicaton user pages.
  */
-export async function* applicationUserServiceGetListGenerator(
-  request: ApplicationUserServiceGetListRequest,
+export async function* ApplicationUserGetListGenerator(
+  request: ApplicationUserGetListRequest,
   configuration?: Configuration
 ): AsyncGenerator<P> {
   const {continuationToken, pageSizeHint = 0} = request;
-  const api = new ApplicationUserServiceApi(configuration);
+  const api = new ApplicationUserApi(configuration);
 
   let current: P = {
     continuationToken: continuationToken,
@@ -25,7 +25,7 @@ export async function* applicationUserServiceGetListGenerator(
   };
 
   do {
-    const response = await api.applicationUserServiceGetList({
+    const response = await api.applicationUserGetList({
       ...request,
       continuationToken: current.continuationToken,
       pageSizeHint: pageSizeHint,

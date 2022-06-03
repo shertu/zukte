@@ -8,7 +8,7 @@ function duel(graph: WeightedGraph, source: unknown, target: unknown): number {
   return graph.reduceOutEdges<number>(
     source,
     target,
-    (accumulator, edge, attr) => accumulator + attr.weight,
+    (accumulator, edge, {weight = 1}) => accumulator + weight,
     0
   );
 }
@@ -16,9 +16,9 @@ function duel(graph: WeightedGraph, source: unknown, target: unknown): number {
 /**
  * Calculates the scores for each node in a round-robin tournament.
  */
-function nodeTournamentScore(
+function nodeTournamentScore<T>(
   graph: WeightedGraph,
-  ...selections: string[]
+  ...selections: T[]
 ): number[] {
   return selections.map<number>(source =>
     selections.reduce<number>(
@@ -31,10 +31,10 @@ function nodeTournamentScore(
 /**
  * Calculates the scores and normalized scores for each selected node in a round-robin tournament.
  */
-export function nodeTournament(
+export function nodeTournament<T>(
   graph: WeightedGraph,
-  ...selections: string[]
-): ScoredNodeSelection[] {
+  ...selections: T[]
+): ScoredNodeSelection<T>[] {
   const scores = nodeTournamentScore(graph, ...selections);
 
   // Normalizes an array of numbers using min-max normalization.
@@ -42,7 +42,7 @@ export function nodeTournament(
   const max: number = Math.max(...scores);
   const diff: number = max - min;
 
-  return selections.map<ScoredNodeSelection>((node, i) => ({
+  return selections.map<ScoredNodeSelection<T>>((node, i) => ({
     diff: !!diff,
     normalized: diff ? (scores[i] - min) / diff : 0,
     score: scores[i],
