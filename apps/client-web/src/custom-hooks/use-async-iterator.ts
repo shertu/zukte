@@ -3,7 +3,7 @@ import React from 'react';
 type AsyncFn = () => Promise<void>;
 
 /**
- * A custom react hook which enable step-wise iteration through an iterator.
+ * A custom hook which enables step-wise iteration through an async iterator.
  */
 export function useAsyncIterator<T, TReturn, TNext = undefined>(
   iterator: AsyncIterator<T, TReturn, TNext>

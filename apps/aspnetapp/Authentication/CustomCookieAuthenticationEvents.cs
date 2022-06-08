@@ -56,7 +56,7 @@ public class CustomCookieAuthenticationEvents : CookieAuthenticationEvents
       // https://docs.microsoft.com/en-us/dotnet/standard/parallel-programming/exception-handling-task-parallel-library
       try
       {
-        createAccountTask.RunSynchronously();
+        createAccountTask.Wait();
       }
       catch (AggregateException ae)
       {

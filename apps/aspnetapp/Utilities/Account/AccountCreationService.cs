@@ -16,7 +16,7 @@ public class AccountCreationService : IAccountCreationService
     db.ApplicationUsers.Add(user);
     try
     {
-      await db.SaveChangesAsync();
+      await db.SaveChangesAsync().ConfigureAwait(false);
     }
     catch (DbUpdateException)
     {

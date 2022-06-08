@@ -3,3 +3,4 @@ export * from './zukte';
 export * from './token-status';
 export * from './rock-paper-scissors';
 export * from './probability/discrete-distribution';
+export * from './superuser';

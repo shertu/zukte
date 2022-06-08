@@ -123,11 +123,11 @@ public class ApplicationUserController : ControllerBase, IPaginationService<stri
   {
     if (mine)
     {
-      var nameIdentifiers = User.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier)
+      var ids = User.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier)
           .Select(claim => claim.Value)
           .ToHashSet();
 
-      query = ApplyIdFilter(query, nameIdentifiers);
+      query = ApplyIdFilter(query, ids);
     }
 
     return query;

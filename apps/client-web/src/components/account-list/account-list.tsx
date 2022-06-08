@@ -3,11 +3,11 @@ import {
   ApplicationUser,
   ApplicationUserGetListGenerator,
 } from '@zukte/api-client';
+import {ZUKTE_CONFIGURATION, isSuperuser} from 'business';
 
 import InfiniteLoader from 'react-window-infinite-loader';
 import {FixedSizeList as List} from 'react-window';
 import React from 'react';
-import {ZUKTE_CONFIGURATION} from 'business';
 import {useAsyncIterator} from 'hooks';
 
 export interface AccountListP {
@@ -32,6 +32,13 @@ export function AccountList(props: AccountListP) {
     });
     return set;
   }, [mine]);
+
+  let superuser = false;
+  mineKs.forEach(mineK => {
+    if (isSuperuser(mineK)) {
+      superuser = true;
+    }
+  });
 
   const [paginationV, paginationD, paginationN] = useAsyncIterator(
     ApplicationUserGetListGenerator(
@@ -62,7 +69,8 @@ export function AccountList(props: AccountListP) {
   const itemData: AccountListItemP[] = sorted.map<AccountListItemP>(
     account => ({
       account: account,
-      deleteSecondaryAction: account.id ? mineKs.has(account.id) : false,
+      deleteSecondaryAction:
+        (account.id ? mineKs.has(account.id) : false) || superuser,
     })
   );
 

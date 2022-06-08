@@ -13,8 +13,8 @@ public class SuperuserAuthorizationHandler : IAuthorizationHandler
 
   public Task HandleAsync(AuthorizationHandlerContext context)
   {
-    var nameIdentifierClaims = context.User.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier);
-    if (nameIdentifierClaims.Any(claim => superusers.Contains(claim.Value)))
+    var ids = context.User.FindAll(claim => claim.Type == ClaimTypes.NameIdentifier).Select(claim => claim.Value);
+    if (ids.Any(id => superusers.Contains(id)))
     {
       foreach (IAuthorizationRequirement requirement in context.Requirements)
       {
